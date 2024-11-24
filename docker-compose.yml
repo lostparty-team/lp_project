@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000" # React 개발 서버
+    volumes:
+      - ./frontend:/app # 코드 변경 시 자동 반영
+      - /app/node_modules # node_modules는 컨테이너 내부에서 관리
+    stdin_open: true
+    tty: true
+    command: npm start
+
+  backend-express:
+    build:
+      context: ./backend-express
+    ports:
+      - "5000:5000" # Express 서버
+    volumes:
+      - ./backend-express:/app
+      - /app/node_modules # node_modules는 컨테이너 내부에서 관리
+    command: npm run dev
+
+  backend-nest:
+    build:
+      context: ./backend-nest
+    ports:
+      - "4000:4000" # NestJS 서버
+    volumes:
+      - ./backend-nest:/app
+      - /app/node_modules # node_modules는 컨테이너 내부에서 관리
+    command: npm run start:dev
