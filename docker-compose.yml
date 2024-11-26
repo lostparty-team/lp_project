@@ -4,13 +4,13 @@ services:
     build:
       context: ./frontend
     ports:
-      - "3000:3000" # React 개발 서버
+      - "3000:3000" # next 개발 서버
     volumes:
       - ./frontend:/app # 코드 변경 시 자동 반영
       - /app/node_modules # node_modules는 컨테이너 내부에서 관리
     stdin_open: true
     tty: true
-    command: npm start
+    command: npm run dev
 
   backend-express:
     build:
