@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+// app/page.js
+"use client";
 
-function App() {
+import { useState } from 'react';
+
+export default function Home() {
   const [expressData, setExpressData] = useState(null);
   const [nestData, setNestData] = useState(null);
 
@@ -24,7 +27,7 @@ function App() {
 
   return (
     <div>
-      <h1>React 에서 Express와 Nest로 fetch요청 테스트</h1>
+      <h1>Next.js에서 Express와 Nest로 fetch 요청 테스트</h1>
       <button onClick={fetchFromExpress}>Express로 GET 요청 </button>
       <p>
         {expressData ? `Express Response: ${expressData.name}` : 'No data from Express yet'}
@@ -37,5 +40,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
