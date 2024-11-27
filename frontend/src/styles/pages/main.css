@@ -1,0 +1,24 @@
+/* MainPage 스타일 */
+.main-container {
+  @apply min-h-screen bg-gray-100;
+}
+
+.main-title {
+  @apply text-4xl font-bold text-gray-800 mb-6;
+}
+
+.main-description {
+  @apply text-lg text-gray-600 mb-4;
+}
+
+.update-card {
+  @apply p-4 bg-white rounded-lg shadow-md;
+}
+
+.update-title {
+  @apply text-xl font-semibold text-gray-800;
+}
+
+.update-content {
+  @apply text-gray-600;
+}

@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* NavigationBar 스타일 */
+.navbar {
+  @apply bg-gray-800 text-white shadow-md;
+}
+
+.navbar-container {
+  @apply container mx-auto px-4 flex justify-between items-center h-16;
+}
+
+.nav-link {
+  @apply hover:text-yellow-400;
+}
