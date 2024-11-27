@@ -1,0 +1,41 @@
+{
+  "root": true, // 이 파일이 루트 설정 파일임을 나타냄
+  "env": {
+    "browser": true, // 브라우저 환경에서 사용되는 글로벌 변수를 허용
+    "es6": true, // ES6 기능 사용
+    "node": true // Node.js 환경에서 사용되는 글로벌 변수를 허용
+  },
+  "extends": [
+    "eslint:recommended", // ESLint에서 권장하는 규칙을 상속
+    "plugin:react/recommended", // React 프로젝트에 권장되는 규칙을 상속
+    "plugin:prettier/recommended" // Prettier와 충돌하는 ESLint 규칙을 비활성화
+  ],
+  "parser": "@typescript-eslint/parser", // TypeScript 파일에도 적용하기 위함
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true // JSX 문법을 사용할 수 있도록 설정
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json" // TypeScript 프로젝트 설정 파일을 지정
+  },
+  "plugins": [
+    "react", // React 관련 규칙을 사용하기 위한 플러그인
+    "@typescript-eslint", // TypeScript 관련 규칙을 사용하기 위한 플러그인
+    "prettier" // Prettier와 ESLint를 통합하기 위한 플러그인
+  ],
+  "settings": {
+    "import/resolver": {
+      "typescript": {} // TypeScript 프로젝트에서 import를 해결하기 위한 설정
+    }
+  },
+  "rules": {
+    "prettier/prettier": ["error", { "endOfLine": "auto" }], // Prettier 규칙을 적용하고, 줄 바꿈은 자동으로 설정
+    "no-var": "error", // var 키워드 사용을 금지
+    "no-multiple-empty-lines": "error", // 연속된 빈 줄을 허용하지 않음
+    "eqeqeq": "error", // 일치 연산자(===, !==) 사용을 강제
+    "react/react-in-jsx-scope": "auto", // JSX scope 내에서 React를 선언하지 않아도 됨
+    "react/jsx-uses-react": "off",
+    "no-unused-vars": "error" // 사용하지 않는 변수를 금지
+  }
+}

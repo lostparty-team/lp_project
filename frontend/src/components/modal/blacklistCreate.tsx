@@ -1,6 +1,4 @@
 "use client";
-
-import React, { useState } from "react";
 import NavigationBar from "@/components/common/navigationBar";
 import "../../styles/pages/blacklist.css";
 

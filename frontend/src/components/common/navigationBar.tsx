@@ -6,8 +6,7 @@ const NavigationBar: React.FC = () => {
       <div
         className="h-72 bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('https://via.placeholder.com/1920x400')", // 헤더 이미지 URL (임시로 해둠)
+          backgroundImage: "url('https://via.placeholder.com/1920x400')", // 헤더 이미지 URL (임시로 해둠)
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
