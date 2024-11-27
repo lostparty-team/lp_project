@@ -21,9 +21,7 @@ const BlacklistPage: React.FC = () => {
     { id: 3, name: "사용자 3", createdBy: "관리자 3" },
   ]);
 
-  const [selectedBlacklist, setSelectedBlacklist] = useState<BlacklistUser[]>(
-    []
-  );
+  const [selectedBlacklist, setSelectedBlacklist] = useState<BlacklistUser[]>([]);
 
   const [isModalOpen, setModalOpen] = useState<Boolean>(false);
 
@@ -41,7 +39,6 @@ const BlacklistPage: React.FC = () => {
     setBlacklist((prev) => prev.filter((item) => item.id !== user.id));
   };
 
-
   return (
     <div className="flex bg-gray-900 text-gray-100 min-h-screen p-8">
       {/* 왼쪽 박스 */}
@@ -49,10 +46,7 @@ const BlacklistPage: React.FC = () => {
         <h2 className="text-xl font-bold mb-4">전체 블랙리스트</h2>
         <ul className="space-y-4">
           {blacklist.map((user) => (
-            <li
-              key={user.id}
-              className="flex items-center justify-between bg-gray-700 p-4 rounded-lg"
-            >
+            <li key={user.id} className="flex items-center justify-between bg-gray-700 p-4 rounded-lg">
               <div>
                 <p className="text-lg font-semibold">{user.name}</p>
                 <p className="text-sm text-gray-400">생성자: {user.createdBy}</p>
@@ -73,18 +67,15 @@ const BlacklistPage: React.FC = () => {
         <h2 className="text-xl font-bold mb-4">내 블랙리스트</h2>
         <ul className="space-y-4">
           {selectedBlacklist.map((user) => (
-            <li
-              key={user.id}
-              className="bg-gray-700 p-4 rounded-lg text-lg font-semibold"
-            >
+            <li key={user.id} className="bg-gray-700 p-4 rounded-lg text-lg font-semibold">
               {user.name}
             </li>
           ))}
         </ul>
       </div>
 
-       {/* "블랙리스트 명단 만들기" 버튼 */}
-       <div className="fixed bottom-8 right-8">
+      {/* "블랙리스트 명단 만들기" 버튼 */}
+      <div className="fixed bottom-8 right-8">
         <button
           onClick={handleCreateBlacklist}
           className="bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-green-400 transition duration-300"
@@ -98,10 +89,7 @@ const BlacklistPage: React.FC = () => {
           <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden max-w-3xl w-full">
             <div className="flex justify-between items-center p-4 bg-gray-700 text-white">
               <h2 className="text-xl font-bold">블랙리스트 명단 만들기</h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-300 hover:text-white transition duration-200"
-              >
+              <button onClick={handleCloseModal} className="text-gray-300 hover:text-white transition duration-200">
                 ✕
               </button>
             </div>
