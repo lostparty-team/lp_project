@@ -9,9 +9,14 @@ app.use(cors({
     methods: ['GET', 'POST'],
   }));
 
-app.get('/product', (req, res) => {
-  res.json({ name: 'Express Productasdasdasdsa' }); // Express 서버가 반환하는 JSON
-});
+// 라우터 관리 부분 시작
+
+const testRouter = require("./router/test");
+
+app.use("/product", testRouter);
+
+// 라우터 관리 부분 끝
+
 
 app.listen(5000, () => {
   console.log('Express server running on http://localhost:5000');
