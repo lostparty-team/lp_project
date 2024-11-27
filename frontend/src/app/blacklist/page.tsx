@@ -22,7 +22,6 @@ const BlacklistPage: React.FC = () => {
   ]);
 
   const [selectedBlacklist, setSelectedBlacklist] = useState<BlacklistUser[]>([]);
-  const [selectedBlacklist, setSelectedBlacklist] = useState<BlacklistUser[]>([]);
 
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
