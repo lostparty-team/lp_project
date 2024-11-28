@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface AddUserModalProps {
   onClose: () => void; // 모달 닫기 함수
@@ -21,7 +20,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
         <h2 className="text-2xl font-bold mb-4">사용자 추가</h2>
         <div className="mb-4">
-          <label htmlFor="name" className="block text-gray-700">이름</label>
+          <label htmlFor="name" className="block text-gray-700">
+            이름
+          </label>
           <input
             id="name"
             type="text"
@@ -32,7 +33,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="reason" className="block text-gray-700">사유</label>
+          <label htmlFor="reason" className="block text-gray-700">
+            사유
+          </label>
           <input
             id="reason"
             type="text"
@@ -43,16 +46,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           />
         </div>
         <div className="flex justify-end gap-4">
-          <button
-            onClick={onClose}
-            className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-400"
-          >
+          <button onClick={onClose} className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-400">
             취소
           </button>
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-400"
-          >
+          <button onClick={handleSubmit} className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-400">
             추가
           </button>
         </div>
