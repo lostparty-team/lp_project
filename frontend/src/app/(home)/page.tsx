@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import NavigationBar from "@/components/common/navigationBar";
 import "../globals.css";
 
+
 const MainPage: React.FC = () => {
   const handleButtonClick = () => {
     toast.success("버튼 클릭");
