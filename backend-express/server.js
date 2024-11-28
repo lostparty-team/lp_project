@@ -12,8 +12,10 @@ app.use(cors({
 // 라우터 관리 부분 시작
 
 const testRouter = require("./router/test");
+const partyRouter = require("./router/party");
 
 app.use("/product", testRouter);
+app.use("/party", partyRouter);
 
 // 라우터 관리 부분 끝
 
