@@ -1,11 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const axios = require('axios');
+const { 직업각인함수 } = require('./class');
+const { 악세옵션목록분석 , 보석검사 } = require("./optionsearch");
 
+const HTML태그제거 = (input) => input.replace(/<[^>]*>/g, '');
+
+const 무기레벨추출함수 = (input) => {
+  const match = input.match(/\b\d{4}\b/);
+  return match ? match[0] : null;
+};
 
 router.post('/', async(req, res) => {
 
-  const nickname = 'haesung99' // 여기부분에 req.body 넣을예정임 지금은 개발중
+  const nickname = req.body.nickname // 여기부분에 그냥 닉네임 적거나 postman body에 raw 에 이런방식으로 넣으면 테스트 가능 { "nickname": "HaeSung99" }
     
   const response = await axios.get('https://developer-lostark.game.onstove.com/armories/characters/'+nickname+'', {
     headers: {
@@ -14,10 +22,17 @@ router.post('/', async(req, res) => {
     }
   });
   
-  직업각인 = JSON.parse(response.data.ArkPassive.Effects[3].ToolTip).Element_000.value
-  console.log(직업각인)
-
-    res.json({ name: 직업각인 }); // Express 서버가 반환하는 JSON
+  직업각인 = 직업각인함수(JSON.parse(response.data.ArkPassive.Effects[0].ToolTip).Element_000.value)
+  무기정보 = 무기레벨추출함수(HTML태그제거(JSON.parse(response.data.ArmoryEquipment[0].Tooltip).Element_001.value.leftStr2)) // 무기레벨(1710레벨) 을 보여줄까 무기몇강인지 보여줄까 ( ex +20[20] 품질 99 )
+  악세옵션 = 악세옵션목록분석(response);
+  보석 = 보석검사(response)
+  //console.log(HTML태그제거(JSON.parse(response.data.ArmoryGem.Gems[0].Tooltip).Element_000.value))
+  res.json({ 
+      무기레벨 : 무기정보,
+      직업각인 : 직업각인,
+      악세목록 : 악세옵션,
+      보석 : 보석
+     }); // Express 서버가 반환하는 JSON
   });
 
   module.exports = router;
