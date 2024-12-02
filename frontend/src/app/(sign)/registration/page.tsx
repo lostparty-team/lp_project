@@ -26,7 +26,7 @@ export default function RegisterPage() {
   const isIdValid = idValue && !errors.id;
 
   // ID 중복 확인
-  const handleCheckId = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCheckId = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const isValid = await trigger('id');
     if (!isValid) return;
