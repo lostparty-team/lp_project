@@ -1,44 +1,50 @@
+import Link from 'next/link';
 import React from 'react';
 
 const NavigationBar: React.FC = () => {
   return (
-    <header className='relative'>
+    <header className="relative">
       <div
-        className='h-72 bg-cover bg-center'
+        className="h-72 bg-cover bg-center"
         style={{
           backgroundImage: "url('https://via.placeholder.com/1920x400')", // 헤더 이미지 URL (임시로 해둠)
         }}
       >
-        <div className='absolute inset-0 bg-black bg-opacity-50'></div>
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       </div>
-      <div className='absolute top-0 left-0 w-full flex items-center justify-between px-8 py-4'>
-        <h1 className='text-3xl font-bold'>LostArk Party</h1>
+      <div className="absolute top-0 left-0 w-full flex items-center justify-between px-8 py-4">
+        <h1 className="text-3xl font-bold">LostArk Party</h1>
         <nav>
-          <ul className='flex space-x-6'>
+          <ul className="flex space-x-6">
             <li>
-              <a href='/' className='text-gray-200 hover:text-white'>
+              <Link href="/" className="text-gray-200 hover:text-white">
                 홈
-              </a>
+              </Link>
             </li>
             <li>
-              <a href='#' className='text-gray-200 hover:text-white'>
+              <Link href="#" className="text-gray-200 hover:text-white">
                 공지사항
-              </a>
+              </Link>
             </li>
             <li>
-              <a href='#' className='text-gray-200 hover:text-white'>
+              <Link href="#" className="text-gray-200 hover:text-white">
                 파티원 정보
-              </a>
+              </Link>
             </li>
             <li>
-              <a href='#' className='text-gray-200 hover:text-white'>
+              <Link href="#" className="text-gray-200 hover:text-white">
                 실시간
-              </a>
+              </Link>
             </li>
             <li>
-              <a href='/blacklist' className='text-gray-200 hover:text-white'>
+              <Link href="/blacklist" className="text-gray-200 hover:text-white">
                 블랙리스트
-              </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="/login" className="text-gray-200 hover:text-white">
+                로그인 (임시)
+              </Link>
             </li>
           </ul>
         </nav>
