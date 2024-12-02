@@ -1,4 +1,10 @@
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import { LoginUserRequestDto } from './dto/login-user.request.dto';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { RegisterUserRequestDto } from './dto/register-user.request.dto';
@@ -67,5 +73,36 @@ export class UsersService {
 
   private async passwordMatch(password, hashedPassword) {
     return bcrypt.compare(password, hashedPassword);
+  }
+
+  async login(loginUserRequestDto: LoginUserRequestDto) {
+    const { userId, password } = loginUserRequestDto;
+
+    const user = await this.userRepository.findOne({
+      where: {
+        userId,
+      },
+    });
+
+    if (!user) throw new BadRequestException('정보를 다시 확인해주세요.');
+
+    const isMatch = await this.passwordMatch(password, user.password);
+
+    if (!isMatch) throw new BadRequestException('정보를 다시 확인해주세요.');
+
+    const { password: pass, ...userInfowithoutPassword } = user;
+
+    return userInfowithoutPassword;
+  }
+
+  async findUser(id) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!user) throw new UnauthorizedException('로그인 후 사용해주세요.');
+    const { password: pass, ...userInfowithoutPassword } = user;
+    return userInfowithoutPassword;
   }
 }
