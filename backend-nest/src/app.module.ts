@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as session from 'express-session';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: Joi.object({
+        SESSION_SECRET: Joi.string().required(),
+      }),
     }),
   ],
   controllers: [],
