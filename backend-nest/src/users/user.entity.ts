@@ -18,7 +18,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 1000 })
   apiKey: string;
 
   @CreateDateColumn({ type: 'timestamp' }) // 생성 시 자동 설정
