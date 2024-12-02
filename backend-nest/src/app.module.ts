@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as session from 'express-session';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         synchronize: configService.get<string>('NODE_ENV') == 'dev', // 개발 중에만 사용 (주의)
       }),
     }),
+    UsersModule,
   ],
   controllers: [],
   providers: [],
