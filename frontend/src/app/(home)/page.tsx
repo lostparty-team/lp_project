@@ -1,14 +1,12 @@
-"use client";
+'use client';
 
-import React from "react";
-import { toast } from "react-toastify";
-import NavigationBar from "@/components/common/navigationBar";
-import "../globals.css";
-
+import React from 'react';
+import { toast } from 'react-toastify';
+import NavigationBar from '@/components/common/navigationBar';
 
 const MainPage: React.FC = () => {
   const handleButtonClick = () => {
-    toast.success("버튼 클릭");
+    toast.success('버튼 클릭');
   };
 
   return (
