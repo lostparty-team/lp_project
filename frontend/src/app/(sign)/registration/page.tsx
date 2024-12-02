@@ -14,22 +14,22 @@ export default function RegisterPage() {
           <div className="absolute left-0 top-2 h-[1px] w-full bg-gradient-to-r from-transparent via-lostark-400/50 to-transparent"></div>
 
           <div className="mb-8 text-center">
-            <figure className="mx-auto mb-4 animate-pulse w-80 ">
+            <figure className="mx-auto mb-4 w-80 animate-pulse">
               <Image src="/lostark_logo.png" width={320} height={320} alt="login" />
             </figure>
-            <h1 className="tracking-wider text-2xl font-semibold text-lostark-400">회원가입</h1>
+            <h1 className="text-2xl font-semibold tracking-wider text-lostark-400">회원가입</h1>
           </div>
 
           <form className="space-y-6">
             <div>
-              <label className="text-lostark-400 block mb-2">아이디</label>
-              <div className="flex group">
+              <label className="mb-2 block text-lostark-400">아이디</label>
+              <div className="group flex">
                 <input
                   type="email"
                   placeholder="아이디를 입력하세요"
-                  className="w-full rounded-md rounded-tr-none rounded-br-none border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 hover:border-lostark-400/50  placeholder:text-white/30"
+                  className="w-full rounded-md rounded-br-none rounded-tr-none border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400"
                 />
-                <button className=" min-w-20 transition-all duration-200 bg-[#1a1a1a] text-sm rounded-md rounded-tl-none rounded-bl-none cursor-not-allowed pointer-events-none group-hover:border-lostark-400/50 outline-none focus:border-lostark-400 focus:ring-lostark-400 text-white/50 border border-lostark-400/30">
+                <button className="pointer-events-none min-w-20 cursor-not-allowed rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-[#1a1a1a] text-sm text-white/50 outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50">
                   중복 확인
                 </button>
               </div>
@@ -40,7 +40,7 @@ export default function RegisterPage() {
               <input
                 type="password"
                 placeholder="비밀번호를 입력하세요"
-                className="w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400 placeholder:text-white/30"
+                className="w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400"
               />
             </div>
             <div>
@@ -48,7 +48,7 @@ export default function RegisterPage() {
               <input
                 type="password"
                 placeholder="비밀번호를 재입력하세요"
-                className="w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400 placeholder:text-white/30"
+                className="w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400"
               />
             </div>
             <div>
@@ -56,13 +56,13 @@ export default function RegisterPage() {
               <input
                 type="password"
                 placeholder="비밀번호를 재입력하세요"
-                className="w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400 placeholder:text-white/30"
+                className="w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400"
               />
             </div>
 
             <button
               type="submit"
-              className="font-medieval w-full transform rounded-md border border-lostark-500 px-4 py-3 text-lostark-400 transition-all hover:border-lostark-400 outline-none"
+              className="font-medieval w-full transform rounded-md border border-lostark-500 px-4 py-3 text-lostark-400 outline-none transition-all hover:border-lostark-400"
             >
               회원가입
             </button>

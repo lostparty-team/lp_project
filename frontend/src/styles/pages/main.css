@@ -4,15 +4,15 @@
 }
 
 .main-title {
-  @apply text-4xl font-bold text-gray-800 mb-6;
+  @apply mb-6 text-4xl font-bold text-gray-800;
 }
 
 .main-description {
-  @apply text-lg text-gray-600 mb-4;
+  @apply mb-4 text-lg text-gray-600;
 }
 
 .update-card {
-  @apply p-4 bg-white rounded-lg shadow-md;
+  @apply rounded-lg bg-white p-4 shadow-md;
 }
 
 .update-title {
