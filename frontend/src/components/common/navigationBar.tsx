@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import React from 'react';
 
-const NavigationBar: React.FC = () => {
+const NavigationBar = () => {
   return (
     <header className="relative">
       <div
@@ -12,7 +11,7 @@ const NavigationBar: React.FC = () => {
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       </div>
-      <div className="absolute top-0 left-0 w-full flex items-center justify-between px-8 py-4">
+      <div className="absolute left-0 top-0 flex w-full items-center justify-between px-8 py-4">
         <h1 className="text-3xl font-bold">LostArk Party</h1>
         <nav>
           <ul className="flex space-x-6">

@@ -1,10 +1,7 @@
-// File: app/not-found.tsx
+import Link from 'next/link';
 
-import React from "react";
-import Link from "next/link";
-
-const NotFound: React.FC = () => {
-  return <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-100"></div>;
+const NotFound = () => {
+  return <div className="flex min-h-screen items-center justify-center bg-gray-900 text-gray-100"></div>;
 };
 
 export default NotFound;

@@ -52,6 +52,7 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d # SQL 초기화 스크립트 마운트
 
 volumes:
   mysql_data:
