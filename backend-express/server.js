@@ -13,9 +13,11 @@ app.use(cors({
 
 const testRouter = require("./router/test");
 const partyRouter = require("./router/party");
+const blacklistRouter = require("./router/blacklist");
 
 app.use("/product", testRouter);
 app.use("/party", partyRouter);
+app.use("/api/blacklist", blacklistRouter);
 
 // 라우터 관리 부분 끝
 
