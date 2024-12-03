@@ -1,16 +1,10 @@
 'use client';
+import { RegisterInfo } from '@/types/domain';
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-
-type RegisterInfo = {
-  id: string;
-  password: string;
-  confirmPassword: string;
-  api: string;
-};
 
 export default function RegisterPage() {
   const {
