@@ -1,6 +1,7 @@
 import NavigationBar from '@/components/common/navigationBar';
 import ToastProvider from '@/components/common/toastProvider';
 import '@/styles/globals.css';
+import { MSWProvider } from './msw-provider';
 export const metadata = {
   title: 'LostArkP',
   description: '로스트아크 파티',
@@ -8,11 +9,13 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>
-        <ToastProvider />
-        <NavigationBar />
-        {children}
+        <MSWProvider>
+          <ToastProvider />
+          <NavigationBar />
+          {children}
+        </MSWProvider>
       </body>
     </html>
   );
