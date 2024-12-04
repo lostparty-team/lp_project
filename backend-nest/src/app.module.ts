@@ -4,14 +4,18 @@ import * as session from 'express-session';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-
+import { AuthModule } from './auth/auth.module';
+import * as path from 'path';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
+import { User } from './users/user.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().default('dev'),
-        SESSION_SECRET: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.number().default(3306),
         DB_USERNAME: Joi.string().required(),
@@ -28,27 +32,19 @@ import { UsersModule } from './users/users.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'], // 엔티티 경로 설정
-        synchronize: configService.get<string>('NODE_ENV') == 'dev', // 개발 중에만 사용 (주의)
+        entities: [User],
+        synchronize: configService.get<string>('NODE_ENV') == 'dev',
       }),
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
-export class AppModule {
-  constructor(private readonly configService: ConfigService) {}
-  configure(consumer) {
-    consumer
-      .apply(
-        session({
-          secret: this.configService.get<string>('SESSION_SECRET'),
-          resave: false,
-          saveUninitialized: false,
-          cookie: { maxAge: 3600000 },
-        }),
-      )
-      .forRoutes('*'); // 모든 경로에 적용
-  }
-}
+export class AppModule {}
