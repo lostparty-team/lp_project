@@ -16,6 +16,7 @@ export const handlers = [
       {
         id: 'id',
         password: 'pw',
+        status: 200,
       },
       {
         headers: {
