@@ -2,6 +2,17 @@ CREATE DATABASE IF NOT EXISTS lp_project;
 
 USE lp_project;
 
+-- User 테이블
+CREATE TABLE IF NOT EXISTS User (
+  user_id VARCHAR(100) PRIMARY KEY,  -- 유저 아이디
+  password VARCHAR(255) NOT NULL,    -- 유저 비밀번호
+  api_key VARCHAR(255) UNIQUE NOT NULL -- 유저 API Key
+);
+
+-- 테스트 유저 생성
+INSERT INTO User (user_id, password, api_key) VALUES
+('test', 'test', 'test');
+
 -- Blacklist 테이블
 CREATE TABLE IF NOT EXISTS Blacklist (
   id INT AUTO_INCREMENT PRIMARY KEY, -- 블랙리스트 ID
@@ -11,13 +22,6 @@ CREATE TABLE IF NOT EXISTS Blacklist (
   reason VARCHAR(255) NOT NULL,      -- 사유
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- 생성 시간
   FOREIGN KEY (author) REFERENCES User(user_id) ON DELETE CASCADE -- User와 관계 설정
-);
-
--- User 테이블
-CREATE TABLE IF NOT EXISTS User (
-  user_id VARCHAR(100) PRIMARY KEY,  -- 유저 아이디
-  password VARCHAR(255) NOT NULL,    -- 유저 비밀번호
-  api_key VARCHAR(255) UNIQUE NOT NULL -- 유저 API Key
 );
 
 -- Cart 테이블
