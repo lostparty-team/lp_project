@@ -32,6 +32,14 @@ export class UsersService {
 
     if (exist) throw new BadRequestException('이미 존재하는 아이디입니다.');
 
+    const existApiKey = await this.userRepository.findOne({
+      where: {
+        apiKey,
+      },
+    });
+
+    if (existApiKey) throw new BadRequestException('이미 존재하는 토큰입니다.');
+
     await this.validateApiKey(apiKey);
 
     const hashedPassword = await this.passwordHash(password);
