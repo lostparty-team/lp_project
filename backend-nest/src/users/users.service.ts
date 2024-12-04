@@ -1,7 +1,7 @@
+import { AuthService } from './../auth/auth.service';
 import { LoginUserRequestDto } from './dto/login-user.request.dto';
 import {
   BadRequestException,
-  HttpException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -18,6 +18,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly httpService: HttpService,
+    private readonly authService: AuthService,
   ) {}
 
   async register(registerUserRequestDto: RegisterUserRequestDto) {
@@ -30,6 +31,14 @@ export class UsersService {
     });
 
     if (exist) throw new BadRequestException('이미 존재하는 아이디입니다.');
+
+    const existApiKey = await this.userRepository.findOne({
+      where: {
+        apiKey,
+      },
+    });
+
+    if (existApiKey) throw new BadRequestException('이미 존재하는 토큰입니다.');
 
     await this.validateApiKey(apiKey);
 
@@ -90,9 +99,11 @@ export class UsersService {
 
     if (!isMatch) throw new BadRequestException('정보를 다시 확인해주세요.');
 
-    const { password: pass, ...userInfowithoutPassword } = user;
+    const jwtPayload = { id: user.id };
 
-    return userInfowithoutPassword;
+    return {
+      access_token: await this.authService.generateToken(jwtPayload),
+    };
   }
 
   async findUser(id) {
