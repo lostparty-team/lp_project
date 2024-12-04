@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -10,12 +9,14 @@ import {
 import { UsersService } from './users.service';
 import { RegisterUserRequestDto } from './dto/register-user.request.dto';
 import { LoginUserRequestDto } from './dto/login-user.request.dto';
-import session from 'express-session';
+import { Public } from 'src/auth/decorator/public.decorator';
+import { User } from 'src/auth/decorator/user.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
   @Post('register')
   async register(@Body() registerUserRequestDto: RegisterUserRequestDto) {
     await this.usersService.register(registerUserRequestDto);
@@ -23,24 +24,14 @@ export class UsersController {
       sucess: true,
     };
   }
-
+  @Public()
   @Post('login')
-  async login(
-    @Body() loginUserRequestDto: LoginUserRequestDto,
-    @Session() session,
-  ) {
-    const userInfo = await this.usersService.login(loginUserRequestDto);
-    session.login = true;
-    session.user = userInfo;
-    return {
-      sucess: true,
-    };
+  async login(@Body() loginUserRequestDto: LoginUserRequestDto) {
+    return this.usersService.login(loginUserRequestDto);
   }
 
   @Get('me')
-  async me(@Session() session) {
-    if (!session?.login)
-      throw new UnauthorizedException('로그인 후 이용해주세요.');
-    return this.usersService.findUser(session.user.id);
+  async me(@User() user) {
+    return this.usersService.findUser(user.id);
   }
 }
