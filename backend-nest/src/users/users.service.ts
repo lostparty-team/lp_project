@@ -32,13 +32,18 @@ export class UsersService {
 
     if (exist) throw new BadRequestException('이미 존재하는 아이디입니다.');
 
+    const decodedToken: { iss: string; aud: string; client_id: string } =
+      await this.authService.decode(apiKey);
+    const { client_id, iss, aud } = decodedToken;
+
     const existApiKey = await this.userRepository.findOne({
       where: {
-        apiKey,
+        clientId: client_id,
       },
     });
 
-    if (existApiKey) throw new BadRequestException('이미 존재하는 토큰입니다.');
+    if (existApiKey && existApiKey.apiKey == apiKey)
+      throw new BadRequestException('이미 존재하는 토큰입니다.');
 
     await this.validateApiKey(apiKey);
 
@@ -48,6 +53,7 @@ export class UsersService {
     newUser.password = hashedPassword;
     newUser.userId = userId;
     newUser.apiKey = apiKey;
+    newUser.clientId = client_id;
 
     try {
       await this.userRepository.save(newUser);
