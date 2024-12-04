@@ -19,7 +19,7 @@ export class User {
   password: string;
 
   @Column({ unique: true })
-  client_id: string;
+  clientId: string;
 
   @Column({ length: 1000 })
   apiKey: string;
