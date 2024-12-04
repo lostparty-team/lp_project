@@ -1,21 +1,24 @@
 'use client';
+import { postLogin } from '@/api/auth';
 import { LoginInfo } from '@/types/domain';
-import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 export default function LoginPage() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInfo>();
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
-    console.log(data);
     try {
-      const res = await axios.post('/api/login', data);
-      console.log(res.data);
+      const res = await postLogin(data);
+      if (res.status === 200) {
+        router.push('/');
+      }
     } catch (err) {
       console.log(err);
     }

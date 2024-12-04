@@ -4,10 +4,13 @@ import axiosInstance from '@/api/axios';
 import { RegisterInfo } from '@/types/domain';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 export default function RegisterPage() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -41,7 +44,17 @@ export default function RegisterPage() {
     }
   };
 
-  const onSubmit: SubmitHandler<RegisterInfo> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<RegisterInfo> = async (data) => {
+    try {
+      const res = await postSignup(data);
+      if (res.status === 200) {
+        toast.success('회원가입 완료');
+        router.push('/login');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     if (idValue) {
