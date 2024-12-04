@@ -1,11 +1,17 @@
-export type UserCredentials = {
+type UserCredentials = {
   id: string;
   password: string;
 };
 
-export type RegisterInfo = UserCredentials & {
+type RegisterInfo = UserCredentials & {
   confirmPassword: string;
   api: string;
 };
 
-export type LoginInfo = UserCredentials;
+type LoginInfo = UserCredentials;
+
+type ResponseToken = {
+  accessToken: string;
+};
+
+export type { UserCredentials, RegisterInfo, LoginInfo, ResponseToken };
