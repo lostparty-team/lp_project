@@ -108,7 +108,7 @@ export default function RegisterPage() {
                   type='button'
                   disabled={!idValue || !!errors.id || idChecked}
                   onClick={handleCheckId}
-                  className={`${idValue && !errors.id && !idChecked ? 'text-lostark-500 duration-300' : 'pointer-events-none cursor-not-allowed'} min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-[#1a1a1a] text-sm text-white/50 outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
+                  className={`${idValue && !errors.id && !idChecked ? 'text-lostark-300 duration-300' : 'pointer-events-none cursor-not-allowed'} min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-[#1a1a1a] text-sm text-white/50 outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
                 >
                   중복 확인
                 </button>
