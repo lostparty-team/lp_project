@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // MySQL 연결 가져오기
-
+const authenticateToken = require('../middleware/authenticateToken'); // 인증 미들웨어 추가
 
 // 블랙리스트 상세 조회
-router.get('/:title', async (req, res) => {
+router.get('/:title', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
   const { title } = req.params;
 
   try {
@@ -27,9 +27,8 @@ router.get('/:title', async (req, res) => {
   }
 });
 
-
 // 블랙리스트 목록 조회
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
   try {
     const selectQuery = `SELECT DISTINCT title, author FROM Blacklist ORDER BY title ASC`;
     const [rows] = await db.query(selectQuery);
@@ -46,7 +45,7 @@ router.get('/', async (req, res) => {
 });
 
 // 블랙리스트 작성
-router.post('/create', async (req, res) => {
+router.post('/create', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
   const { title, author, blacklist } = req.body;
 
   if (!title || !author || !Array.isArray(blacklist) || blacklist.length === 0) {
@@ -80,10 +79,8 @@ router.post('/create', async (req, res) => {
   }
 });
 
-
-
 // DELETE 요청: 블랙리스트 삭제 (글 제목 기반)
-router.delete('/:title', async (req, res) => {
+router.delete('/:title', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
   const { title } = req.params;
   const { userId } = req.body; // 요청한 사용자의 ID
 
@@ -124,6 +121,5 @@ router.delete('/:title', async (req, res) => {
     res.status(500).json({ message: '블랙리스트를 삭제하지 못했습니다.', error });
   }
 });
-
 
 module.exports = router;

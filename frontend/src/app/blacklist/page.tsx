@@ -102,5 +102,5 @@ const BlacklistPage: React.FC = () => {
     </div>
   );
 };
-
+  
 export default BlacklistPage;
