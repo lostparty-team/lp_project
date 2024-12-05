@@ -45,40 +45,32 @@ export default function RegisterPage() {
   };
 
   const onSubmit: SubmitHandler<RegisterInfo> = async (data) => {
+    if (!idChecked) {
+      toast.error('아이디 중복 확인을 완료해주세요.');
+      return;
+    }
     try {
       const res = await postSignup(data);
       if (res.status === 200) {
-        toast.success('회원가입 완료');
+        toast.success('회원가입이 완료되었습니다.');
         router.push('/login');
       }
     } catch (err) {
-      console.log(err);
+      toast.error('회원가입 중 오류가 발생했습니다.');
     }
   };
 
-  useEffect(() => {
-    if (idValue) {
-      trigger('id');
-    }
-  }, [idValue, trigger]);
-
-  useEffect(() => {
-    if (passwordValue) {
-      trigger('password');
-    }
-  }, [passwordValue, trigger]);
-
-  useEffect(() => {
-    if (confirmPasswordValue) {
-      trigger('confirmPassword');
-    }
-  }, [confirmPasswordValue, passwordValue, trigger]);
-
-  useEffect(() => {
-    if (apiValue) {
-      trigger('api');
-    }
-  }, [apiValue, trigger]);
+  const triggerValidation = (field: keyof RegisterInfo) => {
+    useEffect(() => {
+      if (watch(field)) {
+        trigger(field);
+      }
+    }, [watch(field), trigger]);
+  };
+  triggerValidation('id');
+  triggerValidation('password');
+  triggerValidation('confirmPassword');
+  triggerValidation('api');
 
   return (
     <main className='relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1a1a1a]'>
@@ -116,7 +108,7 @@ export default function RegisterPage() {
                   type='button'
                   disabled={!idValue || !!errors.id || idChecked}
                   onClick={handleCheckId}
-                  className={`${idValue && !errors.id && !idChecked ? 'text-lostark-300 duration-300' : 'pointer-events-none cursor-not-allowed'} min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-[#1a1a1a] text-sm text-white/50 outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
+                  className={`${idValue && !errors.id && !idChecked ? 'text-lostark-500 duration-300' : 'pointer-events-none cursor-not-allowed'} min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-[#1a1a1a] text-sm text-white/50 outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
                 >
                   중복 확인
                 </button>
@@ -130,7 +122,11 @@ export default function RegisterPage() {
                   <span role='alert' className='text-sm text-emerald-500'>
                     사용 가능한 아이디입니다!
                   </span>
-                ) : null)}
+                ) : (
+                  <span role='alert' className='text-sm text-blue-400'>
+                    조건을 만족하는 아이디입니다.
+                  </span>
+                ))}
             </div>
 
             {/* 비밀번호 필드 */}
