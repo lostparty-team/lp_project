@@ -1,9 +1,10 @@
 import { AxiosResponse } from 'axios';
 import type { RegisterInfo, ResponseToken, UserCredentials } from '../types/domain';
 import axiosInstance from '@/api/axios';
+import { API } from '@/constants/route';
 
 const postSignup = async ({ id, password, api }: RegisterInfo): Promise<AxiosResponse> => {
-  const { data } = await axiosInstance.post('/api/signup', {
+  const { data } = await axiosInstance.post(API.AUTH.SIGNUP, {
     id,
     password,
     api,
@@ -12,7 +13,7 @@ const postSignup = async ({ id, password, api }: RegisterInfo): Promise<AxiosRes
 };
 
 const postLogin = async ({ id, password }: UserCredentials): Promise<ResponseToken & Pick<AxiosResponse, 'status'>> => {
-  const { data } = await axiosInstance.post<ResponseToken & Pick<AxiosResponse, 'status'>>('/api/login', {
+  const { data } = await axiosInstance.post<ResponseToken & Pick<AxiosResponse, 'status'>>(API.AUTH.LOGIN, {
     id,
     password,
   });
@@ -20,7 +21,7 @@ const postLogin = async ({ id, password }: UserCredentials): Promise<ResponseTok
 };
 
 const getProfile = async (): Promise<UserCredentials> => {
-  const { data } = await axiosInstance.get('/api/me');
+  const { data } = await axiosInstance.get(API.USER.PROFILE);
   return data;
 };
 
