@@ -1,38 +1,83 @@
 const express = require("express");
 const router = express.Router();
-const axios = require('axios');
-const { 직업각인함수 } = require('./class');
-const { 악세옵션목록분석 , 보석검사 } = require("./optionsearch");
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const db = require("../config/db"); // 데이터베이스 연결
+const { 직업각인함수 } = require("./class");
+const { 악세옵션목록분석, 보석검사 } = require("./optionsearch");
 
-const HTML태그제거 = (input) => input.replace(/<[^>]*>/g, '');
+const HTML태그제거 = (input) => input.replace(/<[^>]*>/g, "");
 
 const 무기레벨추출함수 = (input) => {
   const match = input.match(/\b\d{4}\b/);
   return match ? match[0] : null;
 };
 
-router.post('/', async(req, res) => {
+router.post("/", async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1]; // JWT 토큰 추출
 
-  const nickname = req.body.nickname // 여기부분에 그냥 닉네임 적거나 postman body에 raw 에 이런방식으로 넣으면 테스트 가능 { "nickname": "HaeSung99" }
-    
-  const response = await axios.get('https://developer-lostark.game.onstove.com/armories/characters/'+nickname+'', {
-    headers: {
-        'accept': 'application/json',
-        'authorization': process.env.lostark_api_key || 'bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAwNTcxNTUifQ.I1pGqN--4PJ_WTIzJa02FhWr3oDgcp0zgCoQ3lLlmgF1wRFAE7lcj1X7A-WowS5qQDiHR1m_05qdhB8MM1wjgHHYzwyXjrFAmclypz73pjswfHHcLB7O5JWtaW7um22c3vVUtvq1AHJ38XCeT4K32qXsdIpQohbP_nCe2hEfazM7lf0zESfQnwjNyGp5oeGT9-E06h1GV4NAa_7Pc64ThhPUJUXi-gPqm6tuPfxpV75tWT8BERo5-8QuOswe-jvFgylLYSrbpJHqXRQn75rjJeZWQjcZdP0GZIRme9GFZ4WrsvVbpWapzM7ET5jpi4GTgUQp5VkZMvQWv3OaICiuzQ'
+  if (!token) {
+    return res.status(401).json({ error: "인증 토큰이 제공되지 않았습니다." });
+  }
+
+  try {
+    // JWT 토큰 검증 및 유저 정보 추출
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.user_id; // 토큰에서 유저 아이디 추출
+
+    // 데이터베이스에서 유저의 API 키 가져오기
+    const [rows] = await db.query("SELECT api_key FROM User WHERE user_id = ?", [userId]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "유저 정보를 찾을 수 없습니다." });
     }
-  });
-  
-  직업각인 = 직업각인함수(JSON.parse(response.data.ArkPassive.Effects[0].ToolTip).Element_000.value)
-  무기정보 = 무기레벨추출함수(HTML태그제거(JSON.parse(response.data.ArmoryEquipment[0].Tooltip).Element_001.value.leftStr2)) // 무기레벨(1710레벨) 을 보여줄까 무기몇강인지 보여줄까 ( ex +20[20] 품질 99 )
-  악세옵션 = 악세옵션목록분석(response);
-  보석 = 보석검사(response)
-  //console.log(HTML태그제거(JSON.parse(response.data.ArmoryGem.Gems[0].Tooltip).Element_000.value))
-  res.json({ 
-      무기레벨 : 무기정보,
-      직업각인 : 직업각인,
-      악세목록 : 악세옵션,
-      보석 : 보석
-     }); // Express 서버가 반환하는 JSON
-  });
+    const apiKey = rows[0].api_key;
 
-  module.exports = router;
+    const { nickname } = req.body;
+    if (!nickname) {
+      return res.status(400).json({ error: "닉네임이 제공되지 않았습니다." });
+    }
+
+    // Lost Ark API 요청
+    const response = await axios.get(
+      `https://developer-lostark.game.onstove.com/armories/characters/${nickname}`,
+      {
+        headers: {
+          accept: "application/json",
+          authorization: apiKey,
+        },
+      }
+    );
+
+    // 필요한 데이터 추출
+    const 직업각인 = 직업각인함수(
+      JSON.parse(response.data.ArkPassive.Effects[0].ToolTip).Element_000.value
+    );
+    const 무기정보 = 무기레벨추출함수(
+      HTML태그제거(
+        JSON.parse(response.data.ArmoryEquipment[0].Tooltip).Element_001.value.leftStr2
+      )
+    );
+    const 악세옵션 = 악세옵션목록분석(response);
+    const 보석 = 보석검사(response);
+
+    // 응답 반환
+    res.json({
+      무기레벨: 무기정보,
+      직업각인: 직업각인,
+      악세목록: 악세옵션,
+      보석: 보석,
+    });
+  } catch (error) {
+    console.error("API 요청 중 오류 발생:", error.message);
+
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ error: "유효하지 않은 토큰입니다." });
+    } else if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "토큰이 만료되었습니다." });
+    }
+
+    res.status(500).json({ error: "데이터를 가져오는 중 오류가 발생했습니다." });
+  }
+});
+
+module.exports = router;
