@@ -1,29 +1,42 @@
 'use client';
+import { postLogin } from '@/api/auth';
 import { LoginInfo } from '@/types/domain';
-import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInfo>();
+
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
-    console.log(data);
+    setIsLoggingIn(true);
     try {
-      const res = await axios.post('/api/login', data);
-      console.log(res.data);
+      const res = await postLogin(data);
+      if (res.status === 200) {
+        router.push('/');
+      } else {
+        toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
+        setIsLoggingIn(false);
+      }
     } catch (err) {
-      console.log(err);
+      toast.error('로그인 중 오류가 발생했습니다.');
+      setIsLoggingIn(false);
     }
   };
+
   return (
     <main className='relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1a1a1a]'>
-      <div className='pointer-events-none absolute inset-0 bg-[#2a2a2a] opacity-20'></div>
-      <div className='bg-gradient-radial pointer-events-none absolute inset-0 from-transparent to-[#1a1a1a]'></div>
+      <div className='absolute inset-0 bg-[#2a2a2a] opacity-20'></div>
+      <div className='bg-gradient-radial absolute inset-0 from-transparent to-[#1a1a1a]'></div>
 
       <div className='animate-fadeIn relative w-full max-w-md px-4 py-8'>
         <div className='relative overflow-hidden rounded-lg border-2 border-lostark-400 bg-[#2a2a2a] p-8 shadow-2xl'>
@@ -67,8 +80,9 @@ export default function LoginPage() {
             <button
               type='submit'
               className='w-full transform rounded-md border border-lostark-500 px-4 py-3 text-lostark-400 outline-none transition-all hover:border-lostark-400'
+              disabled={isLoggingIn}
             >
-              로그인
+              {isLoggingIn ? '로그인 중...' : '로그인'}
             </button>
           </form>
 

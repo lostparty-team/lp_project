@@ -1,23 +1,31 @@
 'use client';
+import { postSignup } from '@/api/auth';
+import axiosInstance from '@/api/axios';
 import { RegisterInfo } from '@/types/domain';
-import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 export default function RegisterPage() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, dirtyFields },
     trigger,
     watch,
-  } = useForm<RegisterInfo>();
+  } = useForm<RegisterInfo>({
+    mode: 'onChange',
+  });
 
   const [idChecked, setIdChecked] = useState(false);
   const idValue = watch('id');
-  const isIdValid = idValue && !errors.id;
+  const passwordValue = watch('password');
+  const confirmPasswordValue = watch('confirmPassword');
+  const apiValue = watch('api');
 
   // ID 중복 확인
   const handleCheckId = async (e: React.FormEvent<HTMLButtonElement>) => {
@@ -25,8 +33,8 @@ export default function RegisterPage() {
     const isValid = await trigger('id');
     if (!isValid) return;
     try {
-      const response = await axios.post('/api/check-id', { id: idValue });
-      if (response.data.success) {
+      const res = await axiosInstance.post('/api/check-id', { id: idValue });
+      if (res.status === 200) {
         setIdChecked(true);
       } else {
         setIdChecked(false);
@@ -36,7 +44,33 @@ export default function RegisterPage() {
     }
   };
 
-  const onSubmit: SubmitHandler<RegisterInfo> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<RegisterInfo> = async (data) => {
+    if (!idChecked) {
+      toast.error('아이디 중복 확인을 완료해주세요.');
+      return;
+    }
+    try {
+      const res = await postSignup(data);
+      if (res.status === 200) {
+        toast.success('회원가입이 완료되었습니다.');
+        router.push('/login');
+      }
+    } catch (err) {
+      toast.error('회원가입 중 오류가 발생했습니다.');
+    }
+  };
+
+  const triggerValidation = (field: keyof RegisterInfo) => {
+    useEffect(() => {
+      if (watch(field)) {
+        trigger(field);
+      }
+    }, [watch(field), trigger]);
+  };
+  triggerValidation('id');
+  triggerValidation('password');
+  triggerValidation('confirmPassword');
+  triggerValidation('api');
 
   return (
     <main className='relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1a1a1a]'>
@@ -65,33 +99,41 @@ export default function RegisterPage() {
                     minLength: { value: 2, message: '아이디는 최소 두 글자 이상이어야 합니다.' },
                   })}
                   type='text'
+                  disabled={idChecked}
                   id='id'
-                  disabled={idChecked} // 중복 확인 성공 시 비활성화
                   placeholder='아이디를 입력하세요'
                   className={`w-full rounded-md rounded-br-none rounded-tr-none border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400 ${idChecked && 'text-white/30'}`}
                 />
                 <button
                   type='button'
-                  disabled={!isIdValid || idChecked} // 아이디가 유효하지 않거나 중복 확인이 완료되면 비활성화
+                  disabled={!idValue || !!errors.id || idChecked}
                   onClick={handleCheckId}
-                  className={`${isIdValid && !idChecked ? 'text-lostark-300 duration-300' : 'pointer-events-none cursor-not-allowed'} min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-[#1a1a1a] text-sm text-white/50 outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
+                  className={`${
+                    idValue && !errors.id && !idChecked
+                      ? 'text-lostark-400 duration-300'
+                      : 'pointer-events-none cursor-not-allowed text-white/50'
+                  } min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-[#1a1a1a] text-sm outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
                 >
                   중복 확인
                 </button>
               </div>
-              {errors.id ? (
-                <span role='alert' className='text-sm text-red-400'>
-                  {errors.id.message}
-                </span>
-              ) : idChecked ? (
-                <span role='alert' className='text-sm text-blue-400'>
-                  사용 가능한 아이디입니다!
-                </span>
-              ) : (
-                ''
-              )}
+              {dirtyFields.id &&
+                (errors.id ? (
+                  <span role='alert' className='text-sm text-red-400'>
+                    {errors.id.message}
+                  </span>
+                ) : idChecked ? (
+                  <span role='alert' className='text-sm text-emerald-500'>
+                    사용 가능한 아이디입니다!
+                  </span>
+                ) : (
+                  <span role='alert' className='text-sm text-blue-400'>
+                    조건을 만족하는 아이디입니다.
+                  </span>
+                ))}
             </div>
 
+            {/* 비밀번호 필드 */}
             <div className='min-h-[102px]'>
               <label className='mb-2 block text-lostark-400'>비밀번호</label>
               <input
@@ -103,21 +145,35 @@ export default function RegisterPage() {
                 placeholder='비밀번호를 입력하세요'
                 className='w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
-              {errors.password && <span className='text-sm text-red-400'>{errors.password.message} </span>}
+              {dirtyFields.password &&
+                (errors.password ? (
+                  <span className='text-sm text-red-400'>{errors.password.message}</span>
+                ) : (
+                  <span className='text-sm text-emerald-500'>올바른 비밀번호 형식입니다.</span>
+                ))}
             </div>
+
+            {/* 비밀번호 확인 필드 */}
             <div className='min-h-[102px]'>
               <label className='mb-2 block text-lostark-400'>비밀번호 확인</label>
               <input
                 {...register('confirmPassword', {
                   required: '비밀번호 확인을 입력해주세요.',
-                  validate: (value) => value === watch('password') || '비밀번호가 일치하지 않습니다.',
+                  validate: (value) => value === passwordValue || '비밀번호가 일치하지 않습니다.',
                 })}
                 type='password'
                 placeholder='비밀번호를 재입력하세요'
                 className='w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
-              {errors.confirmPassword && <span className='text-sm text-red-400'>{errors.confirmPassword.message}</span>}
+              {dirtyFields.confirmPassword &&
+                (errors.confirmPassword ? (
+                  <span className='text-sm text-red-400'>{errors.confirmPassword.message}</span>
+                ) : (
+                  <span className='text-sm text-emerald-500'>비밀번호가 일치합니다.</span>
+                ))}
             </div>
+
+            {/* API 필드 */}
             <div className='min-h-[102px]'>
               <label className='mb-2 block text-lostark-400'>로스트아크 API</label>
               <input
@@ -128,21 +184,25 @@ export default function RegisterPage() {
                 placeholder='로스트아크 API를 입력하세요'
                 className='w-full rounded-md border border-lostark-400/30 bg-[#1a1a1a] px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
-              {errors.api && <span className='text-sm text-red-400'>{errors.api.message}</span>}
+              {dirtyFields.api &&
+                (errors.api ? <span className='text-sm text-red-400'>{errors.api.message}</span> : null)}
             </div>
 
+            {/* 제출 */}
             <button
               type='submit'
               disabled={isSubmitting}
-              className={`font-medieval w-full transform rounded-md border border-lostark-500 px-4 py-3 text-lostark-400 outline-none transition-all hover:border-lostark-400 ${isSubmitting ? 'text-lostark-500' : null}`}
+              className={`font-medieval w-full transform rounded-md border border-lostark-500 px-4 py-3 text-lostark-400 outline-none transition-all hover:border-lostark-400 ${isSubmitting ? 'text-lostark500' : null}`}
             >
               회원가입
             </button>
           </form>
+
+          {/* 로그인 링크 */}
           <div className='mx-auto mt-6 text-center'>
             <Link
               href='/login'
-              className='text-sm text-lostark-400/70 transition-colors duration-200 hover:text-lostark-400'
+              className='duration=200 hover:text-lostark=400 text-sm text-lostark-400/70 transition-colors'
             >
               로그인하기
             </Link>
