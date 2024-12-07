@@ -14,7 +14,7 @@ const NavigationBar = () => {
           <ul className='flex space-x-8'>
             {NAV_LINK.map(({ href, name }) => (
               <li key={href}>
-                <Link href={'/'} className='relative text-lg transition-colors hover:text-lostark-400'>
+                <Link href={href} className='relative text-lg transition-colors hover:text-lostark-400'>
                   {name}
                 </Link>
               </li>
