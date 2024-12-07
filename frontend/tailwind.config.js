@@ -3,6 +3,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        black1: '#1a1a1a',
+        black2: '#2a2a2a',
         lostark: {
           50: '#f9f6f3',
           100: '#f1ece3',
