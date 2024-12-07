@@ -1,52 +1,34 @@
+import { NAV_LINK } from '@/constants/nav';
 import Link from 'next/link';
 
 const NavigationBar = () => {
   return (
-    <header className="relative">
-      <div
-        className="h-72 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('https://via.placeholder.com/1920x400')", // 헤더 이미지 URL (임시로 해둠)
-        }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-      </div>
-      <div className="absolute left-0 top-0 flex w-full items-center justify-between px-8 py-4">
-        <h1 className="text-3xl font-bold">LostArk Party</h1>
+    <header className='border-black2 bg-black1 relative w-full border-b text-lostark-300'>
+      <div className='container mx-auto flex h-16 items-center justify-between px-4'>
+        <Link href='/' className='group relative text-2xl font-bold'>
+          <span className='bg-gradient-to-r from-lostark-400 via-lostark-500 to-lostark-600 bg-clip-text text-3xl text-transparent'>
+            LostArkParty
+          </span>
+        </Link>
         <nav>
-          <ul className="flex space-x-6">
-            <li>
-              <Link href="/" className="text-gray-200 hover:text-white">
-                홈
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="text-gray-200 hover:text-white">
-                공지사항
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="text-gray-200 hover:text-white">
-                파티원 정보
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="text-gray-200 hover:text-white">
-                실시간
-              </Link>
-            </li>
-            <li>
-              <Link href="/blacklist" className="text-gray-200 hover:text-white">
-                블랙리스트
-              </Link>
-            </li>
-            <li>
-              <Link href="/login" className="text-gray-200 hover:text-white">
-                로그인 (임시)
-              </Link>
-            </li>
+          <ul className='flex space-x-8'>
+            {NAV_LINK.map(({ href, name }) => (
+              <li key={href}>
+                <Link href={href} className='relative text-lg transition-colors hover:text-lostark-400'>
+                  {name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
+      </div>
+      <div
+        className='relative h-72 bg-cover bg-center'
+        style={{
+          backgroundImage: "url('/bg_loa.jpg')", // 헤더 이미지 URL (임시로 해둠)
+        }}
+      >
+        <div className='absolute inset-0 bg-black bg-opacity-30'></div>
       </div>
     </header>
   );
