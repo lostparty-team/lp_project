@@ -1,143 +1,95 @@
 'use client';
 import { toast } from 'react-toastify';
-import NavigationBar from '@/components/common/navigationBar';
+import { ClockIcon, InfoIcon, SearchIcon, ShieldIcon } from '@/styles/icons';
+import { ArrowRight } from 'lucide-react';
 
-const MainPage: React.FC = () => {
+const QUICK_LINK = [
+  {
+    title: '파티원 정보',
+    icon: <ClockIcon size={28} />,
+  },
+  {
+    title: '실시간',
+    icon: <InfoIcon size={28} />,
+  },
+  {
+    title: '블랙리스트',
+    icon: <ShieldIcon size={28} />,
+  },
+  {
+    title: '여분 버튼',
+    icon: <ArrowRight size={28} />,
+  },
+];
+
+const MainPage = () => {
   const handleButtonClick = () => {
     toast.success('버튼 클릭');
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
-      <main className="mx-auto flex max-w-screen-xl flex-col gap-10 px-20">
-        <section className="w-auto pt-20 text-center">
-          <h2>캐릭터 검색하기</h2>
-        </section>
-
-        <section className="flex justify-center pt-0">
+    <div className='bg-black1 min-h-screen text-gray-100'>
+      <section className='container mx-auto px-4 py-16'>
+        <h2 className='mb-8 text-3xl font-bold text-lostark-400'>파티원 검색하기</h2>
+        <div className='relative mx-auto max-w-2xl'>
           <input
-            type="text"
-            placeholder="검색어를 입력하세요..."
-            className="w-full max-w-3xl rounded-lg bg-gray-700 p-4 text-gray-100 placeholder-gray-400 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type='text'
+            placeholder='검색어를 입력하세요...'
+            className='bg-black2 w-full rounded-lg border-2 border-transparent px-6 py-4 text-white transition-all duration-300 hover:border-lostark-400 focus:border-lostark-400 focus:outline-none'
           />
-        </section>
-
-        <section className="pb-5 pt-20">
-          <h2>주요 기능 바로가기</h2>
-        </section>
-
-        <section className="grid grid-cols-4 gap-8">
-          <button
-            className="aspect-square w-full rounded-lg bg-gray-700 text-gray-100 transition duration-300 hover:bg-gray-600"
-            onClick={handleButtonClick}
-          >
-            파티원 정보
-          </button>
-          <button
-            className="aspect-square w-full rounded-lg bg-gray-700 text-gray-100 transition duration-300 hover:bg-gray-600"
-            onClick={handleButtonClick}
-          >
-            실시간
-          </button>
-          <button
-            className="aspect-square w-full rounded-lg bg-gray-700 text-gray-100 transition duration-300 hover:bg-gray-600"
-            onClick={handleButtonClick}
-          >
-            블랙리스트
-          </button>
-          <button
-            className="aspect-square w-full rounded-lg bg-gray-700 text-gray-100 transition duration-300 hover:bg-gray-600"
-            onClick={handleButtonClick}
-          >
-            여분 버튼
-          </button>
-        </section>
-
-        <section className="pb-5 pt-20">
-          <h2>커뮤니티</h2>
-        </section>
-
-        <section className="flex gap-8">
-          {/* 공격대 박스 */}
-          <div className="rounded-lg bg-gray-800 p-6 shadow-md">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold">공격대</h2>
-              <button className="text-sm text-blue-400 hover:text-blue-300">더보기</button>
+          <SearchIcon className='absolute right-4 top-1/2 -translate-y-1/2 text-lostark-300' />
+        </div>
+      </section>
+      {/* 바로가기 박스 */}
+      <section className='container mx-auto px-4 py-16'>
+        <h2 className='mb-12 text-3xl font-bold text-lostark-400'>주요 기능 바로가기</h2>
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4'>
+          {QUICK_LINK.map((item, idx) => (
+            <div
+              key={idx}
+              onClick={handleButtonClick}
+              className='to-black1 from-black2 group flex cursor-pointer flex-col items-center rounded-lg border border-lostark-300 bg-gradient-to-br p-8 transition-all duration-300 hover:scale-105'
+            >
+              <div className='mb-4 text-lostark-300 transition-colors duration-300 group-hover:text-lostark-300'>
+                {item.icon}
+              </div>
+              <h3 className='text-xl font-semibold text-lostark-300 transition-colors duration-300 group-hover:text-lostark-200'>
+                {item.title}
+              </h3>
             </div>
-            <ul className="space-y-4">
-              <li>
-                <button className="flex w-full items-center justify-between rounded-lg bg-gray-700 p-3 transition duration-300 hover:bg-gray-600">
-                  <span className="flex items-center space-x-3">
-                    <img src="https://via.placeholder.com/40" alt="Player" className="h-10 w-10 rounded-full" />
-                    <span>플레이어 1</span>
-                  </span>
-                  <span className="text-gray-400">4시간 전</span>
-                </button>
-              </li>
-              <li>
-                <button className="flex w-full items-center justify-between rounded-lg bg-gray-700 p-3 transition duration-300 hover:bg-gray-600">
-                  <span className="flex items-center space-x-3">
-                    <img src="https://via.placeholder.com/40" alt="Player" className="h-10 w-10 rounded-full" />
-                    <span>플레이어 2</span>
-                  </span>
-                  <span className="ml-5 text-gray-400">5시간 전</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* 공지사항 박스 */}
-          <div className="flex-1 rounded-lg bg-gray-800 p-6 shadow-md">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold">공지사항</h2>
-              <button className="text-sm text-blue-400 hover:text-blue-300">더보기</button>
+          ))}
+        </div>
+      </section>
+      {/* 공지사항, 공격대 박스 */}
+      <section className='container mx-auto px-4 py-16'>
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
+          {['공지사항', '공격대'].map((title) => (
+            <div key={title} className='from-black2 to-black1 rounded-lg bg-gradient-to-br p-8 shadow-lg'>
+              <h3 className='mb-6 text-2xl font-bold text-lostark-400'>{title}</h3>
+              <div className='space-y-4'>
+                <div className='group flex items-center justify-between rounded p-4 text-lostark-100 transition-all duration-300'>
+                  <span className='transition-colors group-hover:text-lostark-200'>제목제목제목</span>
+                  <span className='text-white/50'>2024.12.08 (일)</span>
+                </div>
+              </div>
             </div>
-            <ul className="space-y-4">
-              <li>
-                <button className="flex w-full items-center justify-between rounded-lg bg-gray-700 p-3 transition duration-300 hover:bg-gray-600">
-                  <span className="flex items-center space-x-2">
-                    <span className="text-blue-400">🏆</span>
-                    <span>공지사항 1</span>
-                  </span>
-                  <span className="text-gray-400">10일 전</span>
-                </button>
-              </li>
-              <li>
-                <button className="flex w-full items-center justify-between rounded-lg bg-gray-700 p-3 transition duration-300 hover:bg-gray-600">
-                  <span className="flex items-center space-x-2">
-                    <span className="text-blue-400">🏆</span>
-                    <span>공지사항 2</span>
-                  </span>
-                  <span className="text-gray-400">20일 전</span>
-                </button>
-              </li>
-            </ul>
+          ))}
+        </div>
+      </section>
+      {/* Footer */}
+      <footer className='border-black2 border-t py-12'>
+        <div className='mx-auto px-4'>
+          <div className='mb-8 flex justify-center space-x-12'>
+            {['이용약관', '개인정보처리방침', '문의하기', '후원하기'].map((item) => (
+              <a key={item} className='relative text-white/50 transition-all duration-300 hover:text-lostark-400'>
+                {item}
+                <span className='transition-all duration-300'></span>
+              </a>
+            ))}
           </div>
-        </section>
-
-        {/* Footer Section */}
-        <footer className="mt-auto bg-transparent py-20 text-gray-400">
-          <div className="mx-auto flex max-w-screen-xl flex-col items-center justify-center">
-            {/* 링크들 */}
-            <div className="mb-4 flex space-x-8">
-              <a href="#" className="text-m hover:text-gray-100">
-                이용약관
-              </a>
-              <a href="#" className="text-m hover:text-gray-100">
-                개인정보처리방침
-              </a>
-              <a href="#" className="text-m hover:text-gray-100">
-                문의하기
-              </a>
-              <a href="#" className="text-m hover:text-gray-100">
-                후원하기
-              </a>
-            </div>
-            {/* 저작권 정보 */}
-            <div className="text-m text-center">Copyright © All rights reserved.</div>
-          </div>
-        </footer>
-      </main>
+          <p className='text-center text-white/50'>Copyright © All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };
