@@ -1,9 +1,9 @@
 export const API = {
   AUTH: {
-    SIGNUP: '/api/signup',
-    LOGIN: '/api/login',
+    SIGNUP: '/register',
+    LOGIN: '/login',
   },
   USER: {
-    PROFILE: '/api/me',
+    PROFILE: '/me',
   },
 } as const;
