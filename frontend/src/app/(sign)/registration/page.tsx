@@ -6,25 +6,34 @@ import { RegisterInfo } from '@/types/domain';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { useRegisterStore } from '@/stores/useRegisterStore';
 
 export default function RegisterPage() {
   const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors, dirtyFields },
+    formState: { errors, dirtyFields },
     trigger,
     watch,
   } = useForm<RegisterInfo>({
     mode: 'onChange',
   });
-
-  const [idChecked, setIdChecked] = useState(false);
-  const [idCheckStatus, setIdCheckStatus] = useState<'initial' | 'valid' | 'duplicate' | 'checked'>('initial');
-  const [isChecking, setIsChecking] = useState(false);
+  const {
+    idChecked,
+    idCheckStatus,
+    isChecking,
+    formValues,
+    isSubmitting,
+    setIdChecked,
+    setIdCheckStatus,
+    setIsChecking,
+    setFormValues,
+    setIsSubmitting,
+  } = useRegisterStore();
   const idValue = watch('id');
   const passwordValue = watch('password');
 
@@ -68,6 +77,7 @@ export default function RegisterPage() {
     try {
       const res = await postSignup(data);
       if (res.status === 200) {
+        useRegisterStore.getState().reset();
         toast.success('회원가입이 완료되었습니다.');
         router.push('/login');
       }
