@@ -89,12 +89,12 @@ export default function RegisterPage() {
   triggerValidation('api');
 
   return (
-    <main className='bg-black1 relative flex min-h-screen w-full items-center justify-center overflow-hidden'>
-      <div className='bg-black2 pointer-events-none absolute inset-0 opacity-20'></div>
-      <div className='bg-gradient-radial to-black1 pointer-events-none absolute inset-0 from-transparent'></div>
+    <main className='relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black1'>
+      <div className='pointer-events-none absolute inset-0 bg-black2 opacity-20'></div>
+      <div className='bg-gradient-radial pointer-events-none absolute inset-0 from-transparent to-black1'></div>
 
       <div className='animate-fadeIn relative w-full max-w-md px-4 py-8'>
-        <div className='bg-black2 relative overflow-hidden rounded-lg border-2 border-lostark-400 p-8 shadow-2xl'>
+        <div className='relative overflow-hidden rounded-lg border-2 border-lostark-400 bg-black2 p-8 shadow-2xl'>
           <div className='absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-lostark-400 via-lostark-200 to-lostark-400'></div>
           <div className='absolute left-0 top-2 h-[1px] w-full bg-gradient-to-r from-transparent via-lostark-400/50 to-transparent'></div>
 
@@ -118,7 +118,7 @@ export default function RegisterPage() {
                   disabled={idChecked}
                   id='id'
                   placeholder='아이디를 입력하세요'
-                  className={`bg-black1 w-full rounded-md rounded-br-none rounded-tr-none border border-lostark-400/30 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400 ${idChecked && 'text-white/30'}`}
+                  className={`w-full rounded-md rounded-br-none rounded-tr-none border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400 ${idChecked && 'text-white/30'}`}
                 />
                 <button
                   type='button'
@@ -128,7 +128,7 @@ export default function RegisterPage() {
                     idValue && !errors.id && !idChecked && !isChecking
                       ? 'text-lostark-400 duration-300'
                       : 'pointer-events-none cursor-not-allowed text-white/50'
-                  } bg-black1 min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 text-sm outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
+                  } min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-black1 text-sm outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
                 >
                   {isChecking ? '확인 중...' : '중복 확인'}
                 </button>
@@ -163,7 +163,7 @@ export default function RegisterPage() {
                 })}
                 type='password'
                 placeholder='비밀번호를 입력하세요'
-                className='bg-black1 w-full rounded-md border border-lostark-400/30 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
+                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
               {dirtyFields.password &&
                 (errors.password ? (
@@ -183,7 +183,7 @@ export default function RegisterPage() {
                 })}
                 type='password'
                 placeholder='비밀번호를 재입력하세요'
-                className='bg-black1 w-full rounded-md border border-lostark-400/30 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
+                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
               {dirtyFields.confirmPassword &&
                 (errors.confirmPassword ? (
@@ -202,7 +202,7 @@ export default function RegisterPage() {
                 })}
                 type='text'
                 placeholder='로스트아크 API를 입력하세요'
-                className='bg-black1 w-full rounded-md border border-lostark-400/30 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
+                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
               {dirtyFields.api &&
                 (errors.api ? <span className='text-sm text-red-400'>{errors.api.message}</span> : null)}
@@ -222,7 +222,7 @@ export default function RegisterPage() {
           <div className='mx-auto mt-6 text-center'>
             <Link
               href='/login'
-              className='duration=200 hover:text-lostark=400 text-sm text-lostark-400/70 transition-colors'
+              className='text-sm text-lostark-400/70 transition-colors duration-200 hover:text-lostark-400'
             >
               로그인하기
             </Link>
