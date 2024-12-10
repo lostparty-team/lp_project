@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes slideToRight {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.slide-animation {
+  animation: slideToRight 0.5s forwards ease-in-out;
+  overflow: hidden;
+}
