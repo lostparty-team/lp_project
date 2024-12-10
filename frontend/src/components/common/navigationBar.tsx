@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const NavigationBar = () => {
   return (
-    <header className='border-black2 bg-black1 relative w-full border-b text-lostark-300'>
+    <header className='relative w-full border-b border-black2 bg-black1 text-lostark-300'>
       <div className='container mx-auto flex h-16 items-center justify-between px-4'>
         <Link href='/' className='group relative text-2xl font-bold'>
           <span className='bg-gradient-to-r from-lostark-400 via-lostark-500 to-lostark-600 bg-clip-text text-3xl text-transparent'>

@@ -3,12 +3,12 @@
 import '../../styles/pages/party-info.css';
 import React, { useState } from 'react';
 
-interface ScreenShareProps {
+interface PartyInfoProps {
   minimized?: boolean;
   onToggle?: () => void;
 }
 
-const ScreenShare: React.FC<ScreenShareProps> = ({ minimized = false, onToggle }) => {
+const PartyInfo: React.FC<PartyInfoProps> = ({ minimized = false, onToggle }) => {
   return (
     <div
       className={`${
@@ -40,7 +40,7 @@ const PartyInfoScreenShare: React.FC = () => {
   };
 
   return (
-    <div className='bg-gray-900 p-8 text-gray-100' style={{ height: 'calc(100vh - 68px)', overflow: 'hidden' }}>
+    <div className='bg-gray-900 p-8 text-gray-100' style={{ height: 'calc(100vh - 354px)', overflow: 'hidden' }}>
       <main className='mx-auto flex h-full max-w-screen-xl flex-col gap-10 overflow-hidden px-20'>
         <header className='p-4 text-center text-2xl font-bold'>파티원 정보 확인</header>
         <div className='relative h-[750px] p-4'>

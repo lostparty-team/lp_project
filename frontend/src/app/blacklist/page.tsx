@@ -16,8 +16,6 @@ interface BlacklistUser {
 }
 
 const BlacklistPage: React.FC = () => {
-  const router = useRouter();
-
   const [blacklist, setBlacklist] = useState<BlacklistUser[]>([
     {
       id: 1,
@@ -67,6 +65,30 @@ const BlacklistPage: React.FC = () => {
       viewer: 242,
       rate: 50,
     },
+    {
+      id: 7,
+      name: '레이드 빌런',
+      createdBy: 'HaeSungs',
+      createdAt: '2024-09-19',
+      viewer: 242,
+      rate: 50,
+    },
+    {
+      id: 8,
+      name: '레이드 빌런',
+      createdBy: 'HaeSungs',
+      createdAt: '2024-09-19',
+      viewer: 242,
+      rate: 50,
+    },
+    {
+      id: 9,
+      name: '레이드 빌런',
+      createdBy: 'HaeSungs',
+      createdAt: '2024-09-19',
+      viewer: 242,
+      rate: 50,
+    },
   ]);
 
   const [myBlacklist, setMyBlacklist] = useState<BlacklistUser[]>([]);
@@ -104,81 +126,86 @@ const BlacklistPage: React.FC = () => {
   };
 
   return (
-    <div className='bg-gray-900 p-8 text-gray-100' style={{ height: 'calc(100vh - 68px)', overflow: 'hidden' }}>
-      <main className='mx-auto flex h-full max-w-screen-xl flex-col gap-10 overflow-hidden px-20'>
-        <h1>가장 인기 있는 블랙리스트</h1>
-        <div className='grid grid-cols-3 gap-4'>
-          {blacklist // 인기순으로 정렬된 배열에서
-            .sort((a, b) => b.rate - a.rate) // 인기순 정렬
-            .slice(0, 3) // 상위 3개 항목만 가져오기
+    <div className='min-h-screen bg-black1 text-gray-100'>
+      <section className='container mx-auto px-4 pt-16'>
+        <h1 className='mb-8 text-3xl font-bold text-lostark-400'>가장 인기 있는 블랙리스트</h1>
+        <div className='grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          {blacklist
+            .sort((a, b) => b.rate - a.rate)
+            .slice(0, 3)
             .map((data, index) => (
-              <div key={data.id} className='overflow-hidden rounded-lg bg-gray-800 shadow-md'>
-                <div className='relative'>
-                  <span className='absolute right-2 top-2 rounded-full bg-orange-500 px-2 py-1 text-sm text-white'>
-                    #{index + 1}
-                  </span>
-                </div>
-                <div className='p-4'>
-                  <h3 className='mb-2 text-lg font-semibold'>{data.name}</h3>
-                  <p className='text-sm text-gray-400'>{data.createdBy}</p>
-                </div>
-              </div>
+              <button
+                key={data.id}
+                className='relative overflow-hidden rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 text-left shadow-lg transition-all duration-300 hover:scale-105'
+              >
+                <span className='absolute right-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-sm text-white'>
+                  #{index + 1}
+                </span>
+                <h3 className='mb-2 text-xl font-bold text-lostark-300'>{data.name}</h3>
+                <p className='text-sm text-gray-400'>{data.createdBy}</p>
+              </button>
             ))}
         </div>
+      </section>
 
-        <div className='flex h-auto flex-grow overflow-hidden'>
-          <div className='mr-4 flex-[2] overflow-hidden'>
-            <div className='mb-6 flex items-center space-x-4'>
-              <select className='rounded-lg bg-gray-800 px-4 py-2 text-gray-300' onChange={handleSortChange}>
-                <option value=''>구분</option>
-                <option value='popular'>인기순</option>
-                <option value='newest'>최신순</option>
-              </select>
-              <input
-                type='text'
-                placeholder='제목을 입력하세요.'
-                className='flex-grow rounded-lg bg-gray-800 px-4 py-2 text-sm text-gray-400 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600'
-              />
-              <button
-                onClick={handleCreateBlacklist}
-                className='rounded-lg bg-blue-500 px-6 py-3 text-white shadow-lg transition duration-300 hover:bg-blue-400'
-              >
-                New
-              </button>
-            </div>
+      <section className='container mx-auto px-4 py-16'>
+        <div className='mb-6 flex items-center space-x-4'>
+          <select
+            className='h-[40px] rounded-lg border border-transparent bg-black2 px-4 py-2 text-gray-300 transition-all duration-300 focus:border-lostark-400'
+            onChange={handleSortChange}
+          >
+            <option value=''>구분</option>
+            <option value='popular'>인기순</option>
+            <option value='newest'>최신순</option>
+          </select>
+          <input
+            type='text'
+            placeholder='제목을 입력하세요...'
+            className='h-[40px] flex-grow rounded-lg border border-transparent bg-black2 px-4 py-2 text-sm text-gray-400 placeholder-gray-500 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lostark-400'
+          />
+          <button
+            onClick={handleCreateBlacklist}
+            className='h-[40px] rounded-lg bg-lostark-400 px-6 py-2 font-semibold text-black1 shadow-lg transition-all duration-300 hover:bg-lostark-300'
+          >
+            새로 만들기
+          </button>
+        </div>
 
-            <ul className='space-y-4 overflow-y-auto' style={{ height: 'calc(100vh - 396px)' }}>
-              {blacklist.map((data) => (
-                <li key={data.id} className='flex items-center justify-between rounded-lg bg-gray-800 p-4'>
-                  <button className='text-left'>
-                    <p className='mb-2 text-lg font-semibold'>{data.name}</p>
-                    <p className='text-sm text-gray-400'>
-                      {data.createdBy} | {data.createdAt} | 조회수 {data.viewer} | 추천 {data.rate}
-                    </p>
-                  </button>
-                  <button
-                    onClick={() => handleAddToMyBlacklist(data)}
-                    className='rounded-lg bg-green-500 px-3 py-1 text-white transition duration-300 hover:bg-green-400'
-                  >
-                    +
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className='flex-[1] rounded-lg bg-gray-800 p-4 shadow-md'>
-            <h2 className='mb-6 mt-2 text-lg font-semibold'>내가 담은 블랙리스트</h2>
-            <ul className='space-y-2 overflow-y-auto rounded-lg' style={{ height: 'calc(100vh - 420px)' }}>
+        <div className='grid grid-cols-2 gap-8 lg:grid-cols-3'>
+          <ul
+            className='col-span-2 space-y-4 overflow-y-auto rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'
+            style={{ height: 'calc(100vh - 316px)' }}
+          >
+            {blacklist.map((data) => (
+              <li key={data.id} className='flex items-center justify-between rounded-lg bg-black2 p-4'>
+                <button className='w-full text-left'>
+                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{data.name}</p>
+                  <p className='text-sm text-gray-400'>
+                    {data.createdBy} | {data.createdAt} | 담은수 {data.viewer} | 비추천 {data.rate}
+                  </p>
+                </button>
+                <button
+                  onClick={() => handleAddToMyBlacklist(data)}
+                  className='rounded-lg bg-green-500 px-3 py-1 text-black1 transition-all duration-300 hover:bg-green-400'
+                >
+                  +
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <div className='rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'>
+            <h2 className='mb-6 text-2xl font-bold text-lostark-400'>내가 담은 블랙리스트</h2>
+            <ul className='space-y-2 overflow-y-auto' style={{ height: 'calc(100vh - 420px)' }}>
               {myBlacklist.map((data) => (
-                <li key={data.id} className='flex items-center justify-between rounded-lg bg-gray-700 p-2'>
-                  <div className='p-2'>
-                    <p className='mb-[2px] text-sm'>{data.name}</p>
+                <li key={data.id} className='flex items-center justify-between rounded-lg bg-black2 p-2'>
+                  <div>
+                    <p className='text-sm text-lostark-300'>{data.name}</p>
                     <p className='text-sm text-gray-400'>{data.createdBy}</p>
                   </div>
-
                   <button
                     onClick={() => handleRemoveFromMyBlacklist(data.id)}
-                    className='rounded-lg bg-red-500 px-2 py-1 text-white transition duration-300 hover:bg-red-400'
+                    className='rounded-lg bg-red-500 px-2 py-1 text-black1 transition-all duration-300 hover:bg-red-400'
                   >
                     삭제
                   </button>
@@ -187,7 +214,11 @@ const BlacklistPage: React.FC = () => {
             </ul>
           </div>
         </div>
-      </main>
+      </section>
+
+      <footer className='border-t border-black2 py-12'>
+        <div className='mx-auto px-4 text-center text-white/50'>Copyright © All rights reserved.</div>
+      </footer>
 
       {isModalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
@@ -200,23 +231,6 @@ const BlacklistPage: React.FC = () => {
             </div>
             <div className='p-4'>
               <BlacklistCreateModal setModalOpen={setModalOpen} />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isBlacklistModalOpen && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='w-full max-w-3xl overflow-hidden rounded-lg bg-gray-800 shadow-lg'>
-            <div className='flex items-center justify-between bg-gray-700 p-4 text-white'>
-              <h2 className='text-xl font-bold'>Blacklist.name</h2>
-              <button onClick={handleCloseModal} className='text-gray-300 transition duration-200 hover:text-white'>
-                ✕
-              </button>
-            </div>
-            <div className='p-4'>
-              <p className='text-sm text-gray-400'>이 블랙리스트에 포함된 유저들:</p>
-              {/* 여기서 해당 블랙리스트에 포함된 유저 목록을 보여줄 수 있습니다. */}
             </div>
           </div>
         </div>
