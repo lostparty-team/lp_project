@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import '../../styles/pages/blacklist.css';
 import BlacklistCreateModal from '@/components/modal/blacklistCreate';
+import BlacklistModal from '@/components/modal/blacklistModal';
 import axiosInstance from '@/api/axios';
 
 interface BlacklistUser {
@@ -12,8 +13,8 @@ interface BlacklistUser {
   name: string;
   createdBy: string;
   createdAt: string;
-  viewer: number;
-  rate: number;
+  add: number;
+  bad: number;
 }
 
 const BlacklistPage: React.FC = () => {
@@ -25,61 +26,57 @@ const BlacklistPage: React.FC = () => {
       name: '욕설 플레이어 모음',
       createdBy: '방울토마토라면',
       createdAt: '2024-11-25',
-      viewer: 1294,
-      rate: 153,
+      add: 1294,
+      bad: 153,
     },
     {
       id: 2,
       name: '숙코 모음',
       createdBy: '남양쮸강아지우',
       createdAt: '2024-11-28',
-      viewer: 16,
-      rate: 2,
+      add: 16,
+      bad: 2,
     },
     {
       id: 3,
       name: '비매너 플레이어',
       createdBy: '아기사슴설장군',
       createdAt: '2024-10-15',
-      viewer: 112,
-      rate: 33,
+      add: 112,
+      bad: 33,
     },
     {
       id: 4,
       name: '비매너 모음집',
       createdBy: '애니츠의겨울은너무추오',
       createdAt: '2024-11-26',
-      viewer: 133,
-      rate: 30,
+      add: 133,
+      bad: 30,
     },
     {
       id: 5,
       name: '내 블랙리스트',
       createdBy: '낟찔',
       createdAt: '2024-08-23',
-      viewer: 10,
-      rate: 1,
+      add: 10,
+      bad: 1,
     },
     {
       id: 6,
       name: '레이드 빌런',
       createdBy: 'HaeSungs',
       createdAt: '2024-09-19',
-      viewer: 242,
-      rate: 50,
+      add: 242,
+      bad: 50,
     },
   ]);
 
   const [myBlacklist, setMyBlacklist] = useState<BlacklistUser[]>([]);
-  const [isBlacklistModalOpen, setBlacklistModalOpen] = useState<boolean>(false);
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [listModalData, setListModalData] = useState<Record<string, any> | null>(null);
+  const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
   const handleCreateBlacklist = () => {
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
+    setCreateModalOpen(true);
   };
 
   const handleAddToMyBlacklist = (user: BlacklistUser) => {
@@ -100,7 +97,7 @@ const BlacklistPage: React.FC = () => {
       setBlacklist([...blacklist].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
     }
     if (event.target.value === 'popular') {
-      setBlacklist([...blacklist].sort((a, b) => b.rate - a.rate));
+      setBlacklist([...blacklist].sort((a, b) => b.bad - a.bad));
     }
   };
 
@@ -181,7 +178,7 @@ const BlacklistPage: React.FC = () => {
                     onClick={() => handleRemoveFromMyBlacklist(data.id)}
                     className='rounded-lg bg-red-500 px-2 py-1 text-white transition duration-300 hover:bg-red-400'
                   >
-                    삭제
+                    -
                   </button>
                 </li>
               ))}
