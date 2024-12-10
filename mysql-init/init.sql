@@ -1,6 +1,13 @@
-CREATE DATABASE IF NOT EXISTS lp_project;
+-- 데이터베이스 생성
+CREATE DATABASE IF NOT EXISTS lp_project
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_general_ci;
+
 
 USE lp_project;
+
+-- 문자셋 설정
+SET NAMES utf8mb4;
 
 -- User 테이블
 CREATE TABLE IF NOT EXISTS User (
@@ -12,7 +19,7 @@ CREATE TABLE IF NOT EXISTS User (
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	deletedAt DATETIME NULL
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- 테스트 유저 생성
 INSERT INTO User (userId, password, clientId, apikey) VALUES
@@ -27,7 +34,15 @@ CREATE TABLE IF NOT EXISTS Blacklist (
   reason VARCHAR(255) NOT NULL,      -- 사유
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- 생성 시간
   FOREIGN KEY (author) REFERENCES User(userId) ON DELETE CASCADE -- User와 관계 설정
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- Blacklist 테이블 더미 데이터 생성 (같은 제목에 다른 닉네임과 이유 추가)
+INSERT INTO Blacklist (title, author, nickname, reason) VALUES
+('사기꾼 리스트', 'test', '사기꾼123', '거래 후 잠수'),
+('사기꾼 리스트', 'test', '사기꾼456', '아이템 미전달'),
+('사기꾼 리스트2', 'test', '사기꾼789', '사전 약속 위반'),
+('사기꾼 리스트2', 'test', '사기꾼999', '욕설 및 비매너'),
+('사기꾼 리스트5', 'test', '사기꾼222', '거래 중 돌연 삭제');
 
 -- Cart 테이블
 CREATE TABLE IF NOT EXISTS Cart (
@@ -37,4 +52,4 @@ CREATE TABLE IF NOT EXISTS Cart (
   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP, -- 생성 시간
   FOREIGN KEY (userId) REFERENCES User(userId) ON DELETE CASCADE, -- User와 관계 설정
   FOREIGN KEY (blacklistId) REFERENCES Blacklist(id) ON DELETE CASCADE -- Blacklist와 관계 설정
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;

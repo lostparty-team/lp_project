@@ -3,6 +3,254 @@ const router = express.Router();
 const db = require('../config/db'); // MySQL 연결 가져오기
 const authenticateToken = require('../middleware/authenticateToken'); // 인증 미들웨어 추가
 
+/**
+ * @swagger
+ * tags:
+ *   name: Blacklist
+ *   description: 블랙리스트 관리 API
+ */
+
+/**
+ * @swagger
+ * /api/blacklist/{title}:
+ *   get:
+ *     summary: "특정 블랙리스트 상세 조회"
+ *     description: "제목에 해당하는 블랙리스트 상세 데이터를 조회합니다."
+ *     tags: [Blacklist]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: title
+ *         in: path
+ *         required: true
+ *         description: "조회할 블랙리스트의 제목"
+ *         schema:
+ *           type: string
+ *           example: "블랙리스트 상세 페이지"
+ *     responses:
+ *       200:
+ *         description: "블랙리스트 상세 조회 성공"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "블랙리스트 세부 정보를 성공적으로 조회했습니다."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       nickname:
+ *                         type: string
+ *                         example: "나쁜사람123"
+ *                       reason:
+ *                         type: string
+ *                         example: "거래 후 잠수"
+ *       404:
+ *         description: "해당 제목의 블랙리스트를 찾을 수 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "해당 글제목의 블랙리스트를 찾을 수 없습니다."
+ *       500:
+ *         description: "서버 오류"
+ */
+
+/**
+ * @swagger
+ * /api/blacklist:
+ *   get:
+ *     summary: "블랙리스트 제목 목록 조회"
+ *     description: "중복 제거된 블랙리스트 제목과 작성자 목록을 조회합니다."
+ *     tags: [Blacklist]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: "블랙리스트 제목 목록 조회 성공"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "글제목-작성자 목록을 성공적으로 조회했습니다."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       title:
+ *                         type: string
+ *                         example: "블랙리스트"
+ *                       author:
+ *                         type: string
+ *                         example: "admin123"
+ *       500:
+ *         description: "서버 오류"
+ */
+
+/**
+ * @swagger
+ * /api/blacklist/create:
+ *   post:
+ *     summary: "블랙리스트 작성"
+ *     description: "새로운 블랙리스트를 작성합니다."
+ *     tags: [Blacklist]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: "블랙리스트 제목"
+ *                 example: "블랙리스트"
+ *               author:
+ *                 type: string
+ *                 description: "작성자 ID"
+ *                 example: "test"
+ *               blacklist:
+ *                 type: array
+ *                 description: "블랙리스트 항목"
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     nickname:
+ *                       type: string
+ *                       description: "닉네임"
+ *                       example: "사기꾼123"
+ *                     reason:
+ *                       type: string
+ *                       description: "사유"
+ *                       example: "거래 후 잠수"
+ *     responses:
+ *       201:
+ *         description: "블랙리스트 작성 성공"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "블랙리스트가 성공적으로 작성되었습니다."
+ *                 insertedRows:
+ *                   type: integer
+ *                   example: 3
+ *       400:
+ *         description: "요청 데이터 유효하지 않음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "요청 데이터가 유효하지 않습니다."
+ *       409:
+ *         description: "중복된 블랙리스트 제목"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "동일한 제목으로 작성된 블랙리스트가 이미 존재합니다."
+ *       500:
+ *         description: "서버 오류"
+ */
+
+/**
+ * @swagger
+ * /api/blacklist/{title}:
+ *   delete:
+ *     summary: "블랙리스트 삭제"
+ *     description: "제목에 해당하는 블랙리스트를 삭제합니다."
+ *     tags: [Blacklist]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: title
+ *         in: path
+ *         required: true
+ *         description: "삭제할 블랙리스트의 제목"
+ *         schema:
+ *           type: string
+ *           example: "블랙리스트"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: "삭제 요청자의 ID"
+ *                 example: "test"
+ *     responses:
+ *       200:
+ *         description: "블랙리스트 삭제 성공"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "블랙리스트가 성공적으로 삭제되었습니다."
+ *                 deletedRows:
+ *                   type: integer
+ *                   example: 5
+ *       400:
+ *         description: "요청 데이터 유효하지 않음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "사용자 ID가 제공되지 않았습니다."
+ *       403:
+ *         description: "삭제 권한 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "삭제 권한이 없습니다. 사용자 ID가 작성자와 일치하지 않습니다."
+ *       404:
+ *         description: "블랙리스트 찾을 수 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "제목 '블랙리스트'에 해당하는 블랙리스트를 찾을 수 없습니다."
+ *       500:
+ *         description: "서버 오류"
+ */
+
+
 // 블랙리스트 상세 조회
 router.get('/:title', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
   const { title } = req.params;
@@ -34,6 +282,7 @@ router.get('/', authenticateToken, async (req, res) => {  // 인증 미들웨어
     const [rows] = await db.query(selectQuery);
 
     console.log('중복 제거된 글제목-작성자 목록을 성공적으로 조회했습니다.');
+    console.log([rows][0])
     res.status(200).json({
       message: '글제목-작성자 목록을 성공적으로 조회했습니다.',
       data: rows,

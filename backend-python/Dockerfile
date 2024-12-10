@@ -6,12 +6,19 @@ WORKDIR /app
 
 # 필요한 파일 복사
 COPY requirements.txt requirements.txt
-
-# 종속성 설치
-RUN pip install --no-cache-dir -r requirements.txt
-
-# 애플리케이션 파일 복사
 COPY . .
 
-# 애플리케이션 실행
+# 패키지 업데이트 및 필요한 라이브러리 설치
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python 라이브러리 설치
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Flask 앱 실행 포트 설정
+EXPOSE 5001
+
+# Flask 애플리케이션 실행
 CMD ["python", "app.py"]
