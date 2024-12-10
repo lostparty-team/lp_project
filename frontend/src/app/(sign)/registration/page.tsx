@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useRegisterStore } from '@/stores/useRegisterStore';
+import { CustomButton, CustomInput } from '@/components/common';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,18 +23,8 @@ export default function RegisterPage() {
   } = useForm<RegisterInfo>({
     mode: 'onChange',
   });
-  const {
-    idChecked,
-    idCheckStatus,
-    isChecking,
-    formValues,
-    isSubmitting,
-    setIdChecked,
-    setIdCheckStatus,
-    setIsChecking,
-    setFormValues,
-    setIsSubmitting,
-  } = useRegisterStore();
+  const { idChecked, idCheckStatus, isChecking, isSubmitting, setIdChecked, setIdCheckStatus, setIsChecking } =
+    useRegisterStore();
   const idValue = watch('id');
   const passwordValue = watch('password');
 
@@ -86,17 +77,12 @@ export default function RegisterPage() {
     }
   };
 
-  const triggerValidation = (field: keyof RegisterInfo) => {
-    useEffect(() => {
-      if (watch(field)) {
-        trigger(field);
-      }
-    }, [watch(field), trigger]);
+  const getIdSuccessMessage = () => {
+    if (!dirtyFields.id || errors.id) return null;
+    if (idCheckStatus === 'checked') return '사용 가능한 아이디입니다!';
+    if (idCheckStatus === 'valid') return '조건을 만족하는 아이디입니다.';
+    return null;
   };
-  triggerValidation('id');
-  triggerValidation('password');
-  triggerValidation('confirmPassword');
-  triggerValidation('api');
 
   return (
     <main className='relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black1'>
@@ -116,119 +102,82 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-            <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>아이디</label>
-              <div className='group flex'>
-                <input
-                  {...register('id', {
-                    required: '아이디를 입력해주세요.',
-                    minLength: { value: 2, message: '아이디는 최소 두 글자 이상이어야 합니다.' },
-                  })}
-                  type='text'
-                  disabled={idChecked}
-                  id='id'
-                  placeholder='아이디를 입력하세요'
-                  className={`w-full rounded-md rounded-br-none rounded-tr-none border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400 ${idChecked && 'text-white/30'}`}
-                />
-                <button
+            <CustomInput
+              label='아이디'
+              name='id'
+              type='text'
+              placeholder='아이디를 입력하세요'
+              register={register}
+              rules={{
+                required: '아이디를 입력해주세요.',
+                minLength: { value: 2, message: '아이디는 최소 두 글자 이상이어야 합니다.' },
+              }}
+              error={errors.id?.message || (idCheckStatus === 'duplicate' ? '중복된 아이디가 존재합니다.' : undefined)}
+              disabled={idChecked}
+              isDirty={!!dirtyFields.id}
+              successMessage={getIdSuccessMessage()}
+              rightSide={
+                <CustomButton
                   type='button'
                   disabled={!idValue || !!errors.id || idChecked || isChecking}
                   onClick={handleCheckId}
-                  className={`${
-                    idValue && !errors.id && !idChecked && !isChecking
-                      ? 'text-lostark-400 duration-300'
-                      : 'pointer-events-none cursor-not-allowed text-white/50'
-                  } min-w-20 rounded-md rounded-bl-none rounded-tl-none border border-lostark-400/30 bg-black1 text-sm outline-none transition-all duration-200 focus:border-lostark-400 focus:ring-lostark-400 group-hover:border-lostark-400/50`}
+                  variant='secondary'
+                  size='sm'
+                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500' : 'text-white/50'} w-24 rounded-bl-none rounded-tl-none`}
                 >
                   {isChecking ? '확인 중...' : '중복 확인'}
-                </button>
-              </div>
-              {dirtyFields.id &&
-                (errors.id ? (
-                  <span role='alert' className='text-sm text-red-400'>
-                    {errors.id.message}
-                  </span>
-                ) : idCheckStatus === 'checked' ? (
-                  <span role='alert' className='text-sm text-emerald-500'>
-                    사용 가능한 아이디입니다!
-                  </span>
-                ) : idCheckStatus === 'duplicate' ? (
-                  <span role='alert' className='text-sm text-red-400'>
-                    중복된 아이디가 존재합니다.
-                  </span>
-                ) : idCheckStatus === 'valid' ? (
-                  <span role='alert' className='text-sm text-blue-400'>
-                    조건을 만족하는 아이디입니다.
-                  </span>
-                ) : null)}
-            </div>
+                </CustomButton>
+              }
+            />
 
-            {/* 비밀번호 필드 */}
-            <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>비밀번호</label>
-              <input
-                {...register('password', {
-                  required: '비밀번호를 입력해주세요.',
-                  minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
-                })}
-                type='password'
-                placeholder='비밀번호를 입력하세요'
-                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
-              />
-              {dirtyFields.password &&
-                (errors.password ? (
-                  <span className='text-sm text-red-400'>{errors.password.message}</span>
-                ) : (
-                  <span className='text-sm text-emerald-500'>올바른 비밀번호 형식입니다.</span>
-                ))}
-            </div>
+            <CustomInput
+              label='비밀번호'
+              name='password'
+              type='password'
+              placeholder='비밀번호를 입력하세요'
+              register={register}
+              rules={{
+                required: '비밀번호를 입력해주세요.',
+                minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
+              }}
+              error={errors.password?.message}
+              isDirty={!!dirtyFields.password}
+              successMessage={dirtyFields.password && !errors.password ? '올바른 비밀번호 형식입니다.' : null}
+            />
 
-            {/* 비밀번호 확인 필드 */}
-            <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>비밀번호 확인</label>
-              <input
-                {...register('confirmPassword', {
-                  required: '비밀번호 확인을 입력해주세요.',
-                  validate: (value) => value === passwordValue || '비밀번호가 일치하지 않습니다.',
-                })}
-                type='password'
-                placeholder='비밀번호를 재입력하세요'
-                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
-              />
-              {dirtyFields.confirmPassword &&
-                (errors.confirmPassword ? (
-                  <span className='text-sm text-red-400'>{errors.confirmPassword.message}</span>
-                ) : (
-                  <span className='text-sm text-emerald-500'>비밀번호가 일치합니다.</span>
-                ))}
-            </div>
+            <CustomInput
+              label='비밀번호 확인'
+              name='confirmPassword'
+              type='password'
+              placeholder='비밀번호를 재입력하세요'
+              register={register}
+              rules={{
+                required: '비밀번호 확인을 입력해주세요.',
+                validate: (value) => value === passwordValue || '비밀번호가 일치하지 않습니다.',
+              }}
+              error={errors.confirmPassword?.message}
+              isDirty={!!dirtyFields.confirmPassword}
+              successMessage={dirtyFields.confirmPassword && !errors.confirmPassword ? '비밀번호가 일치합니다.' : null}
+            />
 
-            {/* API 필드 */}
-            <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>로스트아크 API</label>
-              <input
-                {...register('api', {
-                  required: '발급받은 로스트아크 API를 기입해주세요.',
-                })}
-                type='text'
-                placeholder='로스트아크 API를 입력하세요'
-                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
-              />
-              {dirtyFields.api &&
-                (errors.api ? <span className='text-sm text-red-400'>{errors.api.message}</span> : null)}
-            </div>
+            <CustomInput
+              label='로스트아크 API'
+              name='api'
+              placeholder='로스트아크 API를 입력하세요'
+              register={register}
+              rules={{
+                required: '발급받은 로스트아크 API를 기입해주세요.',
+              }}
+              error={errors.api?.message}
+              isDirty={!!dirtyFields.api}
+              successMessage={dirtyFields.api && !errors.api ? '' : null}
+            />
 
-            {/* 제출 */}
-            <button
-              type='submit'
-              disabled={isSubmitting}
-              className={`font-medieval w-full transform rounded-md border border-lostark-500 px-4 py-3 text-lostark-400 outline-none transition-all hover:border-lostark-400 ${isSubmitting ? 'text-lostark500' : null}`}
-            >
+            <CustomButton type='submit' disabled={isSubmitting}>
               회원가입
-            </button>
+            </CustomButton>
           </form>
 
-          {/* 로그인 링크 */}
           <div className='mx-auto mt-6 text-center'>
             <Link
               href='/login'
