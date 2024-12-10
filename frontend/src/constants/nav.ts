@@ -5,11 +5,11 @@ export const NAV_LINK = [
   },
   {
     name: '파티원 정보',
-    href: '/party',
+    href: '/party-info',
   },
   {
-    name: '실시간',
-    href: '/a',
+    name: '블랙리스트',
+    href: '/blacklist',
   },
   {
     name: '로그인',
