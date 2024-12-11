@@ -1,6 +1,6 @@
 'use client';
 import { postSignup } from '@/api/auth';
-import axiosInstance from '@/api/axios';
+import { axiosInstance } from '@/api/axios';
 import axios from 'axios';
 import { RegisterInfo } from '@/types/domain';
 import Image from 'next/image';
