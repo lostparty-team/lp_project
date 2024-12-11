@@ -6,4 +6,5 @@ export const API = {
   USER: {
     PROFILE: '/me',
   },
+  PROCESS: '/process',
 } as const;
