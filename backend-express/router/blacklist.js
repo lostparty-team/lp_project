@@ -12,59 +12,6 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
 
 /**
  * @swagger
- * /api/blacklist/{title}:
- *   get:
- *     summary: "특정 블랙리스트 상세 조회"
- *     description: "제목에 해당하는 블랙리스트 상세 데이터를 조회합니다."
- *     tags: [Blacklist]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: title
- *         in: path
- *         required: true
- *         description: "조회할 블랙리스트의 제목"
- *         schema:
- *           type: string
- *           example: "블랙리스트 상세 페이지"
- *     responses:
- *       200:
- *         description: "블랙리스트 상세 조회 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "블랙리스트 세부 정보를 성공적으로 조회했습니다."
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       nickname:
- *                         type: string
- *                         example: "나쁜사람123"
- *                       reason:
- *                         type: string
- *                         example: "거래 후 잠수"
- *       404:
- *         description: "해당 제목의 블랙리스트를 찾을 수 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "해당 글제목의 블랙리스트를 찾을 수 없습니다."
- *       500:
- *         description: "서버 오류"
- */
-
-/**
- * @swagger
  * /api/blacklist:
  *   get:
  *     summary: "블랙리스트 제목 목록 조회"
@@ -243,32 +190,151 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  *         description: "서버 오류"
  */
 
+/**
+ * @swagger
+ * /api/blacklist/{id}/like:
+ *   post:
+ *     summary: "추천수 증가"
+ *     description: "게시글의 추천수를 1 증가시킵니다."
+ *     tags: [Blacklist]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: "추천수를 증가시킬 게시글의 ID"
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: "추천수 증가 성공"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "추천수가 성공적으로 증가했습니다."
+ *       404:
+ *         description: "게시글을 찾을 수 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "글번호 1에 해당하는 게시글을 찾을 수 없습니다."
+ *       500:
+ *         description: "서버 오류"
+ */
+
+/**
+ * @swagger
+ * /api/blacklist/{id}:
+ *   delete:
+ *     summary: "블랙리스트 삭제"
+ *     description: "글번호를 기준으로 블랙리스트를 삭제합니다. JWT 토큰을 사용하여 요청자를 인증합니다."
+ *     tags: [Blacklist]
+ *     security:
+ *       - bearerAuth: [] # JWT 토큰 인증
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: "삭제할 블랙리스트의 글번호"
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: "블랙리스트 삭제 성공"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "블랙리스트 및 게시글이 성공적으로 삭제되었습니다."
+ *                 deletedRows:
+ *                   type: integer
+ *                   example: 1
+ *       400:
+ *         description: "JWT 토큰에서 clientId를 확인할 수 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "JWT 토큰에서 clientId를 확인할 수 없습니다."
+ *       403:
+ *         description: "삭제 권한 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "삭제 권한이 없습니다. JWT의 clientId가 작성자의 clientId와 일치하지 않습니다."
+ *       404:
+ *         description: "해당 글번호의 블랙리스트를 찾을 수 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "글번호 1에 해당하는 블랙리스트를 찾을 수 없습니다."
+ *       500:
+ *         description: "서버 오류"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "블랙리스트를 삭제하지 못했습니다."
+ */
+
+
 
 // 블랙리스트 목록 조회 (글번호 - 글제목 - 작성자)
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    // Posts 테이블에서 글번호, 제목, 작성자 조회
-    const selectQuery = `SELECT id, title, author FROM Posts ORDER BY id ASC`;
+    const selectQuery = `SELECT id, title, author, views, likes FROM Posts ORDER BY id ASC`;
     const [rows] = await db.query(selectQuery);
 
-    console.log('글번호-글제목-작성자 목록을 성공적으로 조회했습니다.');
+    console.log('글번호-글제목-작성자-조회수-추천수 목록을 성공적으로 조회했습니다.');
     res.status(200).json({
-      message: '글번호-글제목-작성자 목록을 성공적으로 조회했습니다.',
+      message: '글번호-글제목-작성자-조회수-추천수 목록을 성공적으로 조회했습니다.',
       data: rows,
     });
   } catch (error) {
-    console.error('글번호-글제목-작성자 목록을 조회하는 중 오류가 발생했습니다:', error);
-    res.status(500).json({ message: '글번호-글제목-작성자 목록을 조회하지 못했습니다.', error });
+    console.error('글번호-글제목-작성자-조회수-추천수 목록을 조회하는 중 오류가 발생했습니다:', error);
+    res.status(500).json({ message: '글번호-글제목-작성자-조회수-추천수 목록을 조회하지 못했습니다.', error });
   }
 });
 
-// 블랙리스트 상세 조회 (닉네임 - 사유)
+// 블랙리스트 상세 조회 (조회수 증가 포함)
 router.get('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Posts 테이블에서 해당 글번호의 제목과 작성자 확인
-    const selectPostQuery = `SELECT title, author FROM Posts WHERE id = ?`;
+    // 조회수 증가
+    const incrementViewsQuery = `UPDATE Posts SET views = views + 1 WHERE id = ?`;
+    await db.query(incrementViewsQuery, [id]);
+
+    // 게시글 정보 가져오기
+    const selectPostQuery = `SELECT title, author, views, likes FROM Posts WHERE id = ?`;
     const [[post]] = await db.query(selectPostQuery, [id]);
 
     if (!post) {
@@ -287,6 +353,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
         id,
         title: post.title,
         author: post.author,
+        views: post.views,
+        likes: post.likes,
       },
       data: details,
     });
@@ -296,78 +364,117 @@ router.get('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-
-
-// 블랙리스트 작성
-router.post('/create', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
-  const { title, author, blacklist } = req.body;
-
-  if (!title || !author || !Array.isArray(blacklist) || blacklist.length === 0) {
-    console.log('요청 데이터가 유효하지 않습니다.');
-    return res.status(400).json({ message: '요청 데이터가 유효하지 않습니다.' });
-  }
+// 추천수 증가 API
+router.post('/:id/like', authenticateToken, async (req, res) => {
+  const { id } = req.params;
 
   try {
-    // 중복 확인 쿼리
-    const checkQuery = `SELECT COUNT(*) AS count FROM Blacklist WHERE title = ? AND author = ?`;
-    const [checkResult] = await db.query(checkQuery, [title, author]);
+    const incrementLikesQuery = `UPDATE Posts SET likes = likes + 1 WHERE id = ?`;
+    const [result] = await db.query(incrementLikesQuery, [id]);
 
-    if (checkResult[0].count > 0) {
-      console.log(`이미 동일한 제목(${title})과 작성자(${author})가 존재합니다.`);
-      return res.status(409).json({ message: '동일한 제목으로 작성된 블랙리스트가 이미 존재합니다.' });
+    if (result.affectedRows === 0) {
+      console.log(`글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.`);
+      return res.status(404).json({ message: `글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.` });
     }
 
-    // 중복이 없으면 데이터 추가
-    const insertValues = blacklist.map(({ nickname, reason }) => [title, author, nickname, reason]);
-    const insertQuery = `INSERT INTO Blacklist (title, author, nickname, reason) VALUES ?`;
-    const [insertResult] = await db.query(insertQuery, [insertValues]);
-
-    console.log(`${insertResult.affectedRows}개의 블랙리스트 데이터를 성공적으로 추가했습니다.`);
-    res.status(201).json({
-      message: '블랙리스트가 성공적으로 작성되었습니다.',
-      insertedRows: insertResult.affectedRows,
-    });
+    console.log(`글번호 ${id}의 추천수를 1 증가시켰습니다.`);
+    res.status(200).json({ message: '추천수가 성공적으로 증가했습니다.' });
   } catch (error) {
-    console.error('블랙리스트를 작성하는 중 오류가 발생했습니다:', error);
-    res.status(500).json({ message: '블랙리스트를 작성하지 못했습니다.', error });
+    console.error('추천수를 증가시키는 중 오류가 발생했습니다:', error);
+    res.status(500).json({ message: '추천수를 증가시키지 못했습니다.', error });
   }
 });
 
-// DELETE 요청: 블랙리스트 삭제 (글 제목 기반)
-router.delete('/:title', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
-  const { title } = req.params;
-  const { userId } = req.body; // 요청한 사용자의 ID
+router.post('/create', authenticateToken, async (req, res) => {
+  const { title, author, blacklist } = req.body;
 
-  if (!userId) {
-    console.log('사용자 ID가 제공되지 않았습니다.');
-    return res.status(400).json({ message: '사용자 ID가 제공되지 않았습니다.' });
+  if (!title || !author || !Array.isArray(blacklist) || blacklist.length === 0) {
+    return res.status(400).json({ message: '요청 데이터가 유효하지 않습니다.' });
+  }
+
+  let connection;
+  try {
+    // 개별 연결 생성 및 트랜잭션 시작
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    // Posts 테이블에 게시글 생성
+    const insertPostQuery = `INSERT INTO Posts (title, author) VALUES (?, ?)`;
+    const [postResult] = await connection.query(insertPostQuery, [title, author]);
+    const postId = postResult.insertId;
+
+    // Blacklist 테이블에 데이터 삽입
+    const insertValues = blacklist.map(({ nickname, reason }) => [postId, nickname, reason]);
+    const insertBlacklistQuery = `INSERT INTO Blacklist (postId, nickname, reason) VALUES ?`;
+    await connection.query(insertBlacklistQuery, [insertValues]);
+
+    // 트랜잭션 커밋
+    await connection.commit();
+
+    res.status(201).json({
+      message: '게시글과 블랙리스트가 성공적으로 작성되었습니다.',
+      postId,
+    });
+  } catch (error) {
+    // 오류 발생 시 롤백
+    if (connection) await connection.rollback();
+    console.error('게시글과 블랙리스트를 작성하는 중 오류가 발생했습니다:', error);
+    res.status(500).json({ message: '게시글과 블랙리스트를 작성하지 못했습니다.', error });
+  } finally {
+    // 연결 반환
+    if (connection) await connection.release();
+  }
+});
+
+
+
+// DELETE 요청: 블랙리스트 삭제 (글번호 기반, JWT 토큰의 clientId 확인)
+router.delete('/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params; // 삭제할 글번호
+  const { clientId } = req.user; // JWT에서 추출된 clientId (authenticateToken에서 파싱된 정보)
+
+  // 요청자의 clientId 출력
+  console.log('요청자 clientId:', clientId);
+
+  if (!clientId) {
+    console.log('JWT 토큰에서 clientId를 확인할 수 없습니다.');
+    return res.status(400).json({ message: 'JWT 토큰에서 clientId를 확인할 수 없습니다.' });
   }
 
   try {
-    // 해당 제목의 블랙리스트 작성자 확인
-    const selectQuery = `SELECT author FROM Blacklist WHERE title = ? LIMIT 1`;
-    const [rows] = await db.query(selectQuery, [title]);
+    // 해당 글번호의 작성자의 clientId 확인
+    const selectQuery = `SELECT u.clientId, u.userId FROM Posts p JOIN User u ON p.author = u.userId
+      WHERE 
+        p.id = ?`;
 
-    if (rows.length === 0) {
-      console.log(`제목 '${title}'에 해당하는 블랙리스트를 찾을 수 없습니다.`);
-      return res.status(404).json({ message: `제목 '${title}'에 해당하는 블랙리스트를 찾을 수 없습니다.` });
+    const [[post]] = await db.query(selectQuery, [id]);
+
+    if (!post) {
+      console.log(`글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.`);
+      return res.status(404).json({ message: `글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.` });
     }
 
-    const { author } = rows[0];
+    const { clientId: authorClientId, userId: authorUserId } = post;
 
-    // 작성자와 요청 사용자의 ID 비교
-    if (author !== userId) {
-      console.log('삭제 권한이 없습니다. 사용자 ID가 작성자와 일치하지 않습니다.');
-      return res.status(403).json({ message: '삭제 권한이 없습니다. 사용자 ID가 작성자와 일치하지 않습니다.' });
+    // 작성자의 clientId 출력
+    console.log('삭제하려는 글 작성자 clientId:', authorClientId);
+
+    // 작성자의 clientId와 요청자의 clientId 비교
+    if (authorClientId !== clientId) {
+      console.log('삭제 권한이 없습니다. JWT의 clientId가 작성자의 clientId와 일치하지 않습니다.');
+      return res.status(403).json({ message: '삭제 권한이 없습니다. JWT의 clientId가 작성자의 clientId와 일치하지 않습니다.' });
     }
 
-    // 삭제 쿼리 실행 (같은 제목의 모든 데이터 삭제)
-    const deleteQuery = `DELETE FROM Blacklist WHERE title = ?`;
-    const [result] = await db.query(deleteQuery, [title]);
+    // 삭제 쿼리 실행 (해당 글번호의 Posts 및 관련 Blacklist 데이터 삭제)
+    const deleteBlacklistQuery = `DELETE FROM Blacklist WHERE postId = ?`;
+    const deletePostQuery = `DELETE FROM Posts WHERE id = ?`;
 
-    console.log(`제목 '${title}'에 해당하는 블랙리스트 데이터를 성공적으로 삭제했습니다.`);
+    await db.query(deleteBlacklistQuery, [id]); // 관련 Blacklist 데이터 삭제
+    const [result] = await db.query(deletePostQuery, [id]); // Posts 데이터 삭제
+
+    console.log(`글번호 ${id}에 해당하는 블랙리스트 및 게시글 데이터를 성공적으로 삭제했습니다.`);
     res.status(200).json({
-      message: '블랙리스트가 성공적으로 삭제되었습니다.',
+      message: '블랙리스트 및 게시글이 성공적으로 삭제되었습니다.',
       deletedRows: result.affectedRows,
     });
   } catch (error) {
@@ -375,5 +482,7 @@ router.delete('/:title', authenticateToken, async (req, res) => {  // 인증 미
     res.status(500).json({ message: '블랙리스트를 삭제하지 못했습니다.', error });
   }
 });
+
+
 
 module.exports = router;
