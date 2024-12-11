@@ -5,4 +5,9 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-export default axiosInstance;
+const axiosPythonInstance = axios.create({
+  baseURL: 'http://localhost:5001',
+  withCredentials: false,
+});
+
+export { axiosInstance, axiosPythonInstance };
