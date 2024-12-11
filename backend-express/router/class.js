@@ -1,7 +1,7 @@
 // 매핑 데이터
 const 직업각인 = {
     '강력한 체술' : '초심',
-    b: 2,
+    '강력한 오의' : '오의 강화',
     c: 3,
     d: 4,
     e: 5
@@ -10,7 +10,7 @@ const 직업각인 = {
   
   // 매핑 함수
   function 직업각인함수(value) {
-    return 직업각인함수[value] || "Unknown"; // 매핑되지 않은 값은 "Unknown"
+    return 직업각인[value] || "Unknown"; // 매핑되지 않은 값은 "Unknown"
   }
 
   const 보석 = {

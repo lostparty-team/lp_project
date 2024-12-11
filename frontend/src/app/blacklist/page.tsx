@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import '../../styles/pages/blacklist.css';
 import BlacklistCreateModal from '@/components/modal/blacklistCreate';
 import BlacklistModal from '@/components/modal/blacklistModal';
+import axiosInstance from '@/api/axios';
 
 interface BlacklistUser {
   id: number;
@@ -17,6 +18,12 @@ interface BlacklistUser {
 }
 
 const BlacklistPage: React.FC = () => {
+  viewer: number;
+  rate: number;
+}
+
+const BlacklistPage: React.FC = () => {
+  const router = useRouter();
   const [blacklist, setBlacklist] = useState<BlacklistUser[]>([
     {
       id: 1,
@@ -57,6 +64,7 @@ const BlacklistPage: React.FC = () => {
       createdAt: '2024-08-23',
       add: 10,
       bad: 1,
+
     },
     {
       id: 6,
@@ -95,6 +103,8 @@ const BlacklistPage: React.FC = () => {
   const [myBlacklist, setMyBlacklist] = useState<BlacklistUser[]>([]);
   const [listModalData, setListModalData] = useState<Record<string, any> | null>(null);
   const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
+
+
 
   const handleCreateBlacklist = () => {
     setCreateModalOpen(true);

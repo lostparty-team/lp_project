@@ -3,6 +3,7 @@ import NavigationBar from '@/components/common/navigationBar';
 import ToastProvider from '@/components/common/toastProvider';
 import '@/styles/globals.css';
 import { MSWProvider } from './msw-provider';
+import QueryProvider from '@/providers/QueryProvider';
 export const metadata = {
   title: 'LostArkP',
   description: '로스트아크 파티',
@@ -17,9 +18,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en'>
       <body className={pretendard.className}>
         <MSWProvider>
-          <ToastProvider />
-          <NavigationBar />
-          {children}
+          <QueryProvider>
+            <ToastProvider />
+            <NavigationBar />
+            {children}
+          </QueryProvider>
         </MSWProvider>
       </body>
     </html>

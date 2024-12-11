@@ -142,3 +142,4 @@ const PartyInfo: React.FC = () => {
 };
 
 export default PartyInfo;
+
