@@ -68,13 +68,13 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  * /api/blacklist:
  *   get:
  *     summary: "블랙리스트 제목 목록 조회"
- *     description: "중복 제거된 블랙리스트 제목과 작성자 목록을 조회합니다."
+ *     description: "글번호, 제목, 작성자 목록을 조회합니다."
  *     tags: [Blacklist]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: "블랙리스트 제목 목록 조회 성공"
+ *         description: "글번호-글제목-작성자 목록 조회 성공"
  *         content:
  *           application/json:
  *             schema:
@@ -82,21 +82,25 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "글제목-작성자 목록을 성공적으로 조회했습니다."
+ *                   example: "글번호-글제목-작성자 목록을 성공적으로 조회했습니다."
  *                 data:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
  *                       title:
  *                         type: string
- *                         example: "블랙리스트"
+ *                         example: "악성유저리스트"
  *                       author:
  *                         type: string
- *                         example: "admin123"
+ *                         example: "author1"
  *       500:
  *         description: "서버 오류"
  */
+
 
 /**
  * @swagger
@@ -176,35 +180,24 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
 
 /**
  * @swagger
- * /api/blacklist/{title}:
- *   delete:
- *     summary: "블랙리스트 삭제"
- *     description: "제목에 해당하는 블랙리스트를 삭제합니다."
+ * /api/blacklist/{id}:
+ *   get:
+ *     summary: "특정 블랙리스트 상세 조회"
+ *     description: "글번호를 기준으로 블랙리스트 상세 데이터를 조회합니다."
  *     tags: [Blacklist]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: title
+ *       - name: id
  *         in: path
  *         required: true
- *         description: "삭제할 블랙리스트의 제목"
+ *         description: "조회할 블랙리스트의 글번호"
  *         schema:
- *           type: string
- *           example: "블랙리스트"
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               userId:
- *                 type: string
- *                 description: "삭제 요청자의 ID"
- *                 example: "test"
+ *           type: integer
+ *           example: 1
  *     responses:
  *       200:
- *         description: "블랙리스트 삭제 성공"
+ *         description: "블랙리스트 상세 조회 성공"
  *         content:
  *           application/json:
  *             schema:
@@ -212,32 +205,32 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "블랙리스트가 성공적으로 삭제되었습니다."
- *                 deletedRows:
- *                   type: integer
- *                   example: 5
- *       400:
- *         description: "요청 데이터 유효하지 않음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "사용자 ID가 제공되지 않았습니다."
- *       403:
- *         description: "삭제 권한 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "삭제 권한이 없습니다. 사용자 ID가 작성자와 일치하지 않습니다."
+ *                   example: "블랙리스트 세부 정보를 성공적으로 조회했습니다."
+ *                 post:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     title:
+ *                       type: string
+ *                       example: "악성유저리스트"
+ *                     author:
+ *                       type: string
+ *                       example: "author1"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       nickname:
+ *                         type: string
+ *                         example: "악성유저123"
+ *                       reason:
+ *                         type: string
+ *                         example: "거래 후 잠수"
  *       404:
- *         description: "블랙리스트 찾을 수 없음"
+ *         description: "해당 글번호의 블랙리스트를 찾을 수 없음"
  *         content:
  *           application/json:
  *             schema:
@@ -245,29 +238,57 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "제목 '블랙리스트'에 해당하는 블랙리스트를 찾을 수 없습니다."
+ *                   example: "글번호 1에 해당하는 블랙리스트를 찾을 수 없습니다."
  *       500:
  *         description: "서버 오류"
  */
 
 
-// 블랙리스트 상세 조회
-router.get('/:title', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
-  const { title } = req.params;
+// 블랙리스트 목록 조회 (글번호 - 글제목 - 작성자)
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    // Posts 테이블에서 글번호, 제목, 작성자 조회
+    const selectQuery = `SELECT id, title, author FROM Posts ORDER BY id ASC`;
+    const [rows] = await db.query(selectQuery);
+
+    console.log('글번호-글제목-작성자 목록을 성공적으로 조회했습니다.');
+    res.status(200).json({
+      message: '글번호-글제목-작성자 목록을 성공적으로 조회했습니다.',
+      data: rows,
+    });
+  } catch (error) {
+    console.error('글번호-글제목-작성자 목록을 조회하는 중 오류가 발생했습니다:', error);
+    res.status(500).json({ message: '글번호-글제목-작성자 목록을 조회하지 못했습니다.', error });
+  }
+});
+
+// 블랙리스트 상세 조회 (닉네임 - 사유)
+router.get('/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
 
   try {
-    const selectQuery = `SELECT nickname, reason FROM Blacklist WHERE title = ?`;
-    const [rows] = await db.query(selectQuery, [title]);
+    // Posts 테이블에서 해당 글번호의 제목과 작성자 확인
+    const selectPostQuery = `SELECT title, author FROM Posts WHERE id = ?`;
+    const [[post]] = await db.query(selectPostQuery, [id]);
 
-    if (rows.length === 0) {
-      console.log('해당 글제목의 블랙리스트를 찾을 수 없습니다.');
-      return res.status(404).json({ message: '해당 글제목의 블랙리스트를 찾을 수 없습니다.' });
+    if (!post) {
+      console.log(`글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.`);
+      return res.status(404).json({ message: `글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.` });
     }
 
-    console.log(`글제목이 ${title}인 블랙리스트 데이터를 성공적으로 조회했습니다.`);
+    // Blacklist 테이블에서 해당 글번호에 포함된 닉네임과 사유 조회
+    const selectBlacklistQuery = `SELECT nickname, reason FROM Blacklist WHERE postId = ?`;
+    const [details] = await db.query(selectBlacklistQuery, [id]);
+
+    console.log(`글번호 ${id}의 블랙리스트 데이터를 성공적으로 조회했습니다.`);
     res.status(200).json({
       message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-      data: rows,
+      post: {
+        id,
+        title: post.title,
+        author: post.author,
+      },
+      data: details,
     });
   } catch (error) {
     console.error('블랙리스트 세부 정보를 조회하는 중 오류가 발생했습니다:', error);
@@ -275,23 +296,7 @@ router.get('/:title', authenticateToken, async (req, res) => {  // 인증 미들
   }
 });
 
-// 블랙리스트 목록 조회
-router.get('/', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가
-  try {
-    const selectQuery = `SELECT DISTINCT title, author FROM Blacklist ORDER BY title ASC`;
-    const [rows] = await db.query(selectQuery);
 
-    console.log('중복 제거된 글제목-작성자 목록을 성공적으로 조회했습니다.');
-    console.log([rows][0])
-    res.status(200).json({
-      message: '글제목-작성자 목록을 성공적으로 조회했습니다.',
-      data: rows,
-    });
-  } catch (error) {
-    console.error('글제목-작성자 목록을 조회하는 중 오류가 발생했습니다:', error);
-    res.status(500).json({ message: '글제목-작성자 목록을 조회하지 못했습니다.', error });
-  }
-});
 
 // 블랙리스트 작성
 router.post('/create', authenticateToken, async (req, res) => {  // 인증 미들웨어 추가

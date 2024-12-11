@@ -118,6 +118,7 @@ const 무기레벨추출함수 = (input) => {
 router.post("/", authenticateToken, async (req, res) => {
   const clientId = req.user.clientId; // 인증 미들웨어에서 추출된 값
   const nickname = req.body.nickname;
+  console.log(clientId)
 
   if (!nickname) {
     return res.status(400).json({ error: "닉네임이 제공되지 않았습니다." });
