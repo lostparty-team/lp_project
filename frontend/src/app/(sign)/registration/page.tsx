@@ -45,7 +45,7 @@ export default function RegisterPage() {
     if (!isValid) return;
     setIsChecking(true);
     try {
-      const res = await axiosInstance.post('/check-id', { id: idValue });
+      const res = await axiosInstance.post('/api/check-id', { id: idValue });
       if (res.status === 200) {
         setIdChecked(true);
         setIdCheckStatus('checked');
@@ -123,7 +123,7 @@ export default function RegisterPage() {
                   onClick={handleCheckId}
                   variant='secondary'
                   size='sm'
-                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500' : 'text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
+                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500' : 'text-white/50'} w-24 rounded-bl-none rounded-tl-none`}
                 >
                   {isChecking ? '확인 중...' : '중복 확인'}
                 </CustomButton>
