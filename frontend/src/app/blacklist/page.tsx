@@ -1,156 +1,29 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import '../../styles/pages/blacklist.css';
+import { useBlacklist } from '@/hooks/useBlacklist';
+import PopularList from '@/components/blacklist/PopularList';
 import BlacklistCreateModal from '@/components/modal/blacklistCreate';
 import BlacklistModal from '@/components/modal/blacklistModal';
+import '../../styles/pages/blacklist.css';
 
-interface BlacklistUser {
-  id: number;
-  name: string;
-  createdBy: string;
-  createdAt: string;
-  add: number;
-  bad: number;
-}
-
-const BlacklistPage: React.FC = () => {
-  const router = useRouter();
-  const [blacklist, setBlacklist] = useState<BlacklistUser[]>([
-    {
-      id: 1,
-      name: '욕설 플레이어 모음',
-      createdBy: '방울토마토라면',
-      createdAt: '2024-11-25',
-      add: 1294,
-      bad: 153,
-    },
-    {
-      id: 2,
-      name: '숙코 모음',
-      createdBy: '남양쮸강아지우',
-      createdAt: '2024-11-28',
-      add: 16,
-      bad: 2,
-    },
-    {
-      id: 3,
-      name: '비매너 플레이어',
-      createdBy: '아기사슴설장군',
-      createdAt: '2024-10-15',
-      add: 112,
-      bad: 33,
-    },
-    {
-      id: 4,
-      name: '비매너 모음집',
-      createdBy: '애니츠의겨울은너무추오',
-      createdAt: '2024-11-26',
-      add: 133,
-      bad: 30,
-    },
-    {
-      id: 5,
-      name: '내 블랙리스트',
-      createdBy: '낟찔',
-      createdAt: '2024-08-23',
-      add: 10,
-      bad: 1,
-    },
-    {
-      id: 6,
-      name: '레이드 빌런',
-      createdBy: 'HaeSungs',
-      createdAt: '2024-09-19',
-      add: 242,
-      bad: 50,
-    },
-    {
-      id: 7,
-      name: '레이드 빌런',
-      createdBy: 'HaeSungs',
-      createdAt: '2024-09-19',
-      add: 242,
-      bad: 50,
-    },
-    {
-      id: 8,
-      name: '레이드 빌런',
-      createdBy: 'HaeSungs',
-      createdAt: '2024-09-19',
-      add: 242,
-      bad: 50,
-    },
-    {
-      id: 9,
-      name: '레이드 빌런',
-      createdBy: 'HaeSungs',
-      createdAt: '2024-09-19',
-      add: 242,
-      bad: 50,
-    },
-  ]);
-
-  const [myBlacklist, setMyBlacklist] = useState<BlacklistUser[]>([]);
+const BlacklistPage = () => {
+  const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist, handleSortBlacklist } =
+    useBlacklist();
   const [listModalData, setListModalData] = useState<Record<string, any> | null>(null);
   const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
-
-  const handleCreateBlacklist = () => {
-    setCreateModalOpen(true);
-  };
-
-  const handleAddToMyBlacklist = (user: BlacklistUser) => {
-    // 이미 담은 블랙리스트인지 확인
-    if (myBlacklist.some((item) => item.id === user.id)) {
-      toast.error('이미 담은 블랙리스트입니다.');
-      return;
-    }
-    setMyBlacklist((prev) => [...prev, user]);
-  };
-
-  const handleRemoveFromMyBlacklist = (userId: number) => {
-    setMyBlacklist((prev) => prev.filter((user) => user.id !== userId));
-  };
-
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    if (event.target.value === 'newest') {
-      setBlacklist([...blacklist].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-    }
-    if (event.target.value === 'popular') {
-      setBlacklist([...blacklist].sort((a, b) => b.bad - a.bad));
-    }
-  };
 
   return (
     <div className='min-h-screen bg-black1 text-gray-100'>
       <section className='container mx-auto px-4 pt-16'>
         <h1 className='mb-8 text-3xl font-bold text-lostark-400'>가장 인기 있는 블랙리스트</h1>
-        <div className='grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-          {blacklist
-            .sort((a, b) => b.bad - a.bad)
-            .slice(0, 3)
-            .map((data, index) => (
-              <button
-                key={data.id}
-                onClick={() => setListModalData(data)}
-                className='relative overflow-hidden rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 text-left shadow-lg transition-all duration-300 hover:scale-105'
-              >
-                <span className='absolute right-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-sm text-white'>
-                  #{index + 1}
-                </span>
-                <h3 className='mb-2 text-xl font-bold text-lostark-300'>{data.name}</h3>
-                <p className='text-sm text-gray-400'>{data.createdBy}</p>
-              </button>
-            ))}
-        </div>
+        <PopularList blacklist={blacklist} onItemClick={setListModalData} />
       </section>
 
       <section className='container mx-auto px-4 py-16'>
         <div className='mb-6 flex items-center space-x-4'>
           <select
             className='h-[40px] rounded-lg border border-transparent bg-black2 px-4 py-2 text-gray-300 transition-all duration-300 focus:border-lostark-400'
-            onChange={handleSortChange}
+            onChange={(e) => handleSortBlacklist(e.target.value)}
           >
             <option value=''>구분</option>
             <option value='popular'>인기순</option>
@@ -162,7 +35,7 @@ const BlacklistPage: React.FC = () => {
             className='h-[40px] flex-grow rounded-lg border border-transparent bg-black2 px-4 py-2 text-sm text-gray-400 placeholder-gray-500 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lostark-400'
           />
           <button
-            onClick={handleCreateBlacklist}
+            onClick={() => setCreateModalOpen(true)}
             className='h-[40px] rounded-lg bg-lostark-400 px-6 py-2 font-semibold text-black1 shadow-lg transition-all duration-300 hover:bg-lostark-300'
           >
             새로 만들기
