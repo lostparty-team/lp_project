@@ -123,7 +123,7 @@ export default function RegisterPage() {
                   onClick={handleCheckId}
                   variant='secondary'
                   size='sm'
-                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500' : 'text-white/50'} w-24 rounded-bl-none rounded-tl-none`}
+                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500' : 'text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
                 >
                   {isChecking ? '확인 중...' : '중복 확인'}
                 </CustomButton>
