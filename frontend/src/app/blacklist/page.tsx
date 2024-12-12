@@ -1,6 +1,8 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useBlacklist } from '@/hooks/useBlacklist';
+import { useBlacklistStore } from '@/stores/blacklistStore';
 import BlacklistCreateModal from '@/components/modal/blacklistCreate';
 import BlacklistModal from '@/components/modal/blacklistModal';
 import { Minus, Plus, Search } from 'lucide-react';
@@ -9,26 +11,87 @@ import { BlacklistUser, SortType } from '@/types/blacklist';
 import PopularList from '@/components/blacklist/PopularList';
 
 const BlacklistPage = () => {
-  const [sortType, setSortType] = useState<SortType>();
-  const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist } = useBlacklist(sortType);
-  const [selectedBlacklistData, setSelectedBlacklistData] = useState<Record<string, any> | null>(null);
-  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const cartRef = useRef<HTMLDivElement>(null);
+  const {
+    searchTerm,
+    flyingItem,
+    showCreateModal,
+    selectedBlacklistData,
+    sortType,
+    setSearchTerm,
+    setFlyingItem,
+    setShowCreateModal,
+    setSelectedBlacklistData,
+    setSortType,
+    setCartRef,
+  } = useBlacklistStore();
 
-  const handleBlacklistSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  }, []);
+  const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist } = useBlacklist(sortType);
+
+  // cartRef 설정
+  useEffect(() => {
+    setCartRef(cartRef);
+  }, [setCartRef]);
+
+  const handleBlacklistSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+    },
+    [setSearchTerm],
+  );
 
   const filteredBlacklist = blacklist.filter(
     (item) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
   );
 
-  const handleAddToBlacklist = (blacklistItem: BlacklistUser) => {
-    handleAddToMyBlacklist(blacklistItem);
+  const handleAddToBlacklist = (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
+    e.preventDefault();
+    const buttonRect = e.currentTarget.getBoundingClientRect();
+    const cartRect = cartRef.current?.getBoundingClientRect();
+
+    if (cartRect) {
+      setFlyingItem({
+        id: blacklistItem.id.toString(),
+        x: buttonRect.left,
+        y: buttonRect.top,
+        type: 'add',
+      });
+
+      setTimeout(() => {
+        setFlyingItem(null);
+        handleAddToMyBlacklist(blacklistItem);
+      }, 400);
+    }
+  };
+
+  const getRandomValue = (min: number, max: number) => {
+    return Math.random() * (max - min) + min;
+  };
+
+  const handleRemoveFromBlacklist = (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleRemoveFromMyBlacklist(blacklistItem.id);
+  };
+
+  const listItemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.05,
+        duration: 0.5,
+      },
+    }),
+    hover: {
+      scale: 1.02,
+      backgroundColor: '#1a1a1a',
+      transition: { duration: 0.2 },
+    },
   };
 
   return (
-    <div className='min-h-screen bg-black1 text-gray-100'>
+    <div className='relative min-h-screen bg-black1 text-gray-100'>
       {/* 인기 블랙리스트 */}
       <section className='container mx-auto px-4 pt-16'>
         <h1 className='mb-8 text-3xl font-bold text-lostark-400'>가장 인기 있는 블랙리스트</h1>
@@ -71,12 +134,21 @@ const BlacklistPage = () => {
             className='col-span-2 space-y-4 overflow-y-auto rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'
             style={{ height: 'calc(100vh - 316px)' }}
           >
-            {filteredBlacklist.map((blacklistItem) => (
-              <li
+            {filteredBlacklist.map((blacklistItem, index) => (
+              <motion.li
                 key={`blacklist-${blacklistItem.id}`}
+                variants={listItemVariants}
+                initial='hidden'
+                animate='visible'
+                whileHover='hover'
+                custom={index}
                 className='flex items-center justify-between rounded-lg bg-black2 p-4'
+                layout
               >
-                <button className='w-full text-left' onClick={() => setSelectedBlacklistData(blacklistItem)}>
+                <button
+                  className='w-full text-left outline-none'
+                  onClick={() => setSelectedBlacklistData(blacklistItem)}
+                >
                   <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem?.title || '이름 없음'}</p>
                   <p className='text-sm text-gray-400'>
                     {blacklistItem.id} | {blacklistItem.author} | 담은수 {blacklistItem.add} | 비추천{' '}
@@ -84,43 +156,114 @@ const BlacklistPage = () => {
                   </p>
                 </button>
                 <button
-                  onClick={() => handleAddToBlacklist(blacklistItem)}
+                  onClick={(e) => handleAddToBlacklist(blacklistItem, e)}
                   className='rounded-full bg-[#4CAF50] p-2 hover:bg-[#358438]'
                 >
                   <Plus className='text-white' size={20} />
                 </button>
-              </li>
+              </motion.li>
             ))}
           </ul>
 
-          <div className='rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'>
+          <div ref={cartRef} className='rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'>
             <h2 className='mb-6 text-2xl font-bold text-lostark-400'>내가 담은 블랙리스트</h2>
             <ul className='space-y-2 overflow-y-auto' style={{ height: 'calc(100vh - 420px)' }}>
-              {myBlacklist.map((blacklistItem) => (
-                <li key={blacklistItem.id} className='flex items-center justify-between rounded-lg bg-black2 p-2'>
-                  <button className='w-full text-left' onClick={() => setSelectedBlacklistData(blacklistItem)}>
-                    <p className='text-sm text-lostark-300'>{blacklistItem?.title || '이름 없음'}</p>
-                    <p className='text-sm text-gray-400'>{blacklistItem.author}</p>
-                  </button>
-                  <button
-                    onClick={() => handleRemoveFromMyBlacklist(blacklistItem.id)}
-                    className='rounded-full bg-red-500 p-2 hover:bg-red-600'
+              <AnimatePresence mode='popLayout'>
+                {myBlacklist.map((blacklistItem, index) => (
+                  <motion.li
+                    key={blacklistItem.id}
+                    layout
+                    initial={{
+                      opacity: 0,
+                      x: -20,
+                      height: 0,
+                      scale: 0.8,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      height: 'auto',
+                      scale: 1,
+                      transition: {
+                        duration: 0.2,
+                        ease: [0.4, 0, 0.2, 1],
+                      },
+                    }}
+                    exit={{
+                      opacity: [1, 0],
+                      height: ['auto', 0],
+                      transition: {
+                        duration: 0.2,
+                        ease: [0.4, 0, 0.2, 1],
+                        opacity: { duration: 0.15 },
+                      },
+                    }}
+                    className='flex items-center justify-between overflow-hidden rounded-lg bg-black2 p-2'
+                    whileHover={{ scale: 1.02 }}
                   >
-                    <Minus className='text-white' size={14} />
-                  </button>
-                </li>
-              ))}
+                    <button className='w-full text-left' onClick={() => setSelectedBlacklistData(blacklistItem)}>
+                      <p className='text-sm text-lostark-300'>{blacklistItem?.title || '이름 없음'}</p>
+                      <p className='text-sm text-gray-400'>{blacklistItem.author}</p>
+                    </button>
+                    <button
+                      onClick={(e) => handleRemoveFromBlacklist(blacklistItem, e)}
+                      className='rounded-full bg-red-500 p-2 hover:bg-red-600'
+                    >
+                      <Minus className='text-white' size={14} />
+                    </button>
+                  </motion.li>
+                ))}
+              </AnimatePresence>
             </ul>
           </div>
         </div>
       </section>
 
+      <AnimatePresence>
+        {flyingItem && flyingItem.type === 'add' && (
+          <motion.div
+            key={flyingItem.id}
+            initial={{
+              scale: 1,
+              x: flyingItem.x,
+              y: flyingItem.y,
+              opacity: 1,
+            }}
+            animate={{
+              scale: 0.5,
+              x: cartRef.current?.getBoundingClientRect().left ?? 0,
+              y: cartRef.current?.getBoundingClientRect().top ?? 0,
+              opacity: 0,
+            }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: 0.4,
+              ease: 'easeInOut',
+            }}
+            style={{
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              pointerEvents: 'none',
+              zIndex: 9999,
+            }}
+            className='rounded-full bg-[#4CAF50] p-2 shadow-lg'
+          >
+            <Plus className='text-white' size={20} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <footer className='border-t border-black2 py-12'>
         <div className='mx-auto px-4 text-center text-white/50'>Copyright © All rights reserved.</div>
       </footer>
 
-      {showCreateModal && <BlacklistCreateModal setModalOpen={setShowCreateModal} />}
-      {selectedBlacklistData && <BlacklistModal data={selectedBlacklistData} setModalData={setSelectedBlacklistData} />}
+      <AnimatePresence>
+        {showCreateModal && <BlacklistCreateModal setModalOpen={setShowCreateModal} />}
+        {selectedBlacklistData && (
+          <BlacklistModal data={selectedBlacklistData} setModalData={setSelectedBlacklistData} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

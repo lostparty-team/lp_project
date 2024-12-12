@@ -5,18 +5,17 @@ import { CustomButton } from '../common';
 import { Check, Edit } from 'lucide-react';
 import { axiosInstance } from '@/api/axios';
 import { toast } from 'react-toastify';
+import { motion, AnimatePresence } from 'framer-motion'; // 추가
 
 interface BlacklistUser {
   id: number;
   nickname: string;
   reason: string;
 }
-
-type ChildProps = {
-  setModalOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-const BlacklistCreateModal = ({ setModalOpen }: ChildProps) => {
+interface BlacklistCreateModalProps {
+  setModalOpen: (open: boolean) => void;
+}
+const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
   const nameRegex = /^(?![0-9])[가-힣a-zA-Z][가-힣a-zA-Z0-9]{1,11}$/;
   const [blacklist, setBlacklist] = useState<BlacklistUser[]>([]);
   const [newUser, setNewUser] = useState<BlacklistUser>({ id: 0, nickname: '', reason: '' });
@@ -82,6 +81,28 @@ const BlacklistCreateModal = ({ setModalOpen }: ChildProps) => {
     nameInputRef.current?.focus();
   };
 
+  // 아이템 애니메이션 variants
+  const itemVariants = {
+    hidden: {
+      opacity: 0,
+      x: -20,
+      height: 0,
+      transition: { duration: 0.2 },
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      height: 'auto',
+      transition: { duration: 0.2 },
+    },
+    exit: {
+      opacity: 0,
+      x: 20,
+      height: 0,
+      transition: { duration: 0.2 },
+    },
+  };
+
   // 블랙리스트 최종 제출
   const createBlacklist = async (blacklistData: {
     title: string;
@@ -123,8 +144,19 @@ const BlacklistCreateModal = ({ setModalOpen }: ChildProps) => {
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black1/80 backdrop-blur-sm'>
-      <div className='w-full max-w-3xl rounded-xl border border-white/20 bg-gradient-to-br from-black2 to-black1 shadow-2xl'>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black1/80 backdrop-blur-sm'
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ type: 'spring', duration: 0.5 }}
+        className='w-full max-w-3xl rounded-xl border border-white/20 bg-gradient-to-br from-black2 to-black1 shadow-2xl'
+      >
         {/* 모달 타이틀 */}
         <div className='flex items-center justify-between rounded-t-xl border-b border-white/20 bg-black1/90 p-6'>
           <h2 className='text-3xl font-bold text-lostark-400'>블랙리스트 명단 생성</h2>
@@ -191,34 +223,41 @@ const BlacklistCreateModal = ({ setModalOpen }: ChildProps) => {
             </div>
             {/* 테이블 내용 */}
             <div className='scrollbar-thin scrollbar-track-black2 scrollbar-thumb-white/20 flex h-96 flex-col overflow-y-auto'>
-              {blacklist.length !== 0 ? (
-                [...blacklist]
-                  .sort((a, b) => {
-                    const nameCompare = a.nickname.localeCompare(b.nickname, 'ko');
-                    return nameCompare !== 0 ? nameCompare : a.reason.localeCompare(b.reason, 'ko');
-                  })
-                  .map((user) => (
-                    <div
-                      key={user.id}
-                      className='flex w-full items-center border-b border-white/10 transition hover:bg-white/5'
-                    >
-                      <div className='w-1/3 px-6 py-4 text-white/80'>{user.nickname}</div>
-                      <div className='w-1/3 px-6 py-4 text-white/80'>{user.reason}</div>
-                      {/* 제거 버튼 */}
-                      <div className='ml-auto w-1/3 flex-[0.5] px-6 py-4'>
-                        <CustomButton onClick={() => handleRemove(user.id)} size='sm' className='hover:bg-red-900/50'>
-                          제거
-                        </CustomButton>
-                      </div>
-                    </div>
-                  ))
-              ) : (
-                <div className='flex w-full border-b border-white/10'>
-                  <div className='w-1/3 px-6 py-4 text-white/50'>ex) 홍길동</div>
-                  <div className='w-1/3 px-6 py-4 text-white/50'>ex) 숙코 행동</div>
-                  <div className='w-1/3 px-6 py-4'></div>
-                </div>
-              )}
+              <AnimatePresence initial={false}>
+                {blacklist.length !== 0 ? (
+                  [...blacklist]
+                    .sort((a, b) => {
+                      const nameCompare = a.nickname.localeCompare(b.nickname, 'ko');
+                      return nameCompare !== 0 ? nameCompare : a.reason.localeCompare(b.reason, 'ko');
+                    })
+                    .map((user) => (
+                      <motion.div
+                        key={user.id}
+                        variants={itemVariants}
+                        initial='hidden'
+                        animate='visible'
+                        exit='exit'
+                        layout
+                        className='flex w-full items-center border-b border-white/10 transition hover:bg-white/5'
+                      >
+                        <div className='w-1/3 px-6 py-4 text-white/80'>{user.nickname}</div>
+                        <div className='w-1/3 px-6 py-4 text-white/80'>{user.reason}</div>
+                        {/* 제거 버튼 */}
+                        <div className='ml-auto w-1/3 flex-[0.5] px-6 py-4'>
+                          <CustomButton onClick={() => handleRemove(user.id)} size='sm' className='hover:bg-red-900/50'>
+                            제거
+                          </CustomButton>
+                        </div>
+                      </motion.div>
+                    ))
+                ) : (
+                  <div className='flex w-full border-b border-white/10'>
+                    <div className='w-1/3 px-6 py-4 text-white/50'>ex) 홍길동</div>
+                    <div className='w-1/3 px-6 py-4 text-white/50'>ex) 숙코 행동</div>
+                    <div className='w-1/3 px-6 py-4'></div>
+                  </div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div className='flex w-full items-center gap-4 border-t border-white/20 bg-black1/50 p-6'>
@@ -282,8 +321,8 @@ const BlacklistCreateModal = ({ setModalOpen }: ChildProps) => {
             {isLoading ? '생성 중...' : '만들기'}
           </CustomButton>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

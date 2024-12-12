@@ -1,7 +1,8 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import '../../styles/pages/blacklist.css';
+import { motion } from 'framer-motion';
 
 interface BlacklistUser {
   id: number;
@@ -35,8 +36,19 @@ const BlacklistModal = ({ data, setModalData }: ChildProps) => {
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black1/80 backdrop-blur-sm'>
-      <div className='w-full max-w-3xl rounded-xl border border-white/20 bg-gradient-to-br from-black2 to-black1 shadow-2xl'>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black1/80 backdrop-blur-sm'
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ type: 'spring', duration: 0.5 }}
+        className='w-full max-w-3xl rounded-xl border border-white/20 bg-gradient-to-br from-black2 to-black1 shadow-2xl'
+      >
         {/* 모달 타이틀 */}
         <div className='flex items-center justify-between rounded-t-xl border-b border-white/20 bg-black1/90 p-6'>
           <h2 className='text-3xl font-bold text-lostark-400'>블랙리스트 상세보기</h2>
@@ -80,8 +92,8 @@ const BlacklistModal = ({ data, setModalData }: ChildProps) => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
