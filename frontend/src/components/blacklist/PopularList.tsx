@@ -1,5 +1,4 @@
 import { BlacklistUser } from '@/types/blacklist';
-
 interface PopularListProps {
   blacklist: BlacklistUser[];
   onItemClick: (data: BlacklistUser) => void;
@@ -20,8 +19,8 @@ const PopularList: React.FC<PopularListProps> = ({ blacklist, onItemClick }) => 
             <span className='absolute right-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-sm text-white'>
               #{index + 1}
             </span>
-            <h3 className='mb-2 text-xl font-bold text-lostark-300'>{data.name}</h3>
-            <p className='text-sm text-gray-400'>{data.createdBy}</p>
+            <h3 className='mb-2 text-xl font-bold text-lostark-300'>{data.title}</h3>
+            <p className='text-sm text-gray-400'>{data.author}</p>
           </button>
         ))}
     </div>
