@@ -91,7 +91,7 @@ export const handlers = [
   }),
 
   // blacklist 상세 조회
-  http.get(`${baseURL}/blacklist/:id`, async () => {
+  http.get(`${baseURL}/api/blacklist/:id`, async () => {
     await delay(200);
     return HttpResponse.json({
       message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
@@ -118,13 +118,13 @@ export const handlers = [
   }),
 
   // blacklist 생성
-  http.post(`${baseURL}/blacklist`, async () => {
+  http.post(`${baseURL}/api/blacklist/create`, async () => {
     await delay(200);
     return new HttpResponse(null, { status: 200 });
   }),
 
   // blacklist 삭제
-  http.delete(`${baseURL}/blacklist`, async () => {
+  http.delete(`${baseURL}/api/blacklist`, async () => {
     await delay(500);
     return new HttpResponse(null, { status: 200 });
   }),
