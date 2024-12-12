@@ -1,13 +1,11 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
+import base64
 import cv2
 import numpy as np
 from PIL import Image
 import pytesseract
-import io
-import os
-import json
-
 from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)
 
@@ -15,24 +13,41 @@ CORS(app)
 template_path = "초록박스.png"
 template_image = cv2.imread(template_path, cv2.IMREAD_COLOR)
 
-# 결과 이미지 저장 경로
-output_image_path = "masked_result.png"
+# 템플릿 이미지 유효성 검사 및 처리
+if template_image is None:
+    raise FileNotFoundError(f"Template image not found at {template_path}")
 
 @app.route('/process', methods=['POST'])
 def process_image():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file provided'}), 400
+    data = request.json.get('image')
+    if not data:
+        return jsonify({'error': 'No image data provided'}), 400
 
-    # POST 요청에서 이미지 파일 읽기
-    file = request.files['image']
-    original_image = np.frombuffer(file.read(), np.uint8)
-    original_image = cv2.imdecode(original_image, cv2.IMREAD_COLOR)
+    try:
+        # Base64 디코딩
+        header, encoded = data.split(',', 1)  # Base64 헤더 분리
+        image_data = base64.b64decode(encoded)
+        np_array = np.frombuffer(image_data, np.uint8)
+        original_image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+    except Exception as e:
+        return jsonify({'error': f'Failed to decode image: {str(e)}'}), 400
+
+    # 원본 이미지 유효성 검사
+    if original_image is None:
+        return jsonify({'error': 'Failed to decode the uploaded image'}), 400
+
+    # 템플릿과 원본 이미지를 동일한 색상 채널로 변환
+    if template_image.shape[2] != original_image.shape[2]:
+        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
+        template_image_gray = cv2.cvtColor(template_image, cv2.COLOR_BGR2GRAY)
+    else:
+        template_image_gray = template_image
 
     # 템플릿 매칭 수행
-    result = cv2.matchTemplate(original_image, template_image, cv2.TM_CCOEFF_NORMED)
+    result = cv2.matchTemplate(original_image, template_image_gray, cv2.TM_CCOEFF_NORMED)
 
     # 임계값 설정 및 위치 찾기
-    threshold = 0.8
+    threshold = 0.7
     locations = np.where(result >= threshold)
 
     # 템플릿 크기 및 사용자 지정 영역 설정
@@ -54,9 +69,6 @@ def process_image():
         mask[new_top_left[1]:new_bottom_right[1], new_top_left[0]:new_bottom_right[0]] = \
             original_image[new_top_left[1]:new_bottom_right[1], new_top_left[0]:new_bottom_right[0]]
 
-    # 결과 이미지를 파일로 저장
-    cv2.imwrite(output_image_path, mask)
-
     # OCR 처리
     pil_image = Image.fromarray(cv2.cvtColor(mask, cv2.COLOR_BGR2RGB))
     extracted_text = pytesseract.image_to_string(pil_image, lang="kor+eng", config="--oem 1 --psm 4")
@@ -66,11 +78,7 @@ def process_image():
     response = {
         '닉네임': lines
     }
-    return app.response_class(
-        response=json.dumps(response, ensure_ascii=False),
-        status=200,
-        mimetype='application/json'
-    )
+    return jsonify(response), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
