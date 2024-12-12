@@ -4,12 +4,10 @@ import { axiosPythonInstance } from '@/api/axios';
 import { API } from '@/constants/route';
 
 const postProcess = async ({ image }: ProcessInfo): Promise<AxiosResponse> => {
-  const formData = new FormData();
-  formData.append('image', image);
 
-  const response = await axiosPythonInstance.post(API.PROCESS, formData, {
+  const response = await axiosPythonInstance.post(API.PROCESS, { image }, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': 'application/json',
     },
   });
 
