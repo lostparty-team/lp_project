@@ -60,21 +60,41 @@ const PartyInfo: React.FC = () => {
   };
 
   const handleFetchPartyInfo = async () => {
-    console.log('aa');
-    if (recordedData.current.length === 0) {
-      alert('먼저 녹화를 시작한 후 중지해 주세요.');
+    if (!videoRef.current) {
+      alert('비디오 요소를 찾을 수 없습니다.');
       return;
     }
-
-    // Blob 데이터를 병합하여 서버로 전송
-    const finalBlob = new Blob(recordedData.current, { type: 'video/webm' });
+  
+    // Create a canvas to draw the video frame
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) {
+      alert('캔버스를 생성할 수 없습니다.');
+      return;
+    }
+  
+    // Set canvas dimensions to match video
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+  
+    // Draw the current frame onto the canvas
+    context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+  
     try {
-      const response = await postProcess({ image: finalBlob });
+      // Convert canvas to data URL (Base64)
+      const base64Data = canvas.toDataURL('image/png');
+  
+      console.log(base64Data); // Check Base64 output
+  
+      // Send Base64 data to server
+      const response = await postProcess({ image: base64Data });
       console.log('서버 응답:', response.data);
     } catch (error) {
-      console.error('통신 중 오류 발생:', error);
+      console.error('Base64 변환 또는 통신 중 오류 발생:', error);
     }
   };
+  
+  
 
   return (
     <div className='min-h-screen bg-black1 text-gray-100'>
@@ -142,4 +162,3 @@ const PartyInfo: React.FC = () => {
 };
 
 export default PartyInfo;
-
