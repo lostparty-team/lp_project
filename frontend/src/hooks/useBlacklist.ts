@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { BlacklistUser } from '@/types/blacklist';
+import { BlacklistUser, SortType } from '@/types/blacklist';
 import { MOCK_BLACKLIST } from '@/constants/mockData';
 
 export const useBlacklist = () => {
@@ -19,12 +19,16 @@ export const useBlacklist = () => {
     setMyBlacklist((prev) => prev.filter((user) => user.id !== userId));
   };
 
-  const handleSortBlacklist = (sortType: string) => {
-    if (sortType === 'newest') {
-      setBlacklist([...blacklist].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-    }
-    if (sortType === 'popular') {
-      setBlacklist([...blacklist].sort((a, b) => b.bad - a.bad));
+  const handleSortBlacklist = (sortType: SortType) => {
+    switch (sortType) {
+      case 'newest':
+        setBlacklist([...blacklist].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        break;
+      case 'popular':
+        setBlacklist([...blacklist].sort((a, b) => b.bad - a.bad));
+        break;
+      default:
+        toast.error('올바르지 않은 정렬 방식입니다.');
     }
   };
 

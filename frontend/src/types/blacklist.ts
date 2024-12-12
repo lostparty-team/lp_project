@@ -6,3 +6,5 @@ export interface BlacklistUser {
   add: number;
   bad: number;
 }
+
+export type SortType = 'newest' | 'popular';
