@@ -4,6 +4,7 @@ import ToastProvider from '@/components/common/toastProvider';
 import '@/styles/globals.css';
 import { MSWProvider } from './msw-provider';
 import QueryProvider from '@/providers/QueryProvider';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 export const metadata = {
   title: 'LostArkP',
   description: '로스트아크 파티',
@@ -15,12 +16,13 @@ const pretendard = localFont({
 });
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en'>
+    <html lang='ko'>
       <body className={pretendard.className}>
         <MSWProvider>
           <QueryProvider>
             <ToastProvider />
             <NavigationBar />
+            <LoadingSpinner />
             {children}
           </QueryProvider>
         </MSWProvider>
