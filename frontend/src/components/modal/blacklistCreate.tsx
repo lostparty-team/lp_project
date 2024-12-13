@@ -1,11 +1,13 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { CustomButton } from '../common';
 import { Check, Edit } from 'lucide-react';
 import { axiosInstance } from '@/api/axios';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion'; // 추가
+import { useLoadingStore } from '@/stores/loadingStore';
+import { handleBackdropClick } from '@/utils/modalUtils';
 
 interface BlacklistUser {
   id: number;
@@ -16,6 +18,7 @@ interface BlacklistCreateModalProps {
   setModalOpen: (open: boolean) => void;
 }
 const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
+  const { isLoading, setIsLoading } = useLoadingStore();
   const nameRegex = /^(?![0-9])[가-힣a-zA-Z][가-힣a-zA-Z0-9]{1,11}$/;
   const [blacklist, setBlacklist] = useState<BlacklistUser[]>([]);
   const [newUser, setNewUser] = useState<BlacklistUser>({ id: 0, nickname: '', reason: '' });
@@ -25,7 +28,6 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const reasonInputRef = useRef<HTMLInputElement | null>(null);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const MAX_TITLE_LENGTH = 30; // 최대 제목 길이
 
   // ESC 키 감지
@@ -137,7 +139,7 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
       });
       setModalOpen(false);
     } catch (error) {
-      alert('블랙리스트 생성에 실패했습니다.');
+      toast.error('블랙리스트 생성에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -145,12 +147,14 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
 
   return (
     <motion.div
+      onClick={(e) => handleBackdropClick(e, handleClose)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className='fixed inset-0 z-50 flex items-center justify-center bg-black1/80 backdrop-blur-sm'
     >
       <motion.div
+        onClick={(e) => e.stopPropagation()}
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -311,13 +315,13 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
 
               {/* 추가 버튼 */}
               <div className='flex-[0.3]'>
-                <CustomButton onClick={handleAdd} size='sm'>
+                <CustomButton onClick={handleAdd} size='sm' className='w-full'>
                   추가
                 </CustomButton>
               </div>
             </div>
           </div>
-          <CustomButton variant='primary' size='lg' onClick={handleCreate} disabled={isLoading}>
+          <CustomButton variant='primary' size='lg' onClick={handleCreate} disabled={isLoading} className='w-full'>
             {isLoading ? '생성 중...' : '만들기'}
           </CustomButton>
         </div>

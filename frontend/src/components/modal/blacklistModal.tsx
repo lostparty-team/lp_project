@@ -3,6 +3,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import '../../styles/pages/blacklist.css';
 import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
+import { handleBackdropClick } from '@/utils/modalUtils';
 
 interface BlacklistUser {
   id: number;
@@ -37,12 +39,14 @@ const BlacklistModal = ({ data, setModalData }: ChildProps) => {
 
   return (
     <motion.div
+      onClick={(e) => handleBackdropClick(e, handleClose)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className='fixed inset-0 z-50 flex items-center justify-center bg-black1/80 backdrop-blur-sm'
     >
       <motion.div
+        onClick={(e) => e.stopPropagation()}
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -56,7 +60,7 @@ const BlacklistModal = ({ data, setModalData }: ChildProps) => {
             onClick={handleClose}
             className='rounded-full p-2 text-white/70 transition duration-200 hover:bg-white/10 hover:text-white'
           >
-            ✕
+            <X size={28} />
           </button>
         </div>
 
