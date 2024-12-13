@@ -2,6 +2,7 @@
 import { toast } from 'react-toastify';
 import { ClockIcon, InfoIcon, SearchIcon, ShieldIcon } from '@/styles/icons';
 import { ArrowRight } from 'lucide-react';
+import HeroBanner from '@/components/common/HeroBanner';
 
 const QUICK_LINK = [
   {
@@ -29,6 +30,7 @@ const MainPage = () => {
 
   return (
     <div className='min-h-screen bg-black1 text-gray-100'>
+      <HeroBanner />
       <section className='container mx-auto px-4 py-16'>
         <h2 className='mb-8 text-3xl font-bold text-lostark-400'>파티원 검색하기</h2>
         <div className='relative mx-auto max-w-2xl'>
