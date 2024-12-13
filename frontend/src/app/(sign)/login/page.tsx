@@ -39,7 +39,7 @@ export default function LoginPage() {
       <div className='absolute inset-0 bg-black2 opacity-20'></div>
       <div className='bg-gradient-radial absolute inset-0 from-transparent to-black1'></div>
 
-      <div className='animate-fadeIn relative w-full max-w-md px-4 py-8'>
+      <div className='animate-fadeIn fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4'>
         <div className='relative overflow-hidden rounded-lg border-2 border-lostark-400 bg-black2 p-8 shadow-2xl'>
           <div className='absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-lostark-400 via-lostark-300 to-lostark-400'></div>
           <div className='absolute left-0 top-2 h-[1px] w-full bg-gradient-to-r from-transparent via-lostark-400/50 to-transparent'></div>
@@ -78,7 +78,7 @@ export default function LoginPage() {
               {errors.password && <span className='text-sm text-red-400'>{errors.password.message}</span>}
             </div>
 
-            <CustomButton type='submit' disabled={isLoggingIn}>
+            <CustomButton type='submit' disabled={isLoggingIn} className='w-full'>
               {isLoggingIn ? '로그인 중...' : '로그인'}
             </CustomButton>
           </form>

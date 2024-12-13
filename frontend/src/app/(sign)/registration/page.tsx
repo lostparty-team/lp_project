@@ -89,7 +89,7 @@ export default function RegisterPage() {
       <div className='pointer-events-none absolute inset-0 bg-black2 opacity-20'></div>
       <div className='bg-gradient-radial pointer-events-none absolute inset-0 from-transparent to-black1'></div>
 
-      <div className='animate-fadeIn relative w-full max-w-md px-4 py-8'>
+      <div className='animate-fadeIn fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4'>
         <div className='relative overflow-hidden rounded-lg border-2 border-lostark-400 bg-black2 p-8 shadow-2xl'>
           <div className='absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-lostark-400 via-lostark-200 to-lostark-400'></div>
           <div className='absolute left-0 top-2 h-[1px] w-full bg-gradient-to-r from-transparent via-lostark-400/50 to-transparent'></div>
@@ -123,7 +123,7 @@ export default function RegisterPage() {
                   onClick={handleCheckId}
                   variant='secondary'
                   size='sm'
-                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500' : 'text-white/50'} w-24 rounded-bl-none rounded-tl-none`}
+                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500' : 'text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
                 >
                   {isChecking ? '확인 중...' : '중복 확인'}
                 </CustomButton>
@@ -173,7 +173,7 @@ export default function RegisterPage() {
               successMessage={dirtyFields.api && !errors.api ? '' : null}
             />
 
-            <CustomButton type='submit' disabled={isSubmitting}>
+            <CustomButton type='submit' disabled={isSubmitting} className='w-full'>
               회원가입
             </CustomButton>
           </form>
