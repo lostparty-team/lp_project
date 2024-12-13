@@ -17,7 +17,7 @@ export const CustomButton = ({
   variant = 'primary',
   size = 'md',
 }: ButtonProps) => {
-  const baseStyle = 'font-medieval w-full  rounded-md border outline-none transition-all';
+  const baseStyle = 'font-medieval rounded-md border outline-none transition-all';
 
   const variantStyles = {
     primary: 'border-lostark-500 text-lostark-400 hover:border-lostark-400',
