@@ -11,6 +11,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useRegisterStore } from '@/stores/useRegisterStore';
 import { CustomButton, CustomInput } from '@/components/common';
+import BackgroundVideo from '@/components/common/BackgroundVideo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -85,7 +86,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className='relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black1'>
+    <main className='relative flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
+      <BackgroundVideo />
       <div className='pointer-events-none absolute inset-0 bg-black2 opacity-20'></div>
       <div className='bg-gradient-radial pointer-events-none absolute inset-0 from-transparent to-black1'></div>
 
