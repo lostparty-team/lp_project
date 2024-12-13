@@ -64,10 +64,6 @@ const BlacklistPage = () => {
     }
   };
 
-  const getRandomValue = (min: number, max: number) => {
-    return Math.random() * (max - min) + min;
-  };
-
   const handleRemoveFromBlacklist = (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
     e.stopPropagation();
     handleRemoveFromMyBlacklist(blacklistItem.id);
@@ -149,10 +145,9 @@ const BlacklistPage = () => {
                   className='w-full text-left outline-none'
                   onClick={() => setSelectedBlacklistData(blacklistItem)}
                 >
-                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem?.title || '이름 없음'}</p>
+                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
                   <p className='text-sm text-gray-400'>
-                    {blacklistItem.id} | {blacklistItem.author} | 담은수 {blacklistItem.add} | 비추천{' '}
-                    {blacklistItem.bad}
+                    {blacklistItem.id} | {blacklistItem.author} | 담은수 {blacklistItem.id} | 비추천
                   </p>
                 </button>
                 <button
