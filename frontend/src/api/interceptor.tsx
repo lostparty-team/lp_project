@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { axiosInstance } from './axios';
 import { useRouter, usePathname } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const PROTECTED_PATHS = ['/party-info'];
 const PROTECTED_API_PATHS = ['/api/blacklist', '/api/party'];
@@ -29,8 +30,8 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
         const token = localStorage.getItem(TOKEN_KEY);
         if (isProtectedRoute(pathname) || (config.url && isProtectedApi(config.url))) {
           if (!token) {
-            router.push('/login');
-            return Promise.reject(new Error('No token found'));
+            toast.error('로그인이 필요합니다.');
+            return Promise.reject();
           }
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -48,6 +49,7 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
           switch (error.response.status) {
             case 401:
               localStorage.removeItem(TOKEN_KEY);
+              toast.error('로그인이 필요합니다.');
               router.push('/login');
               break;
             case 403:
@@ -62,6 +64,7 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
     if (isProtectedRoute(pathname)) {
       const token = localStorage.getItem(TOKEN_KEY);
       if (!token) {
+        toast.error('로그인이 필요합니다.');
         router.push('/login');
       }
     }
