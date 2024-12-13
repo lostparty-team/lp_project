@@ -1,10 +1,10 @@
 export interface BlacklistUser {
   id: number;
   title: string;
-  author?: string;
-  createdAt?: string;
-  add?: number;
-  bad?: number;
+  author: string;
+  createdAt?: Date;
+  likeCount?: number;
+  cartQuantity?: number;
 }
 
 export type SortType = 'newest' | 'popular';
