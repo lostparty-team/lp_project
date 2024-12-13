@@ -9,6 +9,7 @@ import { Minus, Plus, Search } from 'lucide-react';
 import LikeButton from '@/components/common/LikeButton';
 import { BlacklistUser, SortType } from '@/types/blacklist';
 import PopularList from '@/components/blacklist/PopularList';
+import { useLoadingStore } from '@/stores/loadingStore';
 
 const BlacklistPage = () => {
   const cartRef = useRef<HTMLDivElement>(null);
@@ -26,7 +27,13 @@ const BlacklistPage = () => {
     setCartRef,
   } = useBlacklistStore();
 
-  const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist } = useBlacklist(sortType);
+  const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist, isLoading } =
+    useBlacklist(sortType);
+  const { setIsLoading } = useLoadingStore();
+
+  useEffect(() => {
+    setIsLoading(isLoading);
+  }, [isLoading]);
 
   // cartRef 설정
   useEffect(() => {
