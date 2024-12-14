@@ -9,15 +9,20 @@ export interface BlacklistUser {
 
 export type SortType = 'newest' | 'popular';
 
-export interface BlacklistDetailType {
+export interface BlacklistUserDetail {
+  nickname: string;
+  reason: string;
+}
+
+export interface BlacklistDetail {
   message: string;
   post: {
     id: number;
     title: string;
     author: string;
+    createdAt?: string;
+    likeCount?: number;
+    cartQuantity?: number;
   };
-  data: {
-    nickname: string;
-    reason: string;
-  }[];
+  data: BlacklistUserDetail[];
 }
