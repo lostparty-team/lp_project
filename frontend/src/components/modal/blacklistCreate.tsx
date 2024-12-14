@@ -83,7 +83,7 @@ const BlacklistCreateModal = () => {
     nameInputRef.current?.focus();
   };
 
-  // 아이템 애니메이션 variants
+  // 아이템 애니메이션
   const itemVariants = {
     hidden: {
       opacity: 0,
@@ -158,7 +158,7 @@ const BlacklistCreateModal = () => {
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        transition={{ type: 'spring', duration: 0.5 }}
+        transition={{ duration: 0.2 }}
         className='w-full max-w-3xl rounded-xl border border-white/20 bg-gradient-to-br from-black2 to-black1 shadow-2xl'
       >
         {/* 모달 타이틀 */}
@@ -171,62 +171,62 @@ const BlacklistCreateModal = () => {
             ✕
           </button>
         </div>
+
         <div className='space-y-6 p-6'>
-          <div className='justify-left flex items-center space-x-3'>
-            <h2 className='text-3xl font-bold text-white'>
+          {/* 블랙리스트 제목 입력 섹션 */}
+          <div className='space-y-4 rounded-lg border border-white/10 bg-black1/30 p-6'>
+            <div className='flex items-center gap-3'>
               {isEditing ? (
-                <input
-                  ref={inputRef}
-                  type='text'
-                  value={title}
-                  onChange={(e) => {
-                    if (e.target.value.length <= MAX_TITLE_LENGTH) {
-                      setTitle(e.target.value);
-                    }
-                  }}
-                  onBlur={() => setIsEditing(false)}
-                  className='w-full max-w-[400px] overflow-hidden text-ellipsis rounded-lg bg-black2 px-4 py-2 text-white placeholder-white/50 transition-all duration-200 placeholder:text-2xl placeholder:font-semibold focus:outline-none focus:ring-2 focus:ring-lostark-500'
-                  placeholder='제목 입력 (최대 30자)'
-                  maxLength={MAX_TITLE_LENGTH}
-                  autoFocus
-                />
+                <div className='flex items-center gap-2'>
+                  <input
+                    ref={inputRef}
+                    type='text'
+                    value={title}
+                    onChange={(e) => {
+                      if (e.target.value.length <= MAX_TITLE_LENGTH) {
+                        setTitle(e.target.value);
+                      }
+                    }}
+                    className='w-full max-w-[400px] overflow-hidden text-ellipsis rounded-lg bg-black2/50 px-4 py-2 text-3xl font-bold text-white/70 placeholder-white/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-lostark-500'
+                    placeholder='제목 입력 (최대 30자)'
+                    maxLength={MAX_TITLE_LENGTH}
+                    autoFocus
+                  />
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className='rounded-full p-1.5 text-lostark-400 transition duration-200 hover:bg-white/10'
+                  >
+                    <Check size={24} />
+                  </button>
+                </div>
               ) : (
-                <div className='flex items-center'>
-                  <span
+                <div className='flex items-center gap-2'>
+                  <h2
                     onClick={() => setIsEditing(true)}
-                    className='cursor-pointer rounded-lg px-4 py-2 text-white/80 hover:bg-white/10'
+                    className='cursor-pointer bg-gradient-to-r from-lostark-400 to-lostark-300 bg-clip-text text-3xl font-bold text-transparent'
                   >
                     {title}
-                  </span>
+                  </h2>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className='rounded-full text-white/70 duration-300 hover:bg-white/10 hover:text-white'
-                    aria-label='Edit'
+                    className='rounded-full p-1.5 text-white/70 transition duration-200 hover:bg-white/10 hover:text-white'
                   >
-                    <Edit size={28} />
+                    <Edit size={20} />
                   </button>
                 </div>
               )}
-            </h2>
-            {isEditing && (
-              <button
-                onClick={() => setIsEditing(false)}
-                className='items-center rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white'
-                aria-label='Complete Edit'
-              >
-                <Check size={28} />
-              </button>
-            )}
+            </div>
           </div>
-          {/* 테이블 헤더 */}
-          <div className='flex flex-col overflow-hidden rounded-xl border border-white/20 bg-black2/50'>
-            <div className='flex w-full border-b border-white/20 bg-black1/50 py-4'>
+          {/* 테이블 */}
+          <div className='flex flex-col overflow-hidden rounded-xl border border-white/20 bg-gradient-to-b from-black2/80 to-black1/50 backdrop-blur-sm'>
+            <div className='flex w-full border-b border-white/20 bg-black1/70 px-2 py-5'>
               <div className='w-1/3 px-6 font-medium text-lostark-400'>이름</div>
               <div className='w-1/3 px-6 font-medium text-lostark-400'>사유</div>
               <div className='w-1/3 px-6 font-medium text-lostark-400'></div>
             </div>
-            {/* 테이블 내용 */}
-            <div className='scrollbar-thin scrollbar-track-black2 scrollbar-thumb-white/20 flex h-96 flex-col overflow-y-auto'>
+
+            {/* 리스트 영역 */}
+            <div className='scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30 flex h-[360px] flex-col overflow-y-auto'>
               <AnimatePresence initial={false}>
                 {blacklist.length !== 0 ? (
                   [...blacklist]
@@ -242,88 +242,91 @@ const BlacklistCreateModal = () => {
                         animate='visible'
                         exit='exit'
                         layout
-                        className='flex w-full items-center border-b border-white/10 transition hover:bg-white/5'
+                        className='group flex w-full items-center border-b border-white/10 px-2 transition hover:bg-white/5'
                       >
-                        <div className='w-1/3 px-6 py-4 text-white/80'>{user.nickname}</div>
-                        <div className='w-1/3 px-6 py-4 text-white/80'>{user.reason}</div>
-                        {/* 제거 버튼 */}
-                        <div className='ml-auto w-1/3 flex-[0.5] px-6 py-4'>
-                          <CustomButton onClick={() => handleRemove(user.id)} size='sm' className='hover:bg-red-900/50'>
+                        <div className='w-1/3 px-6 py-5'>
+                          <span className='inline-block whitespace-nowrap rounded bg-white/5 px-3 py-1.5 text-white/90 transition group-hover:bg-white/10'>
+                            {user.nickname}
+                          </span>
+                        </div>
+                        <div className='w-1/3 px-6 py-5'>
+                          <p className='text-white/80 transition group-hover:text-white'>{user.reason}</p>
+                        </div>
+                        <div className='w-1/3 px-6 py-5 text-right'>
+                          <button
+                            onClick={() => handleRemove(user.id)}
+                            className='rounded-lg bg-red-500/20 px-3 py-1.5 text-sm text-red-400 transition hover:bg-red-500/30'
+                          >
                             제거
-                          </CustomButton>
+                          </button>
                         </div>
                       </motion.div>
                     ))
                 ) : (
-                  <div className='flex w-full border-b border-white/10'>
-                    <div className='w-1/3 px-6 py-4 text-white/50'>ex) 홍길동</div>
-                    <div className='w-1/3 px-6 py-4 text-white/50'>ex) 숙코 행동</div>
-                    <div className='w-1/3 px-6 py-4'></div>
+                  <div className='flex items-center justify-center py-8 text-white/60'>
+                    아래에서 블랙리스트 대상을 추가해주세요.
                   </div>
                 )}
               </AnimatePresence>
             </div>
 
-            <div className='flex w-full items-center gap-4 border-t border-white/20 bg-black1/50 p-6'>
-              {/* 이름 입력 */}
-              <div className='flex-1'>
-                <div className='relative'>
-                  <input
-                    ref={nameInputRef}
-                    type='text'
-                    value={newUser.nickname}
-                    onChange={(e) => {
-                      setNewUser({ ...newUser, nickname: e.target.value });
-                      setIsValidName(true);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (e.nativeEvent.isComposing) return;
-                        reasonInputRef.current?.focus();
-                      }
-                    }}
-                    placeholder='이름'
-                    className={`h-full w-full rounded-lg bg-black2 px-4 py-2 text-white/80 placeholder-white/50 transition-all duration-300 focus:outline-none focus:ring-2 ${
-                      isValidName ? 'focus:ring-lostark-500' : 'ring-2 ring-red-500/50'
-                    }`}
-                  />
-                  {!isValidName && (
-                    <p className='absolute mt-1 text-sm text-red-400'>2~12자의 한글, 영문, 숫자만 사용 가능합니다.</p>
-                  )}
+            {/* 입력 폼 */}
+            <div className='border-t border-white/20 bg-black1/70 p-6'>
+              <div className='flex items-center gap-4'>
+                <div className='flex-1'>
+                  <div className='h-[72px]'>
+                    {' '}
+                    <input
+                      ref={nameInputRef}
+                      type='text'
+                      value={newUser.nickname}
+                      onChange={(e) => {
+                        setNewUser({ ...newUser, nickname: e.target.value });
+                        setIsValidName(true);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                          e.preventDefault();
+                          reasonInputRef.current?.focus();
+                        }
+                      }}
+                      placeholder='이름'
+                      className={`w-full rounded-lg border ${
+                        isValidName ? 'border-white/20' : 'border-red-500/50'
+                      } overflow-hidden text-ellipsis whitespace-nowrap bg-black2/50 px-4 py-2.5 text-white/70 placeholder-white/50 transition-all duration-300 focus:border-lostark-400 focus:outline-none`}
+                    />
+                    {!isValidName && (
+                      <p className='mt-1 text-sm text-red-400'>2~12자의 한글, 영문, 숫자만 사용 가능합니다.</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-
-              {/* 사유 입력 */}
-              <div className='flex-1'>
-                <input
-                  ref={reasonInputRef}
-                  type='text'
-                  value={newUser.reason}
-                  onChange={(e) => setNewUser({ ...newUser, reason: e.target.value })}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      if (e.nativeEvent.isComposing) return;
-                      handleAdd();
-                    }
-                  }}
-                  placeholder='사유'
-                  className='h-full w-full rounded-lg bg-black2 px-4 py-2 text-white/90 placeholder-white/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lostark-500'
-                />
-              </div>
-
-              {/* 추가 버튼 */}
-              <div className='flex-[0.3]'>
-                <CustomButton onClick={handleAdd} size='sm' className='w-full'>
-                  추가
-                </CustomButton>
+                <div className='flex-1'>
+                  <div className='h-[72px]'>
+                    <input
+                      ref={reasonInputRef}
+                      type='text'
+                      value={newUser.reason}
+                      onChange={(e) => setNewUser({ ...newUser, reason: e.target.value })}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                          e.preventDefault();
+                          handleAdd();
+                        }
+                      }}
+                      placeholder='사유'
+                      className='w-full rounded-lg border border-white/20 bg-black2/50 px-4 py-2.5 text-white/70 placeholder-white/50 transition-all duration-300 focus:border-lostark-400 focus:outline-none'
+                    />
+                  </div>
+                </div>
+                <div className='flex h-[72px] items-start'>
+                  <CustomButton onClick={handleAdd}>추가</CustomButton>
+                </div>
               </div>
             </div>
           </div>
           <CustomButton variant='primary' size='lg' onClick={handleCreate} disabled={isLoading} className='w-full'>
             {isLoading ? '생성 중...' : '만들기'}
-          </CustomButton>
+          </CustomButton>{' '}
         </div>
       </motion.div>
     </motion.div>
