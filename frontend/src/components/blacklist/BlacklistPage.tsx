@@ -157,7 +157,7 @@ const BlacklistPage = () => {
                   onClick={() => {
                     setIsModalOpen(true);
                     setSelectedBlacklistData(blacklistItem);
-                    router.push(`/blacklist/${blacklistItem.id}`);
+                    router.push(`/blacklist/${blacklistItem.id}`, { scroll: false });
                   }}
                 >
                   <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>

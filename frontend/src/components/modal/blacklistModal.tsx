@@ -33,7 +33,7 @@ const BlacklistModal = () => {
 
   const handleClose = () => {
     setIsVisible(false);
-    router.push('/blacklist');
+    router.push('/blacklist', { scroll: false });
   };
 
   useEffect(() => {
