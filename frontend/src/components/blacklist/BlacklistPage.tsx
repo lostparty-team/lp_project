@@ -10,6 +10,7 @@ import { BlacklistUser, SortType } from '@/types/blacklist';
 import PopularList from '@/components/blacklist/PopularList';
 import { useLoadingStore } from '@/stores/loadingStore';
 import { useRouter } from 'next/navigation';
+import { CustomButton } from '../common';
 
 const BlacklistPage = () => {
   const router = useRouter();
@@ -128,7 +129,7 @@ const BlacklistPage = () => {
           {/* 새로 만들기 버튼 */}
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className='h-[40px] rounded-lg bg-black2 px-6 py-2 font-semibold text-white/80 shadow-lg transition-all duration-300 hover:bg-black2/70'
+            className='h-[40px] rounded-lg bg-black2 px-6 py-2 text-white/80 shadow-lg transition-all duration-300 hover:bg-black2/70'
           >
             새로 만들기
           </button>
@@ -174,9 +175,14 @@ const BlacklistPage = () => {
               </motion.li>
             ))}
           </ul>
-
+          {/* 내가 담은 블랙리스트 */}
           <div ref={cartRef} className='rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'>
-            <h2 className='mb-6 text-2xl font-bold text-lostark-400'>내가 담은 블랙리스트</h2>
+            <div className='mb-6 flex items-center justify-between'>
+              <h2 className='text-2xl font-bold text-lostark-400'>내가 담은 블랙리스트</h2>
+              <CustomButton size='sm' onClick={() => setIsCreateModalOpen(true)}>
+                생성하기
+              </CustomButton>
+            </div>
             <ul className='space-y-2 overflow-y-auto' style={{ height: 'calc(100vh - 420px)' }}>
               <AnimatePresence mode='popLayout'>
                 {myBlacklist.map((blacklistItem, index) => (
