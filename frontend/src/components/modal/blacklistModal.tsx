@@ -19,22 +19,20 @@ const BlacklistModal = () => {
   const pathname = usePathname();
   const { selectedBlacklistData, setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
   const [blacklist] = useState<BlacklistUser[]>([]);
-
-  useEffect(() => {
-    return () => {
-      setSelectedBlacklistData(null);
-      setIsModalOpen(false);
-    };
-  }, [selectedBlacklistData, setSelectedBlacklistData, setIsModalOpen]);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     if (pathname === '/blacklist') {
+      setIsVisible(false);
       setIsModalOpen(false);
       setSelectedBlacklistData(null);
+    } else {
+      setIsVisible(true);
     }
   }, [pathname, setIsModalOpen, setSelectedBlacklistData]);
 
   const handleClose = () => {
+    setIsVisible(false);
     router.push('/blacklist');
   };
 
@@ -53,7 +51,7 @@ const BlacklistModal = () => {
 
   return (
     <AnimatePresence mode='wait'>
-      {pathname !== '/blacklist' && (
+      {isVisible && (
         <motion.div
           onClick={(e) => handleBackdropClick(e, handleClose)}
           initial={{ opacity: 0 }}
@@ -83,11 +81,11 @@ const BlacklistModal = () => {
             <div className='space-y-6 p-6'>
               {/* 블랙리스트 제목 및 정보 */}
               <div className='space-y-4'>
-                <h2 className='text-3xl font-bold text-white'>{selectedBlacklistData?.title}</h2>
+                <h2 className='text-3xl font-bold text-white'>{selectedBlacklistData?.id}</h2>
                 <div className='flex items-center justify-between'>
                   <span className='text-lg text-white/80'>작성자: {selectedBlacklistData?.title}</span>
                   <div className='text-sm text-white/60'>
-                    작성일 {selectedBlacklistData?.title} | 담은수 {selectedBlacklistData?.id} | 비추천{' '}
+                    작성일 {selectedBlacklistData?.title} | 담은수 {selectedBlacklistData?.author} | 비추천{' '}
                     {selectedBlacklistData?.id}
                   </div>
                 </div>
