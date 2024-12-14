@@ -17,13 +17,10 @@ interface BlacklistUser {
 const BlacklistModal = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const [isVisible, setIsVisible] = useState(true);
   const { selectedBlacklistData, setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
   const [blacklist] = useState<BlacklistUser[]>([]);
 
   useEffect(() => {
-    setIsVisible(true);
-
     return () => {
       setSelectedBlacklistData(null);
       setIsModalOpen(false);
@@ -32,14 +29,12 @@ const BlacklistModal = () => {
 
   useEffect(() => {
     if (pathname === '/blacklist') {
-      setIsVisible(false);
       setIsModalOpen(false);
       setSelectedBlacklistData(null);
     }
   }, [pathname, setIsModalOpen, setSelectedBlacklistData]);
 
   const handleClose = () => {
-    setIsVisible(false);
     router.push('/blacklist');
   };
 
@@ -58,7 +53,7 @@ const BlacklistModal = () => {
 
   return (
     <AnimatePresence mode='wait'>
-      {isVisible && pathname !== '/blacklist' && (
+      {pathname !== '/blacklist' && (
         <motion.div
           onClick={(e) => handleBackdropClick(e, handleClose)}
           initial={{ opacity: 0 }}
