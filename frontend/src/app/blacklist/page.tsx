@@ -16,15 +16,16 @@ const BlacklistPage = () => {
   const {
     searchTerm,
     flyingItem,
-    showCreateModal,
-    selectedBlacklistData,
+    isCreateModalOpen,
     sortType,
     setSearchTerm,
     setFlyingItem,
-    setShowCreateModal,
+    setIsCreateModalOpen,
     setSelectedBlacklistData,
     setSortType,
     setCartRef,
+    isModalOpen,
+    setIsModalOpen,
   } = useBlacklistStore();
 
   const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist, isLoading } =
@@ -123,14 +124,16 @@ const BlacklistPage = () => {
             />
             <Search className='absolute left-3 top-2.5 text-[#e2d6c6]' size={20} />
           </div>
+          {/* 새로 만들기 버튼 */}
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={() => setIsCreateModalOpen(true)}
             className='h-[40px] rounded-lg bg-black2 px-6 py-2 font-semibold text-white/80 shadow-lg transition-all duration-300 hover:bg-black2/70'
           >
             새로 만들기
           </button>
         </div>
 
+        {/* 블랙리스트 목록 */}
         <div className='grid grid-cols-2 gap-8 lg:grid-cols-3'>
           <ul
             role='list'
@@ -150,7 +153,10 @@ const BlacklistPage = () => {
               >
                 <button
                   className='w-full text-left outline-none'
-                  onClick={() => setSelectedBlacklistData(blacklistItem)}
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    setSelectedBlacklistData(blacklistItem);
+                  }}
                 >
                   <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
                   <p className='text-sm text-gray-400'>
@@ -261,10 +267,8 @@ const BlacklistPage = () => {
       </footer>
 
       <AnimatePresence>
-        {showCreateModal && <BlacklistCreateModal setModalOpen={setShowCreateModal} />}
-        {selectedBlacklistData && (
-          <BlacklistModal data={selectedBlacklistData} setModalData={setSelectedBlacklistData} />
-        )}
+        {isCreateModalOpen && <BlacklistCreateModal />}
+        {isModalOpen && <BlacklistModal />}
       </AnimatePresence>
     </div>
   );

@@ -8,17 +8,17 @@ import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion'; // 추가
 import { useLoadingStore } from '@/stores/loadingStore';
 import { handleBackdropClick } from '@/utils/modalUtils';
+import { useBlacklistStore } from '@/stores/blacklistStore';
 
 interface BlacklistUser {
   id: number;
   nickname: string;
   reason: string;
 }
-interface BlacklistCreateModalProps {
-  setModalOpen: (open: boolean) => void;
-}
-const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
+
+const BlacklistCreateModal = () => {
   const { isLoading, setIsLoading } = useLoadingStore();
+  const { setIsCreateModalOpen } = useBlacklistStore();
   const nameRegex = /^(?![0-9])[가-힣a-zA-Z][가-힣a-zA-Z0-9]{1,11}$/;
   const [blacklist, setBlacklist] = useState<BlacklistUser[]>([]);
   const [newUser, setNewUser] = useState<BlacklistUser>({ id: 0, nickname: '', reason: '' });
@@ -34,7 +34,7 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setModalOpen(false);
+        setIsCreateModalOpen(false);
       }
     };
 
@@ -42,7 +42,7 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
     return () => {
       window.removeEventListener('keydown', handleEsc);
     };
-  }, [setModalOpen]);
+  }, [setIsCreateModalOpen]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -55,7 +55,7 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
 
   // 모달 창 닫기
   const handleClose = () => {
-    setModalOpen(false);
+    setIsCreateModalOpen(false);
   };
 
   // 블랙리스트 명단 삭제
@@ -137,7 +137,7 @@ const BlacklistCreateModal = ({ setModalOpen }: BlacklistCreateModalProps) => {
           reason,
         })),
       });
-      setModalOpen(false);
+      setIsCreateModalOpen(false);
     } catch (error) {
       toast.error('블랙리스트 생성에 실패했습니다.');
     } finally {

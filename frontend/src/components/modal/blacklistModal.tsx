@@ -1,10 +1,11 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../styles/pages/blacklist.css';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { handleBackdropClick } from '@/utils/modalUtils';
+import { useBlacklistStore } from '@/stores/blacklistStore';
 
 interface BlacklistUser {
   id: number;
@@ -12,18 +13,14 @@ interface BlacklistUser {
   reason: string;
 }
 
-type ChildProps = {
-  data: Record<string, any>;
-  setModalData: Dispatch<SetStateAction<Record<string, any> | null>>;
-};
-
-const BlacklistModal = ({ data, setModalData }: ChildProps) => {
-  const [blacklist, setBlacklist] = useState<BlacklistUser[]>([]);
+const BlacklistModal = () => {
+  const { selectedBlacklistData, setIsModalOpen } = useBlacklistStore();
+  const [blacklist] = useState<BlacklistUser[]>([]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setModalData(null);
+        setIsModalOpen(false);
       }
     };
 
@@ -31,10 +28,10 @@ const BlacklistModal = ({ data, setModalData }: ChildProps) => {
     return () => {
       window.removeEventListener('keydown', handleEsc);
     };
-  }, [setModalData]);
+  }, [setIsModalOpen]);
 
   const handleClose = () => {
-    setModalData(null);
+    setIsModalOpen(false);
   };
 
   return (
@@ -67,11 +64,12 @@ const BlacklistModal = ({ data, setModalData }: ChildProps) => {
         <div className='space-y-6 p-6'>
           {/* 블랙리스트 제목 및 정보 */}
           <div className='space-y-4'>
-            <h2 className='text-3xl font-bold text-white'>{data.name}</h2>
+            <h2 className='text-3xl font-bold text-white'>{selectedBlacklistData?.title}</h2>
             <div className='flex items-center justify-between'>
-              <span className='text-lg text-white/80'>작성자: {data.createdBy}</span>
+              <span className='text-lg text-white/80'>작성자: {selectedBlacklistData?.title}</span>
               <div className='text-sm text-white/60'>
-                작성일 {data.createdAt} | 담은수 {data.add} | 비추천 {data.bad}
+                작성일 {selectedBlacklistData?.title} | 담은수 {selectedBlacklistData?.id} | 비추천{' '}
+                {selectedBlacklistData?.id}
               </div>
             </div>
           </div>
