@@ -37,7 +37,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <main className='relative flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
+      <main className='relative z-10 flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
         <BackgroundVideo />
         <div className='fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4'>
           <div className='relative overflow-hidden rounded-lg border-2 border-lostark-400 bg-black2 p-8 shadow-2xl'>

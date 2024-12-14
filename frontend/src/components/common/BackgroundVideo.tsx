@@ -1,7 +1,7 @@
 export default function BackgroundVideo() {
   return (
     <>
-      <div className='absolute inset-0'>
+      <div className='absolute inset-0 -z-10'>
         <video
           autoPlay
           loop
@@ -12,7 +12,7 @@ export default function BackgroundVideo() {
           <source src='/videos/background.mp4' type='video/mp4' />
         </video>
       </div>
-      <div className='absolute inset-0 bg-black1/70' />
+      <div className='absolute inset-0 -z-10 bg-black1/70' />
     </>
   );
 }
