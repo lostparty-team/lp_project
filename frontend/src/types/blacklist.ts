@@ -8,3 +8,16 @@ export interface BlacklistUser {
 }
 
 export type SortType = 'newest' | 'popular';
+
+export interface BlacklistDetailType {
+  message: string;
+  post: {
+    id: number;
+    title: string;
+    author: string;
+  };
+  data: {
+    nickname: string;
+    reason: string;
+  }[];
+}
