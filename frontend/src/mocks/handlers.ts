@@ -91,150 +91,30 @@ export const handlers = [
   }),
 
   // blacklist 상세 조회
-  http.get(`${baseURL}/api/blacklist`, async () => {
+  http.get(`${baseURL}/api/blacklist/:id`, async (id) => {
     await delay(200);
-    return HttpResponse.json([
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 1,
-          title: '악성 유저 리스트',
-          author: '정의의수호자',
-        },
-        data: [
-          {
-            nickname: '트롤러123',
-            reason: '고의적인 팀 방해 행위',
-          },
-        ],
+    return HttpResponse.json({
+      message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
+      post: {
+        id: 777,
+        title: '악성 유저 리스트',
+        author: '정의의수호자',
       },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 2,
-          title: '비매너 플레이어 모음',
-          author: '매너지킴이',
+      data: [
+        {
+          nickname: '트롤러123',
+          reason: '고의적인 팀 방해 행위',
         },
-        data: [
-          {
-            nickname: '욕설왕123',
-            reason: '과도한 욕설 사용',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 3,
-          title: '아이템 도둑 명단',
-          author: '아이템수호대',
+        {
+          nickname: '트롤러123',
+          reason: '고의적인 팀 방해 행위',
         },
-        data: [
-          {
-            nickname: '아이템강탈자',
-            reason: '팀원 아이템 무단 사용',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 4,
-          title: '채팅 테러리스트',
-          author: '평화주의자',
+        {
+          nickname: '트롤러123',
+          reason: '고의적인 팀 방해 행위',
         },
-        data: [
-          {
-            nickname: '도배마스터',
-            reason: '채팅창 도배 및 방해',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 5,
-          title: '규칙 위반자 목록',
-          author: '규칙준수자',
-        },
-        data: [
-          {
-            nickname: '규칙무시남',
-            reason: '게임 규칙 지속적 위반',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 6,
-          title: '고의적 패배 유도자',
-          author: '승리추구자',
-        },
-        data: [
-          {
-            nickname: '패배유도맨',
-            reason: '의도적인 팀 패배 유도',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 7,
-          title: '비매너 행위 사례집',
-          author: '매너지킴이2',
-        },
-        data: [
-          {
-            nickname: '비매너플레이어',
-            reason: '지속적인 비매너 행위',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 8,
-          title: '팀워크 방해 행위자',
-          author: '팀워크챔피언',
-        },
-        data: [
-          {
-            nickname: '솔로플레이어',
-            reason: '팀 협력 거부 및 방해',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 9,
-          title: '게임 내 사기 행위자',
-          author: '정직한게이머',
-        },
-        data: [
-          {
-            nickname: '사기꾼123',
-            reason: '아이템 거래 사기',
-          },
-        ],
-      },
-      {
-        message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
-        post: {
-          id: 10,
-          title: '불법 프로그램 사용자',
-          author: '공정한플레이어',
-        },
-        data: [
-          {
-            nickname: '핵쓰는해커',
-            reason: '불법 프로그램 사용 의심',
-          },
-        ],
-      },
-    ]);
+      ],
+    });
   }),
 
   // blacklist 생성
