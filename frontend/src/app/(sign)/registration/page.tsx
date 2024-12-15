@@ -12,6 +12,8 @@ import { toast } from 'react-toastify';
 import { useRegisterStore } from '@/stores/useRegisterStore';
 import { CustomButton, CustomInput } from '@/components/common';
 import BackgroundVideo from '@/components/common/BackgroundVideo';
+import { motion } from 'framer-motion';
+import { pageVariants } from '@/constants/animations';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -88,17 +90,14 @@ export default function RegisterPage() {
   return (
     <main className='relative z-10 flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
       <BackgroundVideo />
-      <div className='pointer-events-none absolute inset-0 bg-black2 opacity-20'></div>
-      <div className='bg-gradient-radial pointer-events-none absolute inset-0 from-transparent to-black1'></div>
-
-      <div className='animate-fadeIn fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4'>
+      <motion.div variants={pageVariants} initial='initial' animate='animate' className='w-full max-w-md px-4'>
         <div className='relative overflow-hidden rounded-lg border-2 border-lostark-400 bg-black2 p-8 shadow-2xl'>
           <div className='absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-lostark-400 via-lostark-200 to-lostark-400'></div>
           <div className='absolute left-0 top-2 h-[1px] w-full bg-gradient-to-r from-transparent via-lostark-400/50 to-transparent'></div>
 
           <div className='mb-8 text-center'>
-            <figure className='mx-auto mb-4 w-80 animate-pulse'>
-              <Image src='/lostark_logo.png' width={320} height={320} alt='login' />
+            <figure className='mx-auto mb-4 w-80'>
+              <Image src='/lostark_logo.png' width={320} height={320} alt='login' priority />
             </figure>
             <h1 className='text-2xl font-semibold tracking-wider text-lostark-400'>회원가입</h1>
           </div>
@@ -189,7 +188,7 @@ export default function RegisterPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
     </main>
   );
 }
