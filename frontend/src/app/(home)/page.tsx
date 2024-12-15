@@ -1,112 +1,208 @@
 'use client';
-import { toast } from 'react-toastify';
-import { ClockIcon, InfoIcon, SearchIcon, ShieldIcon } from '@/styles/icons';
-import { ArrowRight } from 'lucide-react';
-import HeroBanner from '@/components/common/HeroBanner';
+import { ClockIcon } from '@/styles/icons';
+import { ArrowRight, Users, Award, ClipboardCheck, Eye, Layers } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useBlacklistStore } from '@/stores/blacklistStore';
+import SearchAutocomplete from '@/components/common/SearchAutocomplete';
+import { useBlacklist } from '@/hooks/useBlacklist';
+import { pageVariants } from '@/constants/animations';
 
-const QUICK_LINK = [
-  {
-    title: '파티원 정보',
-    icon: <ClockIcon size={28} />,
-  },
-  {
-    title: '실시간',
-    icon: <InfoIcon size={28} />,
-  },
-  {
-    title: '블랙리스트',
-    icon: <ShieldIcon size={28} />,
-  },
-  {
-    title: '여분 버튼',
-    icon: <ArrowRight size={28} />,
-  },
+const STATS_DATA = [
+  { label: '가입자 수', value: '15,234', unit: '명', icon: <Users className='h-6 w-6' /> },
+  { label: '오늘 방문자 수', value: '391', unit: '명', icon: <Eye className='h-6 w-6' /> },
+  { label: '등록된 블랙리스트', value: '1,432', unit: '건', icon: <Layers className='h-6 w-6' /> },
+  { label: '오늘 추가된 블랙리스트', value: '234', unit: '건', icon: <ClipboardCheck className='h-6 w-6' /> },
+];
+
+const POPULAR_PARTIES = [
+  { title: '발탄 하드 파티', level: '1620+', time: '오후 8시' },
+  { title: '쿠크세이튼 노말', level: '1580+', time: '오후 9시' },
+  { title: '일리아칸 하드', level: '1600+', time: '오후 10시' },
 ];
 
 const MainPage = () => {
-  const handleButtonClick = () => {
-    toast.success('버튼 클릭');
-  };
+  const router = useRouter();
+  const { setSearchTerm } = useBlacklistStore();
+  const { blacklist } = useBlacklist('popular');
 
-  const pageVariants = {
-    initial: {
-      opacity: 0,
-      x: 5,
-    },
-    animate: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.3,
-        ease: 'easeOut',
-      },
-    },
-  };
+  const overlayGradients = 'from-black1 via-transparent to-black1';
 
   return (
-    <div className='min-h-screen overflow-x-hidden bg-black1 text-gray-100'>
+    <div className='min-h-screen overflow-x-hidden bg-gradient-to-b from-black1 to-black2 text-gray-100'>
       <motion.div variants={pageVariants} initial='initial' animate='animate' exit='exit'>
-        <HeroBanner />
-        <section className='container mx-auto px-4 py-16'>
-          <h2 className='mb-8 text-3xl font-bold text-lostark-400'>파티원 검색하기</h2>
-          <div className='relative mx-auto max-w-2xl'>
-            <input
-              type='text'
-              placeholder='검색어를 입력하세요...'
-              className='w-full rounded-lg border-2 border-transparent bg-black2 px-6 py-4 text-white transition-all duration-300 hover:border-lostark-400 focus:border-lostark-400 focus:outline-none'
-            />
-            <SearchIcon className='absolute right-4 top-1/2 -translate-y-1/2 text-lostark-300' />
+        <section className='relative flex h-[80vh] items-center justify-center overflow-hidden'>
+          {/* 배경 */}
+          <video autoPlay loop muted playsInline className='absolute inset-0 h-full w-full object-cover'>
+            <source src='/videos/background.mp4' type='video/mp4' />
+          </video>
+
+          {/* 오버레이 */}
+          {[...Array(2)].map((_, idx) => (
+            <div key={`horizontal-${idx}`} className={`absolute inset-0 bg-gradient-to-r ${overlayGradients}`} />
+          ))}
+          {[...Array(2)].map((_, idx) => (
+            <div key={`vertical-${idx}`} className={`absolute inset-0 bg-gradient-to-t ${overlayGradients}`} />
+          ))}
+
+          {/* Hero */}
+          <div className='container relative z-10 mx-auto px-4 text-center'>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className='mx-auto max-w-3xl'>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className='mb-6 text-5xl font-bold text-white md:text-6xl'
+              >
+                로스트아크 파티 찾기
+              </motion.h1>
+              <p className='mb-8 text-xl text-white/80'>믿을 수 있는 파티원을 손쉽게 찾아보세요.</p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className='relative mx-auto max-w-2xl'
+              >
+                <SearchAutocomplete
+                  suggestions={blacklist}
+                  onSearch={(term) => {
+                    setSearchTerm(term);
+                    router.push('/blacklist');
+                  }}
+                />
+              </motion.div>
+            </motion.div>
           </div>
         </section>
-        {/* 바로가기 박스 */}
-        <section className='container mx-auto px-4 py-16'>
-          <h2 className='mb-12 text-3xl font-bold text-lostark-400'>주요 기능 바로가기</h2>
-          <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4'>
-            {QUICK_LINK.map((item, idx) => (
+
+        {/* 통계 */}
+        <section className='container relative z-20 mx-auto -mt-20 px-4'>
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
+            {STATS_DATA.map((stat, idx) => (
               <motion.div
                 key={idx}
-                onClick={handleButtonClick}
-                className='group flex cursor-pointer flex-col items-center rounded-lg border border-lostark-300 bg-gradient-to-br from-black2 to-black1 p-8 transition-all duration-300 hover:scale-105'
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className='rounded-2xl border border-lostark-400/20 bg-black2/50 p-6 backdrop-blur-md transition-all duration-300 hover:border-lostark-400/50'
               >
-                <div className='mb-4 text-lostark-300 transition-colors duration-300 group-hover:text-lostark-300'>
-                  {item.icon}
+                <div className='flex items-center space-x-4'>
+                  <div className='rounded-xl bg-lostark-400/10 p-3 text-lostark-400'>{stat.icon}</div>
+                  <div>
+                    <h3 className='text-3xl font-bold text-lostark-400'>
+                      {stat.value} {stat.unit}
+                    </h3>
+                    <p className='text-gray-400'>{stat.label}</p>
+                  </div>
                 </div>
-                <h3 className='text-xl font-semibold text-lostark-300 transition-colors duration-300 group-hover:text-lostark-200'>
-                  {item.title}
-                </h3>
               </motion.div>
             ))}
           </div>
         </section>
-        {/* 공지사항, 공격대 박스 */}
-        <section className='container mx-auto px-4 py-16'>
-          <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
-            {['공지사항', '공격대'].map((title) => (
-              <div key={title} className='rounded-lg bg-gradient-to-br from-black2 to-black1 p-8 shadow-lg'>
-                <h3 className='mb-6 text-2xl font-bold text-lostark-400'>{title}</h3>
-                <div className='space-y-4'>
-                  <div className='group flex items-center justify-between rounded p-4 text-lostark-100 transition-all duration-300'>
-                    <span className='transition-colors group-hover:text-lostark-200'>제목제목제목</span>
-                    <span className='text-white/50'>2024.12.08 (일)</span>
+
+        {/* 파티 */}
+        <section className='container mx-auto px-4 py-24'>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className='mb-12'
+          >
+            <h2 className='mb-2 text-4xl font-bold text-lostark-400'>인기 파티</h2>
+            <p className='text-gray-400'>현재 모집중인 인기 있는 파티들입니다</p>
+          </motion.div>
+          <div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
+            {POPULAR_PARTIES.map((party, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                className='group rounded-2xl border border-lostark-300/20 bg-gradient-to-br from-black2/80 to-black1/80 p-8 backdrop-blur-sm transition-all duration-300 hover:border-lostark-300'
+              >
+                <h3 className='mb-4 text-2xl font-semibold text-lostark-200'>{party.title}</h3>
+                <div className='space-y-3 text-sm text-gray-400'>
+                  <div className='flex items-center space-x-2'>
+                    <Award className='h-4 w-4 text-lostark-400' />
+                    <span>아이템 레벨: {party.level}</span>
+                  </div>
+                  <div className='flex items-center space-x-2'>
+                    <ClockIcon className='h-4 w-4 text-lostark-400' />
+                    <span>{party.time}</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
+
+        {/* 등록된 블랙리스트 */}
+        <section className='container mx-auto px-4 py-24'>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className='mb-12'>
+            <h2 className='mb-2 text-4xl font-bold text-lostark-400'>최근 등록된 블랙리스트</h2>
+            <p className='text-gray-400'>최근에 등록된 블랙리스트 정보입니다</p>
+          </motion.div>
+          <div className='space-y-4'>
+            {blacklist?.slice(0, 3).map((blacklistItem, index) => (
+              <motion.div
+                key={`blacklist-${blacklistItem.id}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className='flex cursor-pointer items-center justify-between rounded-lg bg-black2 p-4 transition-all duration-300 hover:bg-black1'
+                onClick={() => router.push(`/blacklist/${blacklistItem.id}`)}
+              >
+                <div className='w-full'>
+                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
+                  <p className='text-sm text-gray-400'>
+                    {blacklistItem.id} | {blacklistItem.author} | 신고 {blacklistItem.id}회
+                  </p>
+                  <p className='mt-2 line-clamp-1 text-sm text-gray-400'>{blacklistItem.id}</p>
+                </div>
+                <div className='ml-4 flex items-center gap-2'>
+                  <span className='rounded-full bg-red-500/10 px-3 py-1 text-sm text-red-400'>{blacklistItem.id}</span>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className='rounded-full bg-lostark-400 p-2 text-white hover:bg-lostark-500'
+                    onClick={() => router.push(`/blacklist/${blacklistItem.id}`)}
+                  >
+                    <ArrowRight size={20} />
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className='mt-8 text-center'
+          >
+            <button
+              onClick={() => router.push('/blacklist')}
+              className='rounded-lg bg-lostark-400 px-6 py-3 text-white transition-all duration-300 hover:bg-lostark-500'
+            >
+              전체 블랙리스트 보기
+            </button>
+          </motion.div>
+        </section>
+
         {/* Footer */}
-        <footer className='border-t border-black2 py-12'>
-          <div className='mx-auto px-4'>
-            <div className='mb-8 flex justify-center space-x-12'>
+        <footer className='border-t border-lostark-400/10 bg-black1 py-16'>
+          <div className='container mx-auto px-4'>
+            <div className='mb-12 flex flex-wrap justify-center gap-8'>
               {['이용약관', '개인정보처리방침', '문의하기', '후원하기'].map((item) => (
-                <a key={item} className='relative text-white/50 transition-all duration-300 hover:text-lostark-400'>
+                <motion.a
+                  key={item}
+                  whileHover={{ scale: 1.05 }}
+                  className='relative text-white/70 transition-all duration-300 hover:text-lostark-400'
+                >
                   {item}
-                  <span className='transition-all duration-300'></span>
-                </a>
+                </motion.a>
               ))}
             </div>
-            <p className='text-center text-white/50'>Copyright © All rights reserved.</p>
+            <p className='text-center text-white/50'>© 2024 로스트아크 파티파인더. All rights reserved.</p>
           </div>
         </footer>
       </motion.div>

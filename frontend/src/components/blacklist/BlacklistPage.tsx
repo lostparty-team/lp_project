@@ -11,6 +11,7 @@ import { useLoadingStore } from '@/stores/loadingStore';
 import { useRouter } from 'next/navigation';
 import { CustomButton } from '../common';
 import BlacklistCreateModal from './modal/blacklistCreate';
+import { toast } from 'react-toastify';
 
 const BlacklistItem = memo(
   ({
@@ -112,6 +113,7 @@ const MyBlacklistItem = memo(
 const BlacklistPage = () => {
   const router = useRouter();
   const cartRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const {
     searchTerm,
     flyingItem,
@@ -280,6 +282,18 @@ const BlacklistPage = () => {
     [setSelectedBlacklistData],
   );
 
+  useEffect(() => {
+    if (searchInputRef.current && searchTerm) {
+      searchInputRef.current.value = searchTerm;
+      const filteredResults = blacklist.filter(
+        (item) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
+      );
+      if (filteredResults.length === 0) {
+        toast.info('검색 결과가 없습니다.');
+      }
+    }
+  }, [searchTerm, blacklist]);
+
   return (
     <div className='relative min-h-screen bg-black1 text-gray-100'>
       {/* 인기 블랙리스트 */}
@@ -301,6 +315,7 @@ const BlacklistPage = () => {
           <LikeButton />
           <div className='relative flex-1'>
             <input
+              ref={searchInputRef}
               type='text'
               value={searchTerm}
               onChange={handleBlacklistSearch}
