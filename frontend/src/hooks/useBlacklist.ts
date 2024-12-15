@@ -9,6 +9,11 @@ export const useBlacklist = (sortType?: SortType) => {
   const { data: blacklist = [], isLoading } = useQuery({
     queryKey: ['blacklist', sortType],
     queryFn: () => blacklistApi.getBlacklist(sortType),
+    staleTime: 1000 * 60 * 5, // 5분
+    gcTime: 1000 * 60 * 30, // 30분
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 
   return {
