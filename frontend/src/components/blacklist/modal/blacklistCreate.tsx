@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { CustomButton } from '../common';
+import { CustomButton } from '../../common';
 import { Check, Edit } from 'lucide-react';
 import { axiosInstance } from '@/api/axios';
 import { toast } from 'react-toastify';

@@ -1,4 +1,4 @@
-import BlacklistModal from '@/components/modal/blacklistModal';
+import BlacklistModal from '@/components/blacklist/modal/blacklistModal';
 
 export default function InterceptedBlacklistModal() {
   return <BlacklistModal />;
