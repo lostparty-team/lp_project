@@ -17,7 +17,7 @@ const pretendard = localFont({
 });
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='ko'>
+    <html lang='ko' className='bg-black1'>
       <body className={pretendard.className}>
         <MSWProvider>
           <QueryProvider>
