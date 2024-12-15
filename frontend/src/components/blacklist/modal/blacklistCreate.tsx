@@ -19,7 +19,7 @@ interface BlacklistUser {
 const BlacklistCreateModal = () => {
   const { isLoading, setIsLoading } = useLoadingStore();
   const { setIsCreateModalOpen } = useBlacklistStore();
-  const nameRegex = /^(?![0-9])[가-힣a-zA-Z][가-힣a-zA-Z0-9]{1,11}$/;
+  const nameRegex = /^[가-힣a-zA-Z0-9]{2,12}$/;
   const [blacklist, setBlacklist] = useState<BlacklistUser[]>([]);
   const [newUser, setNewUser] = useState<BlacklistUser>({ id: 0, nickname: '', reason: '' });
   const [isValidName, setIsValidName] = useState(true);
