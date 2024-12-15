@@ -2,23 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation';
-import '../../styles/pages/blacklist.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ThumbsUp } from 'lucide-react';
 import { handleBackdropClick } from '@/utils/modalUtils';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { getBlacklistDetail } from '@/api/blacklist';
 import { BlacklistDetail } from '@/types/blacklist';
-import { useLoadingStore } from '@/stores/loadingStore';
 import { toast } from 'react-toastify';
 
 const BlacklistModal = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { id } = useParams();
-  const { selectedBlacklistData, setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
+  const { setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
   const [blacklist, setBlacklist] = useState<BlacklistDetail | null>(null);
-  const { isLoading, setIsLoading } = useLoadingStore();
+  const [isPageLoading, setIsPageLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -26,13 +24,13 @@ const BlacklistModal = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        setIsLoading(true);
+        setIsPageLoading(true);
         const { data } = await getBlacklistDetail(id as string);
         setBlacklist(data);
       } catch (error) {
         toast.error('블랙리스트 데이터 로딩 실패');
       } finally {
-        setIsLoading(false);
+        setIsPageLoading(false);
       }
     };
     fetch();
@@ -112,7 +110,7 @@ const BlacklistModal = () => {
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <h2 className='bg-gradient-to-r from-lostark-400 to-lostark-300 bg-clip-text text-3xl font-bold text-transparent text-white'>
-                      {blacklist?.post.id}
+                      {blacklist?.post.title}
                     </h2>
                     <span className='rounded-full bg-lostark-400/20 px-3 py-1 text-sm font-medium text-lostark-400'>
                       블랙리스트
@@ -160,7 +158,7 @@ const BlacklistModal = () => {
                 </div>
 
                 <div className='scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30 flex h-[360px] flex-col overflow-y-auto'>
-                  {isLoading ? (
+                  {isPageLoading ? (
                     <div className='flex items-center justify-center py-8 text-white/60'>
                       <div className='flex items-center gap-2'>
                         <div className='h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-lostark-400'></div>
