@@ -7,6 +7,10 @@ import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { CustomButton } from '@/components/common';
+import BackgroundVideo from '@/components/common/BackgroundVideo';
+import { motion } from 'framer-motion';
+import { pageVariants } from '@/constants/animations';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,18 +38,16 @@ export default function LoginPage() {
   };
 
   return (
-    <main className='bg-black1 relative flex min-h-screen w-full items-center justify-center overflow-hidden'>
-      <div className='bg-black2 absolute inset-0 opacity-20'></div>
-      <div className='bg-gradient-radial to-black1 absolute inset-0 from-transparent'></div>
-
-      <div className='animate-fadeIn relative w-full max-w-md px-4 py-8'>
-        <div className='bg-black2 relative overflow-hidden rounded-lg border-2 border-lostark-400 p-8 shadow-2xl'>
+    <main className='relative z-10 flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
+      <BackgroundVideo />
+      <motion.div variants={pageVariants} initial='initial' animate='animate' className='w-full max-w-md px-4'>
+        <div className='relative overflow-hidden rounded-lg border-2 border-lostark-400 bg-black2 p-8 shadow-2xl'>
           <div className='absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-lostark-400 via-lostark-300 to-lostark-400'></div>
           <div className='absolute left-0 top-2 h-[1px] w-full bg-gradient-to-r from-transparent via-lostark-400/50 to-transparent'></div>
 
           <div className='mb-8 text-center'>
-            <figure className='mx-auto mb-4 w-80 animate-pulse'>
-              <Image src='/lostark_logo.png' width={320} height={320} alt='login' />
+            <figure className='mx-auto mb-4 w-80'>
+              <Image src='/lostark_logo.png' width={320} height={320} alt='login' priority />
             </figure>
             <h1 className='text-2xl font-semibold tracking-wider text-lostark-400'>로그인</h1>
           </div>
@@ -59,7 +61,7 @@ export default function LoginPage() {
                 })}
                 type='text'
                 placeholder='아이디를 입력하세요'
-                className='bg-black1 w-full rounded-md border border-lostark-400/30 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
+                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
               {errors.id && <span className='text-sm text-red-400'>{errors.id.message}</span>}
             </div>
@@ -72,18 +74,14 @@ export default function LoginPage() {
                 })}
                 type='password'
                 placeholder='비밀번호를 입력하세요'
-                className='bg-black1 w-full rounded-md border border-lostark-400/30 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
+                className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
               {errors.password && <span className='text-sm text-red-400'>{errors.password.message}</span>}
             </div>
 
-            <button
-              type='submit'
-              className='w-full transform rounded-md border border-lostark-500 px-4 py-3 text-lostark-400 outline-none transition-all hover:border-lostark-400'
-              disabled={isLoggingIn}
-            >
+            <CustomButton type='submit' disabled={isLoggingIn} className='w-full'>
               {isLoggingIn ? '로그인 중...' : '로그인'}
-            </button>
+            </CustomButton>
           </form>
 
           <div className='flex justify-between py-4 text-center'>
@@ -101,7 +99,7 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
     </main>
   );
 }

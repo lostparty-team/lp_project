@@ -1,7 +1,7 @@
 export const API = {
   AUTH: {
-    SIGNUP: '/register',
-    LOGIN: '/login',
+    SIGNUP: '/api/register',
+    LOGIN: '/api/login',
   },
   USER: {
     PROFILE: '/me',

@@ -1,13 +1,18 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3030',
+  baseURL: process.env.NEXT_PUBLIC_TEST_API,
   withCredentials: true,
 });
 
-const axiosPythonInstance = axios.create({
-  baseURL: 'http://localhost:5001',
+const axiosAuthInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_AUTH_API,
   withCredentials: false,
 });
 
-export { axiosInstance, axiosPythonInstance };
+const axiosPythonInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_PYTHON_API,
+  withCredentials: false,
+});
+
+export { axiosInstance, axiosAuthInstance, axiosPythonInstance };
