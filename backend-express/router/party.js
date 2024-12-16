@@ -116,9 +116,8 @@ const 무기레벨추출함수 = (input) => {
  *                   example: "데이터를 가져오는 중 오류가 발생했습니다."
  */
 router.post("/", authenticateToken, async (req, res) => {
-  const clientId = req.user.clientId; // 인증 미들웨어에서 추출된 값
+  const clientId = req.user.clientId; // 인증 미들웨어에서 추출된 clientId
   const nickname = req.body.nickname;
-  console.log(clientId)
 
   if (!nickname) {
     return res.status(400).json({ error: "닉네임이 제공되지 않았습니다." });
@@ -143,7 +142,7 @@ router.post("/", authenticateToken, async (req, res) => {
       }
     );
 
-    // 데이터 처리
+    // Lost Ark API 응답 데이터 처리
     const 직업각인 = 직업각인함수(
       JSON.parse(response.data.ArkPassive?.Effects?.[0]?.ToolTip)?.Element_000?.value || ""
     );
@@ -155,12 +154,25 @@ router.post("/", authenticateToken, async (req, res) => {
     const 악세옵션 = 악세옵션목록분석(response);
     const 보석 = 보석검사(response);
 
-    // 응답 반환
+    // 장바구니의 블랙리스트 글 닉네임 비교
+    const cartQuery = `
+      SELECT b.nickname 
+      FROM Cart c 
+      JOIN Blacklist b ON c.postId = b.postId
+      WHERE c.clientId = ?
+    `;
+    const [cartNicknames] = await db.query(cartQuery, [clientId]);
+
+    // 블랙리스트 포함 여부 확인
+    const isBlacklisted = cartNicknames.some((item) => item.nickname === nickname);
+
+    // 응답 데이터 반환
     res.json({
       무기레벨: 무기정보,
       직업각인: 직업각인,
       악세목록: 악세옵션,
       보석: 보석,
+      블랙리스트포함여부: isBlacklisted,
     });
   } catch (error) {
     console.error("API 요청 중 오류 발생:", error.message);
