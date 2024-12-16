@@ -27,7 +27,7 @@ INSERT INTO User (userId, password, clientId, apikey) VALUES
 -- Posts 테이블 (조회수와 추천수 추가)
 CREATE TABLE IF NOT EXISTS Posts (
     id INT AUTO_INCREMENT PRIMARY KEY,   -- 글번호
-    title VARCHAR(255) NOT NULL,  -- 글제목
+    title VARCHAR(255) NOT NULL,         -- 글제목
     author VARCHAR(100) NOT NULL,        -- 작성자 (User 테이블의 userId와 연결)
     views INT DEFAULT 0,                 -- 조회수 (기본값 0)
     likes INT DEFAULT 0,                 -- 추천수 (기본값 0)

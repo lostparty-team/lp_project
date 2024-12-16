@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import type { RegisterInfo, ResponseToken, UserCredentials } from '../types/domain';
-import axiosInstance from '@/api/axios';
+import { axiosInstance } from '@/api/axios';
 import { API } from '@/constants/route';
 
 const postSignup = async ({ id, password, api }: RegisterInfo): Promise<AxiosResponse> => {

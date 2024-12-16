@@ -9,9 +9,12 @@ COPY requirements.txt requirements.txt
 COPY . .
 
 # 패키지 업데이트 및 필요한 라이브러리 설치
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
+    tesseract-ocr-kor \
+    tesseract-ocr-eng \
     libtesseract-dev \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Python 라이브러리 설치

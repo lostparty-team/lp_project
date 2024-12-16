@@ -6,7 +6,7 @@ function authenticateToken(req, res, next) {
   // 테스트 환경을 제외하고는 전부 지워야함
   if (process.env.NODE_ENV === "test") {
     // 테스트 환경에서는 인증 건너뜀
-    req.user = { clientId: "1000000000051231237155" }; // Mock 데이터 설정
+    req.user = { clientId: "1000000000057155" }; // Mock 데이터 설정
     return next();
   }
 
