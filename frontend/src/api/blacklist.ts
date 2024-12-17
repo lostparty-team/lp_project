@@ -8,8 +8,12 @@ export const blacklistApi = {
     });
     return data as BlacklistUser[];
   },
+  deleteBlacklist: async (id: string) => {
+    const { data } = await axiosInstance.delete(`/api/blacklist/${id}`);
+    return data;
+  },
 };
 
 export const getBlacklistDetail = (id: string) => {
-  return axiosInstance.get(`${process.env.NEXT_PUBLIC_TEST_API}/api/blacklist/${id}`);
+  return axiosInstance.get(`/api/blacklist/${id}`);
 };
