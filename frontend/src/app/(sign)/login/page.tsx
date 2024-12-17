@@ -27,6 +27,7 @@ export default function LoginPage() {
       const res = await postLogin(data);
       if (res.status === 200) {
         router.push('/');
+        toast.success('로그인에 성공하였습니다.');
       } else {
         toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
         setIsLoggingIn(false);
