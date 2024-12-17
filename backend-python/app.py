@@ -73,7 +73,7 @@ def process_image():
         # 텍스트 배열 반환
         return jsonify({
             'status': 'success',
-            'message': '템플릿 매칭됨, 마스크 처리됨, 텍스트 추출함함',
+            'message': '템플릿 매칭됨, 마스크 처리됨, 텍스트 추출함',
             '닉네임': lines
         }), 200
 
