@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { CustomButton } from '../../common';
+import { CustomButton, CustomInput } from '../../common';
 import { Check, Edit } from 'lucide-react';
 import { axiosInstance } from '@/api/axios';
 import { toast } from 'react-toastify';
@@ -275,8 +275,7 @@ const BlacklistCreateModal = () => {
               <div className='flex items-center gap-4'>
                 <div className='flex-1'>
                   <div className='h-[72px]'>
-                    {' '}
-                    <input
+                    <CustomInput
                       ref={nameInputRef}
                       type='text'
                       value={newUser.nickname}
@@ -291,13 +290,16 @@ const BlacklistCreateModal = () => {
                         }
                       }}
                       placeholder='이름'
+                      err={true}
                       className={`w-full rounded-lg border ${
                         isValidName ? 'border-white/20' : 'border-red-500/50'
                       } overflow-hidden text-ellipsis whitespace-nowrap bg-black2/50 px-4 py-2.5 text-white/70 placeholder-white/50 transition-all duration-300 focus:border-lostark-400 focus:outline-none`}
                     />
-                    {!isValidName && (
-                      <p className='mt-1 text-sm text-red-400'>2~12자의 한글, 영문, 숫자만 사용 가능합니다.</p>
-                    )}
+                    <div className='min-h-[24px] pt-1'>
+                      {!isValidName && (
+                        <p className='text-sm text-red-400'>2~12자의 한글, 영문, 숫자만 사용 가능합니다.</p>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className='flex-1'>

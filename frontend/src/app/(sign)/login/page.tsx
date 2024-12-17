@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { CustomButton } from '@/components/common';
+import { CustomButton, CustomInput } from '@/components/common';
 import BackgroundVideo from '@/components/common/BackgroundVideo';
 import { motion } from 'framer-motion';
 import { pageVariants } from '@/constants/animations';
@@ -54,8 +54,8 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
             <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>아이디</label>
-              <input
+              <CustomInput
+                label='아이디'
                 {...register('id', {
                   required: '아이디를 입력해주세요.',
                 })}
@@ -65,10 +65,9 @@ export default function LoginPage() {
               />
               {errors.id && <span className='text-sm text-red-400'>{errors.id.message}</span>}
             </div>
-
             <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>비밀번호</label>
-              <input
+              <CustomInput
+                label='비밀번호'
                 {...register('password', {
                   required: '비밀번호를 입력해주세요.',
                 })}
@@ -78,7 +77,6 @@ export default function LoginPage() {
               />
               {errors.password && <span className='text-sm text-red-400'>{errors.password.message}</span>}
             </div>
-
             <CustomButton type='submit' disabled={isLoggingIn} className='w-full'>
               {isLoggingIn ? '로그인 중...' : '로그인'}
             </CustomButton>
