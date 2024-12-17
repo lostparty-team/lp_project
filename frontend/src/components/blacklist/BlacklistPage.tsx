@@ -1,6 +1,7 @@
 'use client';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import BlacklistItem from './BlacklistItem';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { Minus, Plus, Search } from 'lucide-react';
@@ -12,57 +13,6 @@ import { useRouter } from 'next/navigation';
 import { CustomButton } from '../common';
 import BlacklistCreateModal from './modal/blacklistCreate';
 import { toast } from 'react-toastify';
-
-const BlacklistItem = ({
-  blacklistItem,
-  onItemClick,
-  onAddClick,
-}: {
-  blacklistItem: BlacklistUser;
-  onItemClick: (item: BlacklistUser) => void;
-  onAddClick: (item: BlacklistUser, e: React.MouseEvent) => void;
-}) => {
-  const listItemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (index: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: index * 0.05,
-        duration: 0.5,
-      },
-    }),
-    hover: {
-      scale: 1.02,
-      backgroundColor: '#1a1a1a',
-      transition: { duration: 0.2 },
-    },
-  };
-
-  return (
-    <motion.li
-      variants={listItemVariants}
-      initial='hidden'
-      animate='visible'
-      whileHover='hover'
-      className='flex items-center justify-between rounded-lg bg-black2 p-4'
-      layout
-    >
-      <button className='w-full text-left outline-none' onClick={() => onItemClick(blacklistItem)}>
-        <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
-        <p className='text-sm text-gray-400'>
-          {blacklistItem.id} | {blacklistItem.author} | 담은수 {blacklistItem.id} | 비추천
-        </p>
-      </button>
-      <button
-        onClick={(e) => onAddClick(blacklistItem, e)}
-        className='rounded-full bg-[#4CAF50] p-2 hover:bg-[#358438]'
-      >
-        <Plus className='text-white' size={20} />
-      </button>
-    </motion.li>
-  );
-};
 
 const MyBlacklistItem = ({
   blacklistItem,
@@ -80,7 +30,7 @@ const MyBlacklistItem = ({
       animate={{
         opacity: 1,
         height: 'auto',
-        transition: { duration: 0.2 }, // 명시적 duration 설정
+        transition: { duration: 0.2 },
       }}
       exit={{
         opacity: 0,
@@ -105,6 +55,7 @@ const BlacklistPage = () => {
   const router = useRouter();
   const cartRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
   const {
     searchTerm,
     flyingItem,
@@ -116,7 +67,6 @@ const BlacklistPage = () => {
     setSelectedBlacklistData,
     setSortType,
     setCartRef,
-    isModalOpen,
     setIsModalOpen,
   } = useBlacklistStore();
 
@@ -180,6 +130,54 @@ const BlacklistPage = () => {
   const handleRemoveFromBlacklist = (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
     e.stopPropagation();
     handleRemoveFromMyBlacklist(blacklistItem.id);
+  };
+
+  const handleDeleteBlacklist = async (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isDeletingId !== null) return; // 이미 삭제 진행 중이면 중단
+    setIsDeletingId(blacklistItem.id);
+    const postId = toast.warn(
+      <div className=''>
+        <p className='mb-4'>블랙리스트를 삭제하시겠습니까?</p>
+        <div className='flex justify-end gap-2'>
+          <button
+            className='rounded bg-gray-500 px-3 py-1 text-white hover:bg-gray-600'
+            onClick={() => {
+              toast.dismiss(postId);
+              setIsDeletingId(null);
+            }}
+          >
+            취소
+          </button>
+          <button
+            className='rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600'
+            onClick={async () => {
+              try {
+                // const res = await deleteBlacklist(blacklistItem.id);
+                toast.dismiss(postId);
+                toast.success('블랙리스트가 삭제되었습니다.');
+              } catch (error) {
+                toast.dismiss(postId);
+                toast.error('블랙리스트 삭제에 실패했습니다.');
+              } finally {
+                setIsDeletingId(null);
+              }
+            }}
+          >
+            삭제
+          </button>
+        </div>
+      </div>,
+      {
+        autoClose: false,
+        closeOnClick: false,
+        closeButton: false,
+        position: 'top-center',
+        hideProgressBar: true,
+        draggable: false,
+        className: 'no-transition',
+      },
+    );
   };
 
   const handleCreateModalOpen = () => {
@@ -284,6 +282,8 @@ const BlacklistPage = () => {
                 blacklistItem={blacklistItem}
                 onItemClick={handleBlacklistItemClick}
                 onAddClick={handleAddToBlacklist}
+                onDeleteClick={handleDeleteBlacklist}
+                isDeleting={isDeletingId === blacklistItem.id}
               />
             ))}
           </ul>
