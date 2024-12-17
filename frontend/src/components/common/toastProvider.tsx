@@ -1,9 +1,19 @@
 'use client';
-import { ToastContainer } from 'react-toastify';
+import { Flip, Slide, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 const ToastProvider = () => {
-  return <ToastContainer theme='dark' autoClose={2000} pauseOnFocusLoss={false} pauseOnHover={false} />;
+  return (
+    <ToastContainer
+      theme='dark'
+      autoClose={100}
+      pauseOnFocusLoss={false}
+      pauseOnHover={false}
+      limit={1}
+      transition={Flip}
+      hideProgressBar
+    />
+  );
 };
 
 export default ToastProvider;
