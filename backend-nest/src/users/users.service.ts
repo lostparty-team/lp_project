@@ -1,3 +1,4 @@
+import { UserResponseDto } from './dto/user.response.dto';
 import { AuthService } from './../auth/auth.service';
 import { LoginUserRequestDto } from './dto/login-user.request.dto';
 import {
@@ -120,6 +121,7 @@ export class UsersService {
     });
     if (!user) throw new UnauthorizedException('로그인 후 사용해주세요.');
     const { password: pass, ...userInfowithoutPassword } = user;
+    const me = Object.assign(new UserResponseDto(), userInfowithoutPassword);
     return userInfowithoutPassword;
   }
 }
