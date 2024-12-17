@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import BlacklistItem from './BlacklistItem';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { useBlacklistStore } from '@/stores/blacklistStore';
-import { Minus, Plus, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import LikeButton from '@/components/common/LikeButton';
 import { BlacklistUser, SortType } from '@/types/blacklist';
 import PopularList from '@/components/blacklist/PopularList';
@@ -13,43 +13,7 @@ import { useRouter } from 'next/navigation';
 import { CustomButton } from '../common';
 import BlacklistCreateModal from './modal/blacklistCreate';
 import { toast } from 'react-toastify';
-
-const MyBlacklistItem = ({
-  blacklistItem,
-  onItemClick,
-  onRemoveClick,
-}: {
-  blacklistItem: BlacklistUser;
-  onItemClick: (item: BlacklistUser) => void;
-  onRemoveClick: (item: BlacklistUser, e: React.MouseEvent) => void;
-}) => {
-  return (
-    <motion.li
-      layout
-      initial={{ opacity: 0, height: 0 }}
-      animate={{
-        opacity: 1,
-        height: 'auto',
-        transition: { duration: 0.2 },
-      }}
-      exit={{
-        opacity: 0,
-        height: 0,
-        transition: { duration: 0.2 },
-      }}
-      className='flex items-center justify-between overflow-hidden rounded-lg bg-black2 p-2'
-      whileHover={{ scale: 1.02 }}
-    >
-      <button className='w-full text-left' onClick={() => onItemClick(blacklistItem)}>
-        <p className='text-sm text-lostark-300'>{blacklistItem?.title || '이름 없음'}</p>
-        <p className='text-sm text-gray-400'>{blacklistItem.author}</p>
-      </button>
-      <button onClick={(e) => onRemoveClick(blacklistItem, e)} className='rounded-full bg-red-500 p-2 hover:bg-red-600'>
-        <Minus className='text-white' size={14} />
-      </button>
-    </motion.li>
-  );
-};
+import MyBlacklistItem from './MyBlacklistItem';
 
 const BlacklistPage = () => {
   const router = useRouter();
