@@ -441,31 +441,48 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
 
 // 블랙리스트 목록 조회
 router.get('/', authenticateToken, async (req, res) => {
+  const { page = 1, sort = 'latest' } = req.query; // 페이지와 정렬 기준 파라미터
+  const limit = 10; // 페이지당 항목 수
+  const offset = (page - 1) * limit;
+
+  // 정렬 기준 설정
+  let orderByClause = 'p.id DESC'; // 기본 정렬: 최신순
+  if (sort === 'cart_count') {
+    orderByClause = 'cart_count DESC';
+  }
+
   try {
+    // 블랙리스트 게시글 조회 SQL
     const selectQuery = `
       SELECT 
         p.id, 
         p.title, 
         p.author, 
         p.views, 
-        COUNT(d.id) AS dislikes -- 비추천 수 추가
+        COUNT(c.id) AS cart_count, -- 장바구니에 담긴 수
+        COUNT(d.id) AS dislikes    -- 비추천 수
       FROM Posts p
+      LEFT JOIN Cart c ON p.id = c.postId
       LEFT JOIN Dislike d ON p.id = d.postId
       GROUP BY p.id, p.title, p.author, p.views
-      ORDER BY p.id ASC
+      ORDER BY ${orderByClause}
+      LIMIT ? OFFSET ?
     `;
-    const [rows] = await db.query(selectQuery);
+    const [rows] = await db.query(selectQuery, [limit, offset]);
 
-    console.log('글번호-글제목-작성자-조회수-비추천수 목록을 성공적으로 조회했습니다.');
+    console.log('블랙리스트 목록을 성공적으로 조회했습니다.');
     res.status(200).json({
-      message: '글번호-글제목-작성자-조회수-비추천수 목록을 성공적으로 조회했습니다.',
+      message: '블랙리스트 목록을 성공적으로 조회했습니다.',
       data: rows,
+      currentPage: Number(page),
+      sort,
     });
   } catch (error) {
-    console.error('목록 조회 중 오류 발생:', error);
-    res.status(500).json({ message: '목록 조회 실패', error });
+    console.error('블랙리스트 조회 중 오류 발생:', error);
+    res.status(500).json({ message: '블랙리스트를 조회하지 못했습니다.', error });
   }
 });
+
 
 
 
