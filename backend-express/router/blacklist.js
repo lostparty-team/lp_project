@@ -465,6 +465,7 @@ router.get('/', authenticateToken, async (req, res) => {
       LEFT JOIN Cart c ON p.id = c.postId
       LEFT JOIN Dislike d ON p.id = d.postId
       GROUP BY p.id, p.title, p.author, p.views
+      
       ORDER BY ${orderByClause}
       LIMIT ? OFFSET ?
     `;

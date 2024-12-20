@@ -8,7 +8,7 @@ const swaggerDocs = require("./swagger/swagger");
 // 별도로 분리된 미들웨어 가져오기
 const authenticateToken = require('./middleware/authenticateToken');
 
-app.use(express.json()); // POST 요청의 JSON 데이터 파싱
+app.use(express.json({ limit: '10mb' })); // 기본값은 '100kb'  // POST 요청의 JSON 데이터 파싱
 
 app.use(cors({
   origin: 'http://localhost:3000', // React 도메인
