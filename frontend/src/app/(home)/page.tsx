@@ -7,6 +7,7 @@ import { useBlacklistStore } from '@/stores/blacklistStore';
 import SearchAutocomplete from '@/components/common/SearchAutocomplete';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { pageVariants } from '@/constants/animations';
+import Image from 'next/image';
 
 const STATS_DATA = [
   { label: '가입자 수', value: '15,234', unit: '명', icon: <Users className='h-6 w-6' /> },
@@ -53,9 +54,14 @@ const MainPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className='mb-6 text-5xl font-bold text-white md:text-6xl'
               >
-                로스트아크 파티 찾기
+                <figure className='flex items-center justify-center'>
+                  <Image src='/loa_logo.svg' width={100} height={100} alt='' />
+                </figure>
+                <span className='bg-gradient-to-r from-white via-lostark-200 to-lostark-600 bg-clip-text text-transparent'>
+                  로스트파티
+                </span>
               </motion.h1>
-              <p className='mb-8 text-xl text-white/80'>믿을 수 있는 파티원을 손쉽게 찾아보세요.</p>
+              <p className='mb-8 text-xl text-white/80'>믿을 수 있는 파티원을 손쉽게 조회하세요.</p>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
