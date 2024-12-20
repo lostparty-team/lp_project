@@ -1,19 +1,55 @@
-import { NAV_LINK } from '@/constants/nav';
+'use client';
+import { logout } from '@/api/auth';
+import { COMMON_NAV_LINKS, AUTH_NAV_LINKS } from '@/constants/nav';
+import { useAuthStore } from '@/stores/useAuthStore';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useLayoutEffect, useState } from 'react';
 
-const NavLinks = () => (
-  <nav>
-    <ul className='flex space-x-8'>
-      {NAV_LINK.map(({ href, name }) => (
-        <li key={href}>
-          <Link href={href} className='relative text-lg transition-colors hover:text-lostark-400'>
-            {name}
+const NavLinks = () => {
+  const { isLogin, setIsLogin } = useAuthStore();
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useLayoutEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const authLink = isLogin ? AUTH_NAV_LINKS.authenticated : AUTH_NAV_LINKS.unauthenticated;
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    if (isLogin) {
+      e.preventDefault();
+      setIsLogin(false);
+      logout();
+    }
+  };
+
+  return (
+    <nav>
+      <ul className='flex space-x-8'>
+        {COMMON_NAV_LINKS.map(({ href, name }) => (
+          <li key={href}>
+            <Link href={href} className='relative text-lg transition-colors hover:text-lostark-400'>
+              {name}
+            </Link>
+          </li>
+        ))}
+        <li key={authLink.href}>
+          <Link
+            href={authLink.href}
+            className='relative text-lg transition-colors hover:text-lostark-400'
+            onClick={handleLogout}
+          >
+            {authLink.name}
           </Link>
         </li>
-      ))}
-    </ul>
-  </nav>
-);
+      </ul>
+    </nav>
+  );
+};
 
 const MainHeader = () => (
   <div className='container mx-auto flex h-16 items-center justify-between px-4'>

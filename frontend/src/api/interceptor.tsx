@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { axiosInstance } from './axios';
+import { axiosAuthInstance } from './axios';
 import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'react-toastify';
 
@@ -25,7 +25,7 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
   };
 
   useEffect(() => {
-    const requestInterceptor = axiosInstance.interceptors.request.use(
+    const requestInterceptor = axiosAuthInstance.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem(TOKEN_KEY);
         if (isProtectedRoute(pathname) || (config.url && isProtectedApi(config.url))) {
@@ -42,7 +42,7 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
       },
     );
 
-    const responseInterceptor = axiosInstance.interceptors.response.use(
+    const responseInterceptor = axiosAuthInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response) {
@@ -70,8 +70,8 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
     }
 
     return () => {
-      axiosInstance.interceptors.request.eject(requestInterceptor);
-      axiosInstance.interceptors.response.eject(responseInterceptor);
+      axiosAuthInstance.interceptors.request.eject(requestInterceptor);
+      axiosAuthInstance.interceptors.response.eject(responseInterceptor);
     };
   }, [router, pathname]);
 
