@@ -14,15 +14,13 @@ import { pageVariants } from '@/constants/animations';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginInfo>();
 
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
-    setIsLoggingIn(true);
     try {
       const res = await postLogin(data);
       if (res.status === 200) {
@@ -30,11 +28,9 @@ export default function LoginPage() {
         toast.success('로그인에 성공하였습니다.');
       } else {
         toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
-        setIsLoggingIn(false);
       }
     } catch (err) {
       toast.error('로그인 중 오류가 발생했습니다.');
-      setIsLoggingIn(false);
     }
   };
 
@@ -78,8 +74,12 @@ export default function LoginPage() {
               />
               {errors.password && <span className='text-sm text-red-400'>{errors.password.message}</span>}
             </div>
-            <CustomButton type='submit' disabled={isLoggingIn} className='w-full'>
-              {isLoggingIn ? '로그인 중...' : '로그인'}
+            <CustomButton
+              type='submit'
+              disabled={isSubmitting}
+              className={`w-full ${isSubmitting && 'cursor-not-allowed'}`}
+            >
+              {isSubmitting ? '로그인 중...' : '로그인'}
             </CustomButton>
           </form>
 

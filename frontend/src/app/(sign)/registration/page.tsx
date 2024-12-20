@@ -20,14 +20,13 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, dirtyFields },
+    formState: { errors, dirtyFields, isSubmitting },
     trigger,
     watch,
   } = useForm<RegisterInfo>({
     mode: 'onChange',
   });
-  const { idChecked, idCheckStatus, isChecking, isSubmitting, setIdChecked, setIdCheckStatus, setIsChecking } =
-    useRegisterStore();
+  const { idChecked, idCheckStatus, isChecking, setIdChecked, setIdCheckStatus, setIsChecking } = useRegisterStore();
   const idValue = watch('id');
   const passwordValue = watch('password');
 
@@ -124,7 +123,7 @@ export default function RegisterPage() {
                     onClick={handleCheckId}
                     variant='secondary'
                     size='sm'
-                    className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500 hover:text-lostark-400' : 'text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
+                    className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500 hover:text-lostark-400' : 'cursor-not-allowed text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
                   >
                     {isChecking ? '확인 중...' : '중복 확인'}
                   </CustomButton>
@@ -174,8 +173,12 @@ export default function RegisterPage() {
                 successMessage={dirtyFields.api && !errors.api ? '' : null}
               />
             </div>
-            <CustomButton type='submit' disabled={isSubmitting} className='w-full'>
-              회원가입
+            <CustomButton
+              type='submit'
+              disabled={isSubmitting}
+              className={`w-full ${isSubmitting && 'cursor-not-allowed'}`}
+            >
+              {isSubmitting ? '회원가입중...' : '회원가입'}
             </CustomButton>
           </form>
 
