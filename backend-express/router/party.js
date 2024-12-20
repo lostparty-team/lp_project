@@ -134,19 +134,13 @@ const 초월추출함수 = (input) => {
 router.post("/", authenticateToken, async (req, res) => {
   const clientId = req.user.clientId; // 인증 미들웨어에서 추출된 clientId
   const nickname = req.body.nickname;
+  const apikey = req.user.apikey;
 
   if (!nickname) {
     return res.status(400).json({ error: "닉네임이 제공되지 않았습니다." });
   }
 
   try {
-    // API Key 가져오기
-    const [rows] = await db.query("SELECT apikey FROM User WHERE clientId = ?", [clientId]);
-    if (!rows || rows.length === 0) {
-      return res.status(404).json({ error: "유효하지 않은 clientId입니다." });
-    }
-    const apikey = rows[0].apikey;
-
     // Lost Ark API 호출
     const response = await axios.get(
       `https://developer-lostark.game.onstove.com/armories/characters/${nickname}`,
@@ -230,7 +224,7 @@ router.post("/", authenticateToken, async (req, res) => {
     // const 직업각인 = 직업각인함수(
     //   JSON.parse(response.data.ArkPassive?.Effects?.[0]?.ToolTip)?.Element_000?.value || ""
     // );
-    const 직업각인 = JSON.parse(response.data.ArkPassive?.Effects?.[0]?.ToolTip)?.Element_000?.value || ""
+    const 직업각인 = 직업각인함수(JSON.parse(response.data.ArkPassive?.Effects?.[0]?.ToolTip)?.Element_000?.value || "")
     const 무기정보 = 무기레벨추출함수(
       HTML태그제거(
         JSON.parse(response.data.ArmoryEquipment[0]?.Tooltip)?.Element_001?.value?.leftStr2 || ""
