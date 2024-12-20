@@ -23,7 +23,7 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
     try {
       const res = await postLogin(data);
-      if (res.status === 200) {
+      if (res.status === 201) {
         router.push('/');
         toast.success('로그인에 성공하였습니다.');
       } else {
@@ -53,14 +53,14 @@ export default function LoginPage() {
             <div className='min-h-[102px]'>
               <CustomInput
                 label='아이디'
-                {...register('id', {
+                {...register('userId', {
                   required: '아이디를 입력해주세요.',
                 })}
                 type='text'
                 placeholder='아이디를 입력하세요'
                 className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
-              {errors.id && <span className='text-sm text-red-400'>{errors.id.message}</span>}
+              {errors.userId && <span className='text-sm text-red-400'>{errors.userId.message}</span>}
             </div>
             <div className='min-h-[102px]'>
               <CustomInput
