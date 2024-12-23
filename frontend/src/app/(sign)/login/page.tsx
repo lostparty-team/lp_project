@@ -7,33 +7,30 @@ import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { CustomButton } from '@/components/common';
+import { CustomButton, CustomInput } from '@/components/common';
 import BackgroundVideo from '@/components/common/BackgroundVideo';
 import { motion } from 'framer-motion';
 import { pageVariants } from '@/constants/animations';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginInfo>();
 
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
-    setIsLoggingIn(true);
     try {
       const res = await postLogin(data);
       if (res.status === 200) {
         router.push('/');
+        toast.success('로그인에 성공하였습니다.');
       } else {
         toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
-        setIsLoggingIn(false);
       }
     } catch (err) {
       toast.error('로그인 중 오류가 발생했습니다.');
-      setIsLoggingIn(false);
     }
   };
 
@@ -54,8 +51,8 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
             <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>아이디</label>
-              <input
+              <CustomInput
+                label='아이디'
                 {...register('id', {
                   required: '아이디를 입력해주세요.',
                 })}
@@ -65,10 +62,9 @@ export default function LoginPage() {
               />
               {errors.id && <span className='text-sm text-red-400'>{errors.id.message}</span>}
             </div>
-
             <div className='min-h-[102px]'>
-              <label className='mb-2 block text-lostark-400'>비밀번호</label>
-              <input
+              <CustomInput
+                label='비밀번호'
                 {...register('password', {
                   required: '비밀번호를 입력해주세요.',
                 })}
@@ -78,9 +74,12 @@ export default function LoginPage() {
               />
               {errors.password && <span className='text-sm text-red-400'>{errors.password.message}</span>}
             </div>
-
-            <CustomButton type='submit' disabled={isLoggingIn} className='w-full'>
-              {isLoggingIn ? '로그인 중...' : '로그인'}
+            <CustomButton
+              type='submit'
+              disabled={isSubmitting}
+              className={`w-full ${isSubmitting && 'cursor-not-allowed'}`}
+            >
+              {isSubmitting ? '로그인 중...' : '로그인'}
             </CustomButton>
           </form>
 

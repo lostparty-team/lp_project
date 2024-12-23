@@ -8,7 +8,7 @@ const swaggerDocs = require("./swagger/swagger");
 // 별도로 분리된 미들웨어 가져오기
 const authenticateToken = require('./middleware/authenticateToken');
 
-app.use(express.json()); // POST 요청의 JSON 데이터 파싱
+app.use(express.json({ limit: '10mb' })); // 기본값은 '100kb'  // POST 요청의 JSON 데이터 파싱
 
 app.use(cors({
   origin: 'http://localhost:3000', // React 도메인
@@ -25,8 +25,8 @@ const blacklistRouter = require("./router/blacklist");
 
 // 인증이 필요한 라우터
 app.use("/product", authenticateToken, testRouter);
-app.use("/party", authenticateToken, partyRouter);
-app.use("/api/blacklist", authenticateToken, blacklistRouter);
+app.use("/party", partyRouter);
+app.use("/api/blacklist", blacklistRouter);
 
 // // 임시 jwt 토큰 발급
 // const jwt = require("jsonwebtoken");

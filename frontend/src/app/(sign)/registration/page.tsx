@@ -20,14 +20,13 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, dirtyFields },
+    formState: { errors, dirtyFields, isSubmitting },
     trigger,
     watch,
   } = useForm<RegisterInfo>({
     mode: 'onChange',
   });
-  const { idChecked, idCheckStatus, isChecking, isSubmitting, setIdChecked, setIdCheckStatus, setIsChecking } =
-    useRegisterStore();
+  const { idChecked, idCheckStatus, isChecking, setIdChecked, setIdCheckStatus, setIsChecking } = useRegisterStore();
   const idValue = watch('id');
   const passwordValue = watch('password');
 
@@ -103,79 +102,83 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-            <CustomInput
-              label='아이디'
-              name='id'
-              type='text'
-              placeholder='아이디를 입력하세요'
-              register={register}
-              rules={{
-                required: '아이디를 입력해주세요.',
-                minLength: { value: 2, message: '아이디는 최소 두 글자 이상이어야 합니다.' },
-              }}
-              error={errors.id?.message || (idCheckStatus === 'duplicate' ? '중복된 아이디가 존재합니다.' : undefined)}
-              disabled={idChecked}
-              isDirty={!!dirtyFields.id}
-              successMessage={getIdSuccessMessage()}
-              rightSide={
-                <CustomButton
-                  type='button'
-                  disabled={!idValue || !!errors.id || idChecked || isChecking}
-                  onClick={handleCheckId}
-                  variant='secondary'
-                  size='sm'
-                  className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500 hover:text-lostark-400' : 'text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
-                >
-                  {isChecking ? '확인 중...' : '중복 확인'}
-                </CustomButton>
-              }
-            />
+            <div className='min-h-[102px]'>
+              <CustomInput
+                label='아이디'
+                {...register('id', {
+                  required: '아이디를 입력해주세요.',
+                  minLength: { value: 2, message: '아이디는 최소 두 글자 이상이어야 합니다.' },
+                })}
+                placeholder='아이디를 입력하세요'
+                error={
+                  errors.id?.message || (idCheckStatus === 'duplicate' ? '중복된 아이디가 존재합니다.' : undefined)
+                }
+                disabled={idChecked}
+                isDirty={!!dirtyFields.id}
+                successMessage={getIdSuccessMessage()}
+                rightSide={
+                  <CustomButton
+                    type='button'
+                    disabled={!idValue || !!errors.id || idChecked || isChecking}
+                    onClick={handleCheckId}
+                    variant='secondary'
+                    size='sm'
+                    className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500 hover:text-lostark-400' : 'cursor-not-allowed text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
+                  >
+                    {isChecking ? '확인 중...' : '중복 확인'}
+                  </CustomButton>
+                }
+              />
+            </div>
 
-            <CustomInput
-              label='비밀번호'
-              name='password'
-              type='password'
-              placeholder='비밀번호를 입력하세요'
-              register={register}
-              rules={{
-                required: '비밀번호를 입력해주세요.',
-                minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
-              }}
-              error={errors.password?.message}
-              isDirty={!!dirtyFields.password}
-              successMessage={dirtyFields.password && !errors.password ? '올바른 비밀번호 형식입니다.' : null}
-            />
-
-            <CustomInput
-              label='비밀번호 확인'
-              name='confirmPassword'
-              type='password'
-              placeholder='비밀번호를 재입력하세요'
-              register={register}
-              rules={{
-                required: '비밀번호 확인을 입력해주세요.',
-                validate: (value) => value === passwordValue || '비밀번호가 일치하지 않습니다.',
-              }}
-              error={errors.confirmPassword?.message}
-              isDirty={!!dirtyFields.confirmPassword}
-              successMessage={dirtyFields.confirmPassword && !errors.confirmPassword ? '비밀번호가 일치합니다.' : null}
-            />
-
-            <CustomInput
-              label='로스트아크 API'
-              name='api'
-              placeholder='로스트아크 API를 입력하세요'
-              register={register}
-              rules={{
-                required: '발급받은 로스트아크 API를 기입해주세요.',
-              }}
-              error={errors.api?.message}
-              isDirty={!!dirtyFields.api}
-              successMessage={dirtyFields.api && !errors.api ? '' : null}
-            />
-
-            <CustomButton type='submit' disabled={isSubmitting} className='w-full'>
-              회원가입
+            <div className='min-h-[102px]'>
+              <CustomInput
+                label='비밀번호'
+                {...register('password', {
+                  required: '비밀번호를 입력해주세요.',
+                  minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
+                })}
+                type='password'
+                placeholder='비밀번호를 입력하세요'
+                error={errors.password?.message}
+                isDirty={!!dirtyFields.password}
+                successMessage={dirtyFields.password && !errors.password ? '올바른 비밀번호 형식입니다.' : null}
+              />
+            </div>
+            <div className='min-h-[102px]'>
+              <CustomInput
+                label='비밀번호 확인'
+                {...register('confirmPassword', {
+                  required: '비밀번호 확인을 입력해주세요.',
+                  validate: (value) => value === passwordValue || '비밀번호가 일치하지 않습니다.',
+                })}
+                type='password'
+                placeholder='비밀번호를 재입력하세요'
+                error={errors.confirmPassword?.message}
+                isDirty={!!dirtyFields.confirmPassword}
+                successMessage={
+                  dirtyFields.confirmPassword && !errors.confirmPassword ? '비밀번호가 일치합니다.' : null
+                }
+              />
+            </div>
+            <div className='min-h-[102px]'>
+              <CustomInput
+                label='로스트아크 API'
+                {...register('api', {
+                  required: '발급받은 로스트아크 API를 기입해주세요.',
+                })}
+                placeholder='로스트아크 API를 입력하세요'
+                error={errors.api?.message}
+                isDirty={!!dirtyFields.api}
+                successMessage={dirtyFields.api && !errors.api ? '' : null}
+              />
+            </div>
+            <CustomButton
+              type='submit'
+              disabled={isSubmitting}
+              className={`w-full ${isSubmitting && 'cursor-not-allowed'}`}
+            >
+              {isSubmitting ? '회원가입중...' : '회원가입'}
             </CustomButton>
           </form>
 

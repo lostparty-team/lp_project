@@ -440,7 +440,7 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
 
 
 // 블랙리스트 목록 조회
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', async (req, res) => {
   const { page = 1, sort = 'latest' } = req.query; // 페이지와 정렬 기준 파라미터
   const limit = 10; // 페이지당 항목 수
   const offset = (page - 1) * limit;
@@ -465,6 +465,7 @@ router.get('/', authenticateToken, async (req, res) => {
       LEFT JOIN Cart c ON p.id = c.postId
       LEFT JOIN Dislike d ON p.id = d.postId
       GROUP BY p.id, p.title, p.author, p.views
+      
       ORDER BY ${orderByClause}
       LIMIT ? OFFSET ?
     `;
@@ -482,10 +483,6 @@ router.get('/', authenticateToken, async (req, res) => {
     res.status(500).json({ message: '블랙리스트를 조회하지 못했습니다.', error });
   }
 });
-
-
-
-
 
 // 블랙리스트 작성
 router.post('/create', authenticateToken, async (req, res) => {
@@ -650,7 +647,7 @@ router.delete('/cart/:id', authenticateToken, async (req, res) => {
 });
 
 // 블랙리스트 상세 조회
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {

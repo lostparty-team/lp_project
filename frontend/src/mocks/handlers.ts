@@ -847,8 +847,9 @@ export const handlers = [
   }),
 
   // blacklist 삭제
-  http.delete(`${baseURL}/api/blacklist`, async () => {
-    await delay(500);
+  http.delete(`${baseURL}/api/blacklist/:id`, async ({ params }) => {
+    const { id } = params;
+    await delay(300);
     return new HttpResponse(null, { status: 200 });
   }),
 ];

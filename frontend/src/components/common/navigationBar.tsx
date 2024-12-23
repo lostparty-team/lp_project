@@ -19,7 +19,8 @@ const MainHeader = () => (
   <div className='container mx-auto flex h-16 items-center justify-between px-4'>
     <Link href='/' className='group relative'>
       <span className='bg-gradient-to-r from-lostark-400 via-lostark-500 to-lostark-600 bg-clip-text text-3xl font-bold text-transparent'>
-        LostArkParty
+        {/* LostArkParty */}
+        로스트파티
       </span>
     </Link>
     <NavLinks />

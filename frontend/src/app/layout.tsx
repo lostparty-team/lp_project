@@ -7,8 +7,11 @@ import QueryProvider from '@/providers/QueryProvider';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { AxiosInterceptor } from '@/api/interceptor';
 export const metadata = {
-  title: 'LostArkP',
-  description: '로스트아크 파티',
+  title: '로스트파티',
+  description: '로스트파티',
+  icons: {
+    icon: '/loa_logo.svg',
+  },
 };
 const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2',
