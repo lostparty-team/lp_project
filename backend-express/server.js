@@ -25,8 +25,8 @@ const blacklistRouter = require("./router/blacklist");
 
 // 인증이 필요한 라우터
 app.use("/product", authenticateToken, testRouter);
-app.use("/party", authenticateToken, partyRouter);
-app.use("/api/blacklist", authenticateToken, blacklistRouter);
+app.use("/party", partyRouter);
+app.use("/api/blacklist", blacklistRouter);
 
 // // 임시 jwt 토큰 발급
 // const jwt = require("jsonwebtoken");
