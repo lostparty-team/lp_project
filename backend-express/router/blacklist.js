@@ -69,10 +69,6 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  *                 type: string
  *                 description: "블랙리스트 제목"
  *                 example: "블랙리스트"
- *               author:
- *                 type: string
- *                 description: "작성자 ID"
- *                 example: "test"
  *               blacklist:
  *                 type: array
  *                 description: "블랙리스트 항목"
@@ -98,7 +94,7 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  *                 message:
  *                   type: string
  *                   example: "블랙리스트가 성공적으로 작성되었습니다."
- *                 insertedRows:
+ *                 postId:
  *                   type: integer
  *                   example: 3
  *       400:
@@ -111,19 +107,10 @@ const authenticateToken = require('../middleware/authenticateToken'); // 인증 
  *                 message:
  *                   type: string
  *                   example: "요청 데이터가 유효하지 않습니다."
- *       409:
- *         description: "중복된 블랙리스트 제목"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "동일한 제목으로 작성된 블랙리스트가 이미 존재합니다."
  *       500:
  *         description: "서버 오류"
  */
+
 
 /**
  * @swagger
@@ -486,9 +473,10 @@ router.get('/', async (req, res) => {
 
 // 블랙리스트 작성
 router.post('/create', authenticateToken, async (req, res) => {
-  const { title, author, blacklist } = req.body;
+  const { title, blacklist } = req.body;
+  const { userId } = req.user; // JWT에서 추출된 사용자 ID
 
-  if (!title || !author || !Array.isArray(blacklist) || blacklist.length === 0) {
+  if (!title || !Array.isArray(blacklist) || blacklist.length === 0) {
     return res.status(400).json({ message: '요청 데이터가 유효하지 않습니다.' });
   }
 
@@ -497,8 +485,9 @@ router.post('/create', authenticateToken, async (req, res) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
+    // 작성자는 JWT에서 가져옴
     const insertPostQuery = `INSERT INTO Posts (title, author) VALUES (?, ?)`;
-    const [postResult] = await connection.query(insertPostQuery, [title, author]);
+    const [postResult] = await connection.query(insertPostQuery, [title, userId]);
     const postId = postResult.insertId;
 
     const insertValues = blacklist.map(({ nickname, reason }) => [postId, nickname, reason]);
@@ -519,6 +508,7 @@ router.post('/create', authenticateToken, async (req, res) => {
     if (connection) await connection.release();
   }
 });
+
 
 
 

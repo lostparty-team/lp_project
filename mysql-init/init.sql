@@ -77,3 +77,11 @@ INSERT INTO Blacklist (postId, nickname, reason) VALUES
 (2, '사기꾼789', '사전 약속 위반'),
 (2, '사기꾼999', '욕설 및 비매너'),
 (3, '사기꾼222', '거래 중 돌연 삭제');
+
+CREATE TABLE IF NOT EXISTS Visitors (
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    visitorId VARCHAR(255) NOT NULL, -- 고유 방문자 ID (쿠키 또는 세션)
+    ipAddress VARCHAR(45),           -- 방문자의 IP 주소
+    userAgent TEXT,                  -- 브라우저 및 기기 정보
+    visitedAt DATETIME DEFAULT CURRENT_TIMESTAMP -- 방문 시간
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
