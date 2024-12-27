@@ -124,4 +124,17 @@ export class UsersService {
     const me = Object.assign(new UserResponseDto(), userInfowithoutPassword);
     return userInfowithoutPassword;
   }
+
+  async duplicationCheck(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        userId,
+      },
+    });
+
+    if (user) {
+      return false;
+    }
+    return true;
+  }
 }
