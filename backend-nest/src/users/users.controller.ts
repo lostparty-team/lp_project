@@ -73,4 +73,19 @@ export class UsersController {
   async me(@User() user) {
     return this.usersService.findUser(user.id);
   }
+
+  @ApiOperation({
+    summary: '중복 체크',
+    description: '중복 체크 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'boolean 반환',
+    type: Boolean,
+  })
+  @Get('check-userid')
+  async check(@Body() body) {
+    const { userId } = body;
+    return this.usersService.duplicationCheck(userId);
+  }
 }
