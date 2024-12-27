@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Query,
   Session,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -21,6 +23,7 @@ import {
 import { UserResponseDto } from './dto/user.response.dto';
 import { LoginUserResponseDto } from './dto/login-user.response.dto';
 import { CommonResponseDto } from './dto/common-response.dto';
+import { CheckUserIdResponseDto } from './dto/check-userid.response.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -80,12 +83,15 @@ export class UsersController {
   })
   @ApiResponse({
     status: 200,
-    description: 'boolean 반환',
-    type: Boolean,
+    description: '존재여부 반환',
+    type: CheckUserIdResponseDto,
   })
-  @Get('check-userid')
-  async check(@Body() body) {
-    const { userId } = body;
-    return this.usersService.duplicationCheck(userId);
+  @Public()
+  @Get('check-userid/:userid')
+  async check(@Param() param) {
+    const { userid } = param;
+    return {
+      exist: await this.usersService.duplicationCheck(userid),
+    };
   }
 }
