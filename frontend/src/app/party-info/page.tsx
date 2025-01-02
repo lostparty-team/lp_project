@@ -2,14 +2,19 @@
 
 import '../../styles/pages/party-info.css';
 import React, { useState, useRef } from 'react';
-import { postProcess } from '@/api/process';
+import { postProcess, postProcessTest } from '@/api/process';
 
 const PartyInfo: React.FC = () => {
-  const members = [
+  const [members, setMembers] = useState<Array<{
+    server: string;
+    name: string;
+    level: number;
+    itemLevel: number;
+  }>>([
     { server: '카단', name: 'HaeSungs', level: 70, itemLevel: 1676.67 },
     { server: '아만', name: '낟찔', level: 60, itemLevel: 1660 },
     { server: '아만', name: '애니츠의겨울은너무추워', level: 60, itemLevel: 1430 },
-  ];
+  ]);
 
   const [isRecording, setIsRecording] = useState(false);
   const recordedData = useRef<Blob[]>([]);
@@ -65,7 +70,6 @@ const PartyInfo: React.FC = () => {
       return;
     }
   
-    // Create a canvas to draw the video frame
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     if (!context) {
@@ -73,22 +77,24 @@ const PartyInfo: React.FC = () => {
       return;
     }
   
-    // Set canvas dimensions to match video
     canvas.width = videoRef.current.videoWidth;
     canvas.height = videoRef.current.videoHeight;
   
-    // Draw the current frame onto the canvas
     context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
   
     try {
-      // Convert canvas to data URL (Base64)
       const base64Data = canvas.toDataURL('image/png');
   
-      console.log(base64Data); // Check Base64 output
+      console.log(base64Data);
   
-      // Send Base64 data to server
+      // Base64 데이터를 파이썬 백엔드로 전송
       const response = await postProcess({ image: base64Data });
-      console.log('서버 응답:', response.data);
+      const partyNickname = response.data.nicknames;
+      // 테스트용 코드 (추후 삭제)
+      const testResponse = await postProcessTest();
+      const partyData = testResponse.data.data;
+
+      console.log('서버 응답:', response.data, testResponse.data);
     } catch (error) {
       console.error('Base64 변환 또는 통신 중 오류 발생:', error);
     }
@@ -130,13 +136,32 @@ const PartyInfo: React.FC = () => {
                 className='flex items-center justify-between rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'
               >
                 <div>
-                  <div className='text-lg font-semibold text-lostark-300'>{data.name}</div>
-                  <div className='text-sm text-gray-400'>레벨 {data.level}</div>
-                  <div className='text-sm text-gray-400'>아이템 레벨 {data.itemLevel}</div>
+                  <div className='text-lg font-semibold text-lostark-300'>닉네임임</div>
+                  <div className='text-sm text-gray-400'>레벨 70</div>
+                  
                 </div>
                 <div className='text-right'>
-                  <div className='text-sm text-gray-400'>{data.server} 서버</div>
+                  <div className='text-lg font-semibold text-lostark-300'>1680</div>
+                  <div className='text-sm text-gray-400'>아만 서버</div>
                 </div>
+                <div className='text-sm text-gray-400'>
+                  <div className='inline-block px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-md'>
+                    10겁작 1
+                  </div>
+                  <div className='inline-block px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-md'>
+                    8겁작 2
+                  </div>
+                  <div className='inline-block px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-md'>
+                    7겁작 2
+                  </div>
+                  <div className='inline-block px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-md'>
+                    6겁작 2
+                  </div>
+                  <div className='inline-block px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-md'>
+                    8멸홍x3
+                  </div>
+                </div>
+                <div className='text-sm text-gray-400'>세구빛 30각 | 방어구 100초 | 무기 20초 | 40엘 </div>
               </div>
             ))}
             <div className='rounded-lg bg-black2 p-6 text-center text-gray-400'>파티원을 기다리는 중입니다...</div>
