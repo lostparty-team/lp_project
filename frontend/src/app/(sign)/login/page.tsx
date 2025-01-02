@@ -1,16 +1,16 @@
 'use client';
-import { postLogin } from '@/api/auth';
 import { LoginInfo } from '@/types/domain';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { CustomButton, CustomInput } from '@/components/common';
 import BackgroundVideo from '@/components/common/BackgroundVideo';
 import { motion } from 'framer-motion';
 import { pageVariants } from '@/constants/animations';
 import { useAuthStore } from '@/stores/useAuthStore';
+import useAuth from '@/hooks/useAuth';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,16 +20,15 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginInfo>();
   const { setIsLogin } = useAuthStore();
+  const { loginMutation } = useAuth();
 
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
     try {
-      const res = await postLogin(data);
-      if (res.status === 201) {
+      const res = await loginMutation.mutateAsync(data);
+      if (res) {
         setIsLogin(true);
         router.push('/');
         toast.success('로그인에 성공하였습니다.');
-      } else {
-        toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (err) {
       toast.error('로그인 중 오류가 발생했습니다.');
