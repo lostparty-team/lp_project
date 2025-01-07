@@ -1,10 +1,10 @@
 export const API = {
   AUTH: {
-    SIGNUP: '/api/register',
-    LOGIN: '/api/login',
+    SIGNUP: '/users/register',
+    LOGIN: '/users/login',
   },
   USER: {
-    PROFILE: '/me',
+    PROFILE: '/users/me',
   },
   PROCESS: '/process',
 } as const;

@@ -1,38 +1,38 @@
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Plus, Trash2 } from 'lucide-react';
 import { BlacklistUser } from '@/types/blacklist';
+
+const LIST_ITEM_VARIANTS: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: index * 0.05,
+      duration: 0.5,
+    },
+  }),
+  hover: {
+    scale: 1.02,
+    backgroundColor: '#1a1a1a',
+    transition: { duration: 0.2 },
+  },
+} as const;
 
 interface BlacklistItemProps {
   blacklistItem: BlacklistUser;
   onItemClick: (item: BlacklistUser) => void;
-  onAddClick: (item: BlacklistUser, e: React.MouseEvent) => void;
-  onDeleteClick: (item: BlacklistUser, e: React.MouseEvent) => void;
+  onAddClick: (item: BlacklistUser, e: React.MouseEvent<HTMLButtonElement>) => void;
+  onDeleteClick: (item: BlacklistUser, e: React.MouseEvent<HTMLButtonElement>) => void;
   isDeleting: boolean;
 }
 
 const BlacklistItem = ({ blacklistItem, onItemClick, onAddClick, onDeleteClick, isDeleting }: BlacklistItemProps) => {
-  const listItemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (index: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: index * 0.05,
-        duration: 0.5,
-      },
-    }),
-    hover: {
-      scale: 1.02,
-      backgroundColor: '#1a1a1a',
-      transition: { duration: 0.2 },
-    },
-  };
-
   const isAuthor = blacklistItem.author === '트롤러123';
 
   return (
     <motion.li
-      variants={listItemVariants}
+      variants={LIST_ITEM_VARIANTS}
       initial='hidden'
       animate='visible'
       whileHover='hover'

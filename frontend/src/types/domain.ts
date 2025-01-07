@@ -1,5 +1,5 @@
 type UserCredentials = {
-  id: string;
+  userId: string;
   password: string;
 };
 
@@ -11,7 +11,7 @@ type RegisterInfo = UserCredentials & {
 type LoginInfo = UserCredentials;
 
 type ResponseToken = {
-  accessToken: string;
+  access_token: string;
 };
 
 type ProcessInfo = {

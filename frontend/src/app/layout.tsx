@@ -22,16 +22,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='ko' className='bg-black1'>
       <body className={pretendard.className}>
-        <MSWProvider>
-          <QueryProvider>
-            <AxiosInterceptor>
-              <ToastProvider />
-              <NavigationBar />
-              <LoadingSpinner />
-              {children}
-            </AxiosInterceptor>
-          </QueryProvider>
-        </MSWProvider>
+        {/* <MSWProvider> */}
+        <QueryProvider>
+          <AxiosInterceptor>
+            <ToastProvider />
+            <NavigationBar />
+            <LoadingSpinner />
+            {children}
+          </AxiosInterceptor>
+        </QueryProvider>
+        {/* </MSWProvider> */}
       </body>
     </html>
   );
