@@ -11,6 +11,7 @@ import { pageVariants } from '@/constants/animations';
 import { useAuthStore } from '@/stores/useAuthStore';
 import useAuth from '@/hooks/useAuth';
 import { toast } from 'react-toastify';
+import { data } from 'autoprefixer';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,9 +20,12 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginInfo>();
+
+  /**
+   *! 로그인 로직 임시 해제 
   const { setIsLogin } = useAuthStore();
   const { loginMutation } = useAuth();
-
+  
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
     try {
       const res = await loginMutation.mutateAsync(data);
@@ -34,6 +38,9 @@ export default function LoginPage() {
       toast.error('로그인 중 오류가 발생했습니다.');
     }
   };
+  */
+
+  const onSubmit = console.log('임시');
 
   return (
     <main className='relative z-10 flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
