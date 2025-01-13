@@ -54,18 +54,6 @@ services:
       - mysql_data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d # SQL 초기화 스크립트 마운트
 
-  redis:
-    image: redis:7.4.1
-    container_name: redis_container
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    environment:
-      - REDIS_PASSWORD=lp1346
-    command: ["redis-server", "--requirepass", "lp1346"]
-    restart: unless-stopped
 
 volumes:
   mysql_data:
-  redis_data:
