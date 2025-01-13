@@ -1,429 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // MySQL 연결 가져오기
-const authenticateToken = require('../middleware/authenticateToken'); // 인증 미들웨어 추가
-
-/**
- * @swagger
- * tags:
- *   name: Blacklist
- *   description: 블랙리스트 관리 API
- */
-
-/**
- * @swagger
- * /api/blacklist:
- *   get:
- *     summary: "블랙리스트 제목 목록 조회"
- *     description: "글번호, 제목, 작성자 목록을 조회합니다."
- *     tags: [Blacklist]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: "글번호-글제목-작성자 목록 조회 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "글번호-글제목-작성자 목록을 성공적으로 조회했습니다."
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                         example: 1
- *                       title:
- *                         type: string
- *                         example: "악성유저리스트"
- *                       author:
- *                         type: string
- *                         example: "author1"
- *       500:
- *         description: "서버 오류"
- */
-
-
-/**
- * @swagger
- * /api/blacklist/create:
- *   post:
- *     summary: "블랙리스트 작성"
- *     description: "새로운 블랙리스트를 작성합니다."
- *     tags: [Blacklist]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: "블랙리스트 제목"
- *                 example: "블랙리스트"
- *               blacklist:
- *                 type: array
- *                 description: "블랙리스트 항목"
- *                 items:
- *                   type: object
- *                   properties:
- *                     nickname:
- *                       type: string
- *                       description: "닉네임"
- *                       example: "사기꾼123"
- *                     reason:
- *                       type: string
- *                       description: "사유"
- *                       example: "거래 후 잠수"
- *     responses:
- *       201:
- *         description: "블랙리스트 작성 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "블랙리스트가 성공적으로 작성되었습니다."
- *                 postId:
- *                   type: integer
- *                   example: 3
- *       400:
- *         description: "요청 데이터 유효하지 않음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "요청 데이터가 유효하지 않습니다."
- *       500:
- *         description: "서버 오류"
- */
-
-
-/**
- * @swagger
- * /api/blacklist/{id}:
- *   get:
- *     summary: "특정 블랙리스트 상세 조회"
- *     description: "글번호를 기준으로 블랙리스트 상세 데이터를 조회합니다."
- *     tags: [Blacklist]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: "조회할 블랙리스트의 글번호"
- *         schema:
- *           type: integer
- *           example: 1
- *     responses:
- *       200:
- *         description: "블랙리스트 상세 조회 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "블랙리스트 세부 정보를 성공적으로 조회했습니다."
- *                 post:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       example: 1
- *                     title:
- *                       type: string
- *                       example: "악성유저리스트"
- *                     author:
- *                       type: string
- *                       example: "author1"
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       nickname:
- *                         type: string
- *                         example: "악성유저123"
- *                       reason:
- *                         type: string
- *                         example: "거래 후 잠수"
- *       404:
- *         description: "해당 글번호의 블랙리스트를 찾을 수 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "글번호 1에 해당하는 블랙리스트를 찾을 수 없습니다."
- *       500:
- *         description: "서버 오류"
- */
-
-
-/**
- * @swagger
- * /api/blacklist/{id}:
- *   delete:
- *     summary: "블랙리스트 삭제"
- *     description: "글번호를 기준으로 블랙리스트를 삭제합니다. JWT 토큰을 사용하여 요청자를 인증합니다."
- *     tags: [Blacklist]
- *     security:
- *       - bearerAuth: [] # JWT 토큰 인증
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: "삭제할 블랙리스트의 글번호"
- *         schema:
- *           type: integer
- *           example: 1
- *     responses:
- *       200:
- *         description: "블랙리스트 삭제 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "블랙리스트 및 게시글이 성공적으로 삭제되었습니다."
- *                 deletedRows:
- *                   type: integer
- *                   example: 1
- *       400:
- *         description: "JWT 토큰에서 clientId를 확인할 수 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "JWT 토큰에서 clientId를 확인할 수 없습니다."
- *       403:
- *         description: "삭제 권한 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "삭제 권한이 없습니다. JWT의 clientId가 작성자의 clientId와 일치하지 않습니다."
- *       404:
- *         description: "해당 글번호의 블랙리스트를 찾을 수 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "글번호 1에 해당하는 블랙리스트를 찾을 수 없습니다."
- *       500:
- *         description: "서버 오류"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "블랙리스트를 삭제하지 못했습니다."
- */
-
-/**
- * @swagger
- * /api/blacklist/dislike/{id}:
- *   post:
- *     summary: "비추천 수 증가"
- *     description: "게시글의 비추천 수를 1 증가시킵니다. 같은 사용자가 중복 비추천은 할 수 없습니다."
- *     tags: [Blacklist]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: "비추천할 게시글의 ID"
- *         schema:
- *           type: integer
- *           example: 1
- *     responses:
- *       200:
- *         description: "비추천 수 증가 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "비추천이 성공적으로 처리되었습니다."
- *       404:
- *         description: "게시글을 찾을 수 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "글번호 1에 해당하는 게시글을 찾을 수 없습니다."
- *       409:
- *         description: "이미 비추천한 게시글"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "이미 비추천한 게시글입니다."
- *       500:
- *         description: "서버 오류"
- */
-
-/**
- * @swagger
- * /api/blacklist/cart:
- *   get:
- *     summary: "유저 장바구니 조회"
- *     description: "JWT 토큰의 clientId를 사용하여 장바구니에 담긴 블랙리스트 글 목록을 조회합니다."
- *     tags: [Cart]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: "장바구니 조회 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "장바구니 데이터를 성공적으로 조회했습니다."
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       postId:
- *                         type: integer
- *                         example: 1
- *                       title:
- *                         type: string
- *                         example: "악성유저리스트"
- *                       author:
- *                         type: string
- *                         example: "author1"
- *       500:
- *         description: "서버 오류"
- */
-
-/**
- * @swagger
- * /api/blacklist/cart/{id}:
- *   post:
- *     summary: "장바구니 추가"
- *     description: "특정 블랙리스트 글을 유저의 장바구니에 추가합니다."
- *     tags: [Cart]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: "장바구니에 추가할 블랙리스트 글 번호"
- *         schema:
- *           type: integer
- *           example: 1
- *     responses:
- *       201:
- *         description: "장바구니 추가 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "장바구니에 성공적으로 추가되었습니다."
- *       409:
- *         description: "이미 장바구니에 추가된 게시글"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "이미 장바구니에 추가된 게시글입니다."
- *       500:
- *         description: "서버 오류"
- */
-
-/**
- * @swagger
- * /api/blacklist/cart/{id}:
- *   delete:
- *     summary: "장바구니 삭제"
- *     description: "특정 블랙리스트 글을 유저의 장바구니에서 삭제합니다."
- *     tags: [Cart]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: "장바구니에서 삭제할 블랙리스트 글 번호"
- *         schema:
- *           type: integer
- *           example: 1
- *     responses:
- *       200:
- *         description: "장바구니 삭제 성공"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "장바구니에서 성공적으로 삭제되었습니다."
- *       404:
- *         description: "장바구니에 해당 게시글이 없음"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "장바구니에 해당 게시글이 없습니다."
- *       500:
- *         description: "서버 오류"
- */
+const extractClientId = require('../middleware/extractClientId');
 
 
 // 블랙리스트 목록 조회
@@ -446,6 +24,7 @@ router.get('/', async (req, res) => {
         p.title, 
         p.author, 
         p.views, 
+        p.created_at, 
         COUNT(c.id) AS cart_count, -- 장바구니에 담긴 수
         COUNT(d.id) AS dislikes    -- 비추천 수
       FROM Posts p
@@ -472,9 +51,9 @@ router.get('/', async (req, res) => {
 });
 
 // 블랙리스트 작성
-router.post('/create', authenticateToken, async (req, res) => {
+router.post('/create', extractClientId, async (req, res) => {
   const { title, blacklist } = req.body;
-  const { userId } = req.user; // JWT에서 추출된 사용자 ID
+  const clientId = req.clientId; // 미들웨어에서 추출된 clientId 사용
 
   if (!title || !Array.isArray(blacklist) || blacklist.length === 0) {
     return res.status(400).json({ message: '요청 데이터가 유효하지 않습니다.' });
@@ -485,9 +64,8 @@ router.post('/create', authenticateToken, async (req, res) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    // 작성자는 JWT에서 가져옴
     const insertPostQuery = `INSERT INTO Posts (title, author) VALUES (?, ?)`;
-    const [postResult] = await connection.query(insertPostQuery, [title, userId]);
+    const [postResult] = await connection.query(insertPostQuery, [title, clientId]);
     const postId = postResult.insertId;
 
     const insertValues = blacklist.map(({ nickname, reason }) => [postId, nickname, reason]);
@@ -509,18 +87,10 @@ router.post('/create', authenticateToken, async (req, res) => {
   }
 });
 
-
-
-
-
 // 비추천 추가
-router.post('/dislike/:id', authenticateToken, async (req, res) => {
+router.post('/dislike/:id', extractClientId, async (req, res) => {
   const { id } = req.params;
-  const { clientId } = req.user;
-
-  if (!clientId) {
-    return res.status(400).json({ message: 'JWT 토큰에서 clientId를 확인할 수 없습니다.' });
-  }
+  const clientId = req.clientId;
 
   try {
     const checkDislikeQuery = `SELECT * FROM Dislike WHERE postId = ? AND clientId = ?`;
@@ -539,17 +109,9 @@ router.post('/dislike/:id', authenticateToken, async (req, res) => {
   }
 });
 
-
 // 유저 장바구니 조회 (추천수, 조회수, 비추천수 제외)
-router.get('/cart', authenticateToken, async (req, res) => {
-  const { clientId } = req.user; // JWT에서 추출된 clientId
-
-  console.log('장바구니 조회 요청자 clientId:', clientId);
-
-  if (!clientId) {
-    console.log('JWT 토큰에서 clientId를 확인할 수 없습니다.');
-    return res.status(400).json({ message: 'JWT 토큰에서 clientId를 확인할 수 없습니다.' });
-  }
+router.get('/cart', extractClientId, async (req, res) => {
+  const clientId = req.clientId; // 미들웨어에서 추출된 clientId 사용
 
   try {
     const selectCartQuery = `
@@ -574,22 +136,12 @@ router.get('/cart', authenticateToken, async (req, res) => {
   }
 });
 
-
 // 블랙리스트 글 장바구니에 담기
-router.post('/cart/:id', authenticateToken, async (req, res) => {
+router.post('/cart/:id', extractClientId, async (req, res) => {
   const { id } = req.params; // 글 번호
-  const { clientId } = req.user; // JWT에서 추출된 clientId
-
-  // 요청자의 clientId 출력
-  console.log('장바구니 추가 요청자 clientId:', clientId);
-
-  if (!clientId) {
-    console.log('JWT 토큰에서 clientId를 확인할 수 없습니다.');
-    return res.status(400).json({ message: 'JWT 토큰에서 clientId를 확인할 수 없습니다.' });
-  }
+  const clientId = req.clientId; // 미들웨어에서 추출된 clientId 사용
 
   try {
-    // 장바구니에 추가
     const insertCartQuery = `INSERT INTO Cart (clientId, postId) VALUES (?, ?)`;
     await db.query(insertCartQuery, [clientId, id]);
 
@@ -606,20 +158,11 @@ router.post('/cart/:id', authenticateToken, async (req, res) => {
 });
 
 // 블랙리스트 글 장바구니에서 삭제
-router.delete('/cart/:id', authenticateToken, async (req, res) => {
+router.delete('/cart/:id', extractClientId, async (req, res) => {
   const { id } = req.params; // 글 번호
-  const { clientId } = req.user; // JWT에서 추출된 clientId
-
-  // 요청자의 clientId 출력
-  console.log('장바구니 삭제 요청자 clientId:', clientId);
-
-  if (!clientId) {
-    console.log('JWT 토큰에서 clientId를 확인할 수 없습니다.');
-    return res.status(400).json({ message: 'JWT 토큰에서 clientId를 확인할 수 없습니다.' });
-  }
+  const clientId = req.clientId; // 미들웨어에서 추출된 clientId 사용
 
   try {
-    // 장바구니에서 삭제
     const deleteCartQuery = `DELETE FROM Cart WHERE clientId = ? AND postId = ?`;
     const [result] = await db.query(deleteCartQuery, [clientId, id]);
 
@@ -641,11 +184,9 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 조회수 증가
     const incrementViewsQuery = `UPDATE Posts SET views = views + 1 WHERE id = ?`;
     await db.query(incrementViewsQuery, [id]);
 
-    // 게시글 정보 가져오기
     const selectPostQuery = `SELECT title, author, views FROM Posts WHERE id = ?`;
     const [[post]] = await db.query(selectPostQuery, [id]);
 
@@ -654,7 +195,6 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: `글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.` });
     }
 
-    // Blacklist 테이블에서 해당 글번호에 포함된 닉네임과 사유 조회
     const selectBlacklistQuery = `SELECT nickname, reason FROM Blacklist WHERE postId = ?`;
     const [details] = await db.query(selectBlacklistQuery, [id]);
 
@@ -676,26 +216,25 @@ router.get('/:id', async (req, res) => {
 });
 
 // 블랙리스트 삭제
-router.delete('/:id', authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  const { clientId } = req.user;
-
-  if (!clientId) {
-    return res.status(400).json({ message: 'JWT 토큰에서 clientId를 확인할 수 없습니다.' });
-  }
+router.delete('/:id', extractClientId, async (req, res) => {
+  const { id } = req.params; // 글번호
+  const clientId = req.clientId; // 미들웨어에서 추출된 clientId 사용
 
   try {
-    const selectQuery = `SELECT u.clientId FROM Posts p JOIN User u ON p.author = u.userId WHERE p.id = ?`;
+    // 글번호에 해당하는 작성자(clientId) 조회
+    const selectQuery = `SELECT author FROM Posts WHERE id = ?`;
     const [[post]] = await db.query(selectQuery, [id]);
 
     if (!post) {
       return res.status(404).json({ message: `글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.` });
     }
 
-    if (post.clientId !== clientId) {
+    // 요청한 clientId와 게시글의 작성자가 다른 경우 권한 없음 처리
+    if (post.author !== clientId) {
       return res.status(403).json({ message: '삭제 권한이 없습니다.' });
     }
 
+    // 블랙리스트 및 게시글 삭제
     const deleteBlacklistQuery = `DELETE FROM Blacklist WHERE postId = ?`;
     const deletePostQuery = `DELETE FROM Posts WHERE id = ?`;
 
@@ -711,5 +250,6 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ message: '블랙리스트를 삭제하지 못했습니다.', error });
   }
 });
+
 
 module.exports = router;

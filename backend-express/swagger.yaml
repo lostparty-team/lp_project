@@ -1,0 +1,343 @@
+openapi: 3.0.0
+info:
+  title: 블랙리스트 API
+  version: 1.0.0
+  description: 블랙리스트 API에 대한 Swagger 문서입니다.
+servers:
+  - url: http://localhost:5000
+    description: 로컬 개발 서버
+tags:
+  - name: blacklist
+    description: 블랙리스트 관련 API
+  - name: party
+    description: "파티 관련 API"
+paths:
+  /api/blacklist:
+    get:
+      summary: 블랙리스트 목록 조회
+      description: 페이지와 정렬 기준에 따라 블랙리스트 게시글 목록을 조회합니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: page
+          in: query
+          description: 페이지 번호
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: sort
+          in: query
+          description: 정렬 기준 (latest 또는 cart_count)
+          required: false
+          schema:
+            type: string
+            default: latest
+      responses:
+        '200':
+          description: 목록 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: 서버 오류
+  /api/blacklist/create:
+    post:
+      summary: 블랙리스트 게시글 작성
+      description: 블랙리스트 게시글과 관련 닉네임 목록을 작성합니다.
+      tags:
+        - blacklist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 게시글 제목
+                blacklist:
+                  type: array
+                  description: 블랙리스트 닉네임과 사유
+                  items:
+                    type: object
+                    properties:
+                      nickname:
+                        type: string
+                        description: 닉네임
+                      reason:
+                        type: string
+                        description: 사유
+      responses:
+        '201':
+          description: 게시글 작성 성공
+        '400':
+          description: 요청 데이터 오류
+        '500':
+          description: 서버 오류
+  /api/blacklist/dislike/{id}:
+    post:
+      summary: 게시글 비추천
+      description: 특정 게시글에 비추천을 추가합니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: id
+          in: path
+          description: 게시글 ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 비추천 추가 성공
+        '409':
+          description: 이미 비추천한 게시글
+        '500':
+          description: 서버 오류
+  /api/blacklist/cart:
+    get:
+      summary: 장바구니 조회
+      description: 사용자의 장바구니 데이터를 조회합니다.
+      tags:
+        - blacklist
+      responses:
+        '200':
+          description: 장바구니 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: 서버 오류
+  /api/blacklist/cart/{id}:
+    post:
+      summary: 게시글을 장바구니에 추가
+      description: 특정 게시글을 장바구니에 추가합니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: id
+          in: path
+          description: 게시글 ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: 장바구니 추가 성공
+        '409':
+          description: 이미 장바구니에 추가된 게시글
+        '500':
+          description: 서버 오류
+    delete:
+      summary: 장바구니에서 게시글 삭제
+      description: 장바구니에서 특정 게시글을 삭제합니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: id
+          in: path
+          description: 게시글 ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 삭제 성공
+        '404':
+          description: 장바구니에 해당 게시글 없음
+        '500':
+          description: 서버 오류
+  /api/blacklist/{id}:
+    get:
+      summary: 블랙리스트 상세 조회
+      description: 특정 게시글과 관련된 블랙리스트 상세 데이터를 조회합니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: id
+          in: path
+          description: 게시글 ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 상세 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: 게시글 없음
+        '500':
+          description: 서버 오류
+    delete:
+      summary: 블랙리스트 게시글 삭제
+      description: 특정 게시글 및 관련 블랙리스트 데이터를 삭제합니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: id
+          in: path
+          description: 게시글 ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 삭제 성공
+        '404':
+          description: 게시글 없음
+        '500':
+          description: 서버 오류
+
+# 파티원 정보
+
+  /party:
+    post:
+      summary: 닉네임 기반 캐릭터 정보 조회
+      description: "Lost Ark API를 호출하여 닉네임에 대한 캐릭터 정보를 반환합니다."
+      tags:
+        - party
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                  description: "조회할 캐릭터 닉네임"
+                  example: "사용자닉네임"
+      responses:
+        '200':
+          description: "캐릭터 정보 반환 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  무기레벨:
+                    type: string
+                    description: "무기의 레벨 정보"
+                    example: "1400"
+                  직업각인:
+                    type: string
+                    description: "캐릭터의 직업 각인 정보"
+                    example: "바드"
+                  포인트:
+                    type: array
+                    description: "진화, 깨달음, 도약 포인트"
+                    items:
+                      type: integer
+                      example: 10
+                  초월:
+                    type: object
+                    description: "장비별 초월 정보"
+                    properties:
+                      투구:
+                        type: integer
+                        example: 5
+                      견장:
+                        type: integer
+                        example: 4
+                      상의:
+                        type: integer
+                        example: 3
+                      하의:
+                        type: integer
+                        example: 2
+                      장갑:
+                        type: integer
+                        example: 1
+                      무기:
+                        type: integer
+                        example: 6
+                  고대악세개수:
+                    type: integer
+                    description: "고대 등급 악세사리 개수"
+                    example: 2
+                  유물악세개수:
+                    type: integer
+                    description: "유물 등급 악세사리 개수"
+                    example: 3
+                  악세목록:
+                    type: array
+                    description: "악세사리 옵션 정보"
+                    items:
+                      type: string
+                      example: "치명 200, 특화 300"
+                  팔찌:
+                    type: array
+                    description: "팔찌 옵션 정보"
+                    items:
+                      type: string
+                      example: "공격력 증가"
+                  보석:
+                    type: array
+                    description: "보석 정보"
+                    items:
+                      type: string
+                      example: "보석 1: 효과 증가"
+                  각인:
+                    type: array
+                    description: "각인 상세 정보"
+                    items:
+                      type: object
+                      properties:
+                        등급:
+                          type: string
+                          description: "각인 등급"
+                          example: "고급"
+                        등급레벨:
+                          type: integer
+                          description: "각인 등급 레벨"
+                          example: 3
+                        각인이름:
+                          type: string
+                          description: "각인 이름"
+                          example: "원한"
+                        어빌리티스톤레벨:
+                          type: integer
+                          description: "어빌리티 스톤 레벨"
+                          example: 5
+                  블랙리스트포함여부:
+                    type: boolean
+                    description: "닉네임이 블랙리스트에 포함되어 있는지 여부"
+                    example: false
+        '400':
+          description: "요청 오류 (닉네임 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "에러 메시지"
+                    example: "닉네임이 제공되지 않았습니다."
+        '500':
+          description: "서버 내부 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "에러 메시지"
+                    example: "데이터를 가져오는 중 오류가 발생했습니다."
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: API Key를 입력하세요.
+security:
+  - ApiKeyAuth: []
