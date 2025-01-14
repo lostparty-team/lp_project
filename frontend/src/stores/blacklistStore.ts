@@ -29,7 +29,7 @@ export const useBlacklistStore = create<BlacklistStore>((set, get) => ({
   flyingItem: null,
   isCreateModalOpen: false,
   selectedBlacklistData: null,
-  sortType: undefined,
+  sortType: 'latest',
   cartRef: null,
   isModalOpen: false,
   addToMyBlacklist: (user) => {
