@@ -2,7 +2,9 @@ import { axiosInstance } from './axios';
 import { BlacklistUser, SortType } from '@/types/blacklist';
 
 export const getBlacklist = async (sortType?: SortType) => {
-  const { data } = await axiosInstance.get('/api/blacklist', {
+  const {
+    data: { data },
+  } = await axiosInstance.get('/api/blacklist', {
     params: sortType ? { sort: sortType } : undefined,
   });
   return data as BlacklistUser[];

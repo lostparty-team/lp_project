@@ -37,7 +37,6 @@ const BlacklistPage = () => {
   const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist, isLoading } =
     useBlacklist(sortType);
   const { setIsLoading } = useLoadingStore();
-
   useEffect(() => {
     setIsLoading(isLoading);
   }, [isLoading]);
@@ -51,9 +50,11 @@ const BlacklistPage = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredBlacklist = blacklist.filter(
-    (item) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
-  );
+  // const filteredBlacklist = blacklist.filter(
+  //   (item) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
+  // );
+
+  // console.log(blacklist.map((v) => v.author));
 
   const handleAddToBlacklist = (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
     e.preventDefault();
@@ -247,7 +248,7 @@ const BlacklistPage = () => {
               role='list'
               className='col-span-2 space-y-4 rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'
             >
-              {filteredBlacklist.map((blacklistItem, index) => (
+              {blacklist.map((blacklistItem) => (
                 <BlacklistItem
                   key={`blacklist-${blacklistItem.id}`}
                   blacklistItem={blacklistItem}
