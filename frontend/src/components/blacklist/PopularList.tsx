@@ -10,7 +10,7 @@ interface PopularListProps {
 const PopularList: React.FC<PopularListProps> = ({ blacklist, onItemClick }) => {
   return (
     <div className='grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-      {blacklist.slice(0, 3).map((data, index) => (
+      {/* {blacklist.slice(0, 3).map((data, index) => (
         <motion.button
           key={data.id}
           variants={{ ...fadeInUp, ...listItemHover }}
@@ -27,7 +27,7 @@ const PopularList: React.FC<PopularListProps> = ({ blacklist, onItemClick }) => 
           <h3 className='mb-2 text-xl font-bold text-lostark-300'>{data.title}</h3>
           <p className='text-sm text-gray-400'>{data.author}</p>
         </motion.button>
-      ))}
+      ))} */}
     </div>
   );
 };
