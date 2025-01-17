@@ -5,7 +5,10 @@ export const getBlacklist = async (sortType?: SortType) => {
   const {
     data: { data },
   } = await axiosInstance.get('/api/blacklist', {
-    params: sortType ? { sort: sortType } : undefined,
+    params: {
+      page: 1,
+      sort: sortType,
+    },
   });
   return data as BlacklistUser[];
 };
@@ -17,4 +20,17 @@ export const deleteBlacklist = async (id: string) => {
 
 export const getBlacklistDetail = (id: string) => {
   return axiosInstance.get(`/api/blacklist/${id}`);
+};
+
+export const postDislike = (id: string) => {
+  const getApi = localStorage.getItem('lostark-api');
+  return axiosInstance.post(
+    `/api/blacklist/dislike/${id}`,
+    { id },
+    {
+      headers: {
+        Authorization: getApi,
+      },
+    },
+  );
 };
