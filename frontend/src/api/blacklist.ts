@@ -23,13 +23,13 @@ export const getBlacklistDetail = (id: string) => {
 };
 
 export const postDislike = (id: string) => {
-  const getApi = localStorage.getItem('lostark-api');
+  const getStorage = localStorage.getItem('lostark-api');
   return axiosInstance.post(
     `/api/blacklist/dislike/${id}`,
     { id },
     {
       headers: {
-        Authorization: getApi,
+        Authorization: getStorage,
       },
     },
   );
