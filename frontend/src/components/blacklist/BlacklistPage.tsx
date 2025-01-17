@@ -248,7 +248,7 @@ const BlacklistPage = () => {
               role='list'
               className='col-span-2 space-y-4 rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'
             >
-              {blacklist.map((blacklistItem) => (
+              {blacklist.map((blacklistItem: BlacklistUser) => (
                 <BlacklistItem
                   key={`blacklist-${blacklistItem.id}`}
                   blacklistItem={blacklistItem}
