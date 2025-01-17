@@ -6,18 +6,20 @@ const extractClientId = require('../middleware/extractClientId');
 
 // 블랙리스트 목록 조회
 router.get('/', async (req, res) => {
-  const { page = 1, sort = 'latest' } = req.query; // 페이지와 정렬 기준 파라미터
-  const limit = 10; // 페이지당 항목 수
+  const { page = 1, sort = 'latest' } = req.query;
+  const limit = 10;
   const offset = (page - 1) * limit;
 
-  // 정렬 기준 설정
-  let orderByClause = 'p.id DESC'; // 기본 정렬: 최신순
+  let orderByClause = 'p.id DESC';
   if (sort === 'cart_count') {
     orderByClause = 'cart_count DESC';
   }
 
   try {
-    // 블랙리스트 게시글 조회 SQL
+    const countQuery = `SELECT COUNT(*) AS totalPosts FROM Posts`;
+    const [[{ totalPosts }]] = await db.query(countQuery);
+    const totalPages = Math.ceil(totalPosts / limit);
+
     const selectQuery = `
       SELECT 
         p.id, 
@@ -25,27 +27,26 @@ router.get('/', async (req, res) => {
         p.author, 
         p.views, 
         p.created_at, 
-        COUNT(c.id) AS cart_count, -- 장바구니에 담긴 수
-        COUNT(d.id) AS dislikes    -- 비추천 수
+        COUNT(c.id) AS cart_count, 
+        COUNT(d.id) AS dislikes 
       FROM Posts p
       LEFT JOIN Cart c ON p.id = c.postId
       LEFT JOIN Dislike d ON p.id = d.postId
-      GROUP BY p.id, p.title, p.author, p.views
-      
+      GROUP BY p.id, p.title, p.author, p.views, p.created_at
       ORDER BY ${orderByClause}
       LIMIT ? OFFSET ?
     `;
     const [rows] = await db.query(selectQuery, [limit, offset]);
 
-    console.log('블랙리스트 목록을 성공적으로 조회했습니다.');
     res.status(200).json({
       message: '블랙리스트 목록을 성공적으로 조회했습니다.',
       data: rows,
+      totalPosts,
+      totalPages,
       currentPage: Number(page),
       sort,
     });
   } catch (error) {
-    console.error('블랙리스트 조회 중 오류 발생:', error);
     res.status(500).json({ message: '블랙리스트를 조회하지 못했습니다.', error });
   }
 });
@@ -180,37 +181,44 @@ router.delete('/cart/:id', extractClientId, async (req, res) => {
 });
 
 // 블랙리스트 상세 조회
-router.get('/:id', async (req, res) => {
+router.get('/:id', extractClientId, async (req, res) => {
   const { id } = req.params;
+  const clientId = req.clientId;
 
   try {
-    const incrementViewsQuery = `UPDATE Posts SET views = views + 1 WHERE id = ?`;
-    await db.query(incrementViewsQuery, [id]);
-
-    const selectPostQuery = `SELECT title, author, views FROM Posts WHERE id = ?`;
-    const [[post]] = await db.query(selectPostQuery, [id]);
+    await db.query(`UPDATE Posts SET views = views + 1 WHERE id = ?`, [id]);
+    
+    const selectPostQuery = `
+      SELECT p.title, p.author, p.created_at, p.views, 
+             (SELECT COUNT(*) FROM Dislike WHERE postId = ?) AS dislikes
+      FROM Posts p WHERE p.id = ?
+    `;
+    const [[post]] = await db.query(selectPostQuery, [id, id]);
 
     if (!post) {
-      console.log(`글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.`);
       return res.status(404).json({ message: `글번호 ${id}에 해당하는 게시글을 찾을 수 없습니다.` });
     }
 
     const selectBlacklistQuery = `SELECT nickname, reason FROM Blacklist WHERE postId = ?`;
     const [details] = await db.query(selectBlacklistQuery, [id]);
 
-    console.log(`글번호 ${id}의 블랙리스트 데이터를 성공적으로 조회했습니다.`);
+    const checkUserDislikeQuery = `SELECT COUNT(*) AS userDisliked FROM Dislike WHERE postId = ? AND clientId = ?`;
+    const [[{ userDisliked }]] = await db.query(checkUserDislikeQuery, [id, clientId]);
+
     res.status(200).json({
       message: '블랙리스트 세부 정보를 성공적으로 조회했습니다.',
       post: {
         id,
         title: post.title,
         author: post.author,
+        created_at: post.created_at,
         views: post.views,
+        dislikes: post.dislikes,
+        userDisliked: userDisliked > 0
       },
       data: details,
     });
   } catch (error) {
-    console.error('블랙리스트 세부 정보를 조회하는 중 오류가 발생했습니다:', error);
     res.status(500).json({ message: '블랙리스트 세부 정보를 조회하지 못했습니다.', error });
   }
 });
