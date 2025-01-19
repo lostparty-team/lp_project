@@ -1,22 +1,24 @@
 from flask import Flask, request, jsonify
-import requests
 import base64
 import cv2
 import numpy as np
-from ultralytics import YOLO
-import easyocr
+import pytesseract
 from flask_cors import CORS
-from data_class.member import Member
+from PIL import Image
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # 모든 출처에서의 요청 허용
 
+# 템플릿 이미지 로드
+template_path = "초록박스.png"
+template_image = cv2.imread(template_path, cv2.IMREAD_COLOR)
 
+# 템플릿 유효성 검사
+if template_image is None:
+    raise FileNotFoundError(f"Template image not found at {template_path}")
 
 @app.route('/process', methods=['POST'])
 def process_image():
-    members = []
-    # 이미지 데이터 처리
     data = request.json.get('image')
     if not data:
         return jsonify({'error': 'No image data provided'}), 400
@@ -30,57 +32,53 @@ def process_image():
     except Exception as e:
         return jsonify({'error': f'Failed to decode image: {str(e)}'}), 400
 
-    # try:
-    if True:
-        # 모델 로드
-        model = YOLO("model/best.pt")
-        original_height, original_width = original_image.shape[:2]
+    try:
+        # 템플릿 매칭 수행
+        result = cv2.matchTemplate(original_image, template_image, cv2.TM_CCOEFF_NORMED)
 
-        # 이미지 리사이즈 (640x640)
-        resized_image = cv2.resize(original_image, (640, 640))
+        # 임계값 설정 및 매칭 위치 찾기
+        threshold = 0.7
+        locations = np.where(result >= threshold)
 
-        # 추론 수행
-        results = model(resized_image)
+        # 템플릿 크기 가져오기
+        h, w = template_image.shape[:2]
 
-        # 닉네임 이미지 배열 생성
-        cropped_images = []
-        for result in results:
-            idx = 0
-            boxes = result.boxes
-            for box in boxes:
-                x1, y1, x2, y2 = box.xyxy[0]
-                cls = int(box.cls[0])
+        # 사용자 지정 offset과 크기 설정
+        left_offset = 430
+        new_width = 200
+        additional_height_down = 5
+        vertical_shift = 5  # 아래로 이동할 거리
 
-                # 바운딩 박스 좌표를 원본 크기로 변환
-                x1 = int(x1 * original_width / 640)
-                y1 = int(y1 * original_height / 640)
-                x2 = int(x2 * original_width / 640)
-                y2 = int(y2 * original_height / 640)
+        # 빈 마스크 생성 (원본 이미지와 동일한 크기)
+        mask = np.zeros_like(original_image, dtype=np.uint8)
 
-                if cls == 1:  # 특정 클래스만 처리
-                    cropped_image = original_image[y1:y2, x1:x2]
-                    cropped_images.append(cropped_image)
-                    idx += 1
+        # 매칭된 위치에 대해 마스크 처리
+        for pt in zip(*locations[::-1]):
+            # 새로운 영역 계산
+            new_top_left = (max(pt[0] - left_offset, 0), pt[1] + vertical_shift)
+            new_bottom_right = (
+                min(new_top_left[0] + new_width, original_image.shape[1]),
+                min(new_top_left[1] + h + additional_height_down, original_image.shape[0])
+            )
 
-        # OCR 텍스트 읽기
-        reader = easyocr.Reader(['ko', 'en'])
-        nicknames = []
-        for img in cropped_images:
-            img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            _, img_binary = cv2.threshold(img_gray, 150, 255, cv2.THRESH_BINARY)
-            result = reader.readtext(img_binary)
-            members.append(Member(result[0][1] if result else "No Text").to_dict())
-            print(members)
-            nicknames.append(result[0][1] if result else "No Text")
+            # 마스크 처리 (영역 외를 검은색으로 설정)
+            mask[new_top_left[1]:new_bottom_right[1], new_top_left[0]:new_bottom_right[0]] = \
+                original_image[new_top_left[1]:new_bottom_right[1], new_top_left[0]:new_bottom_right[0]]
 
+        # OCR 수행 (PIL을 사용한 텍스트 추출)
+        pil_image = Image.fromarray(cv2.cvtColor(mask, cv2.COLOR_BGR2RGB))
+        extracted_text = pytesseract.image_to_string(pil_image, lang="kor+eng", config="--oem 3 --psm 4")
+        lines = [line.strip() for line in extracted_text.splitlines() if line.strip()]
+
+        # 텍스트 배열 반환
         return jsonify({
             'status': 'success',
-            'message': 'Image processed successfully',
-            'nicknames': nicknames,
-            'members': members,
+            'message': '템플릿 매칭됨, 마스크 처리됨, 텍스트 추출함',
+            '닉네임': lines
         }), 200
-    # except Exception as e:
-    #     return jsonify({'error': f'Error during processing: {str(e)}'}), 500
+
+    except Exception as e:
+        return jsonify({'error': f'Error during template matching or text extraction: {str(e)}'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)

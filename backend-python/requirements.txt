@@ -1,8 +1,6 @@
 flask
 flask-cors
-flask-jwt-extended
 pillow
 opencv-python-headless
-easyocr
+pytesseract
 numpy
-ultralytics
