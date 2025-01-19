@@ -2,20 +2,11 @@
 import { useRef, useEffect, useState } from 'react';
 import Tooltip from '@/components/partyInfo/MemberTooltip';
 import { postProcess } from '@/api/process';
+import { Member } from '@/types/member';
+
 
 const PartyInfo: React.FC = () => {
-  const [members, setMembers] = useState<
-    Array<{
-      server: string;
-      name: string;
-      level: number;
-      itemLevel: number;
-    }>
-  >([
-    { server: '카단', name: 'HaeSungs', level: 70, itemLevel: 1676.67 },
-    { server: '아만', name: '낟찔', level: 60, itemLevel: 1660 },
-    { server: '아만', name: '애니츠의겨울은너무추워', level: 60, itemLevel: 1430 },
-  ]);
+  const [members, setMembers] = useState<Member[]>([]);
 
   const [isRecording, setIsRecording] = useState(false);
   const recordedData = useRef<Blob[]>([]);
@@ -122,11 +113,13 @@ const PartyInfo: React.FC = () => {
     try {
       const base64Data = canvas.toDataURL('image/png');
 
-      console.log(base64Data);
-
       // Base64 데이터를 파이썬 백엔드로 전송
       const response = await postProcess({ image: base64Data });
-      const partyNickname = response.data.nicknames;
+      const memberData: Member[] = response.data.members;
+
+      // 상태 업데이트
+      setMembers(memberData);
+      console.log(response);
       // 테스트용 코드 (추후 삭제)
       // const testResponse = await postProcessTest();
       // const partyData = testResponse.data.data;
@@ -171,7 +164,7 @@ const PartyInfo: React.FC = () => {
           <div className='flex-1 rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'>
             <h3 className='mb-4 text-xl font-semibold text-lostark-400'>파티원 정보</h3>
             <div className='h-full max-h-[calc(100%-48px)] overflow-y-auto'>
-              {members.map((data, index) => (
+              {Array.isArray(members) && members.map((data, index) => (
                 <div
                   key={index}
                   onMouseEnter={(e) => handleMouseEnter(e, data)}
@@ -179,7 +172,7 @@ const PartyInfo: React.FC = () => {
                   className='mb-2 rounded-lg bg-gradient-to-br from-black2 to-black1 p-4 shadow-lg'
                 >
                   <div className='flex items-center justify-between'>
-                    <div className='text-lg font-semibold text-lostark-300'>아기사슴설장군</div>
+                    <div className='text-lg font-semibold text-lostark-300'>{data.name}</div>
                     <div className='text-sm text-gray-400'>1680</div>
                   </div>
                   <div className='text-sm text-gray-400'>세구빛 30각 | 40엘 | 126초</div>

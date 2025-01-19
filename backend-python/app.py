@@ -6,13 +6,16 @@ import numpy as np
 from ultralytics import YOLO
 import easyocr
 from flask_cors import CORS
+from data_class.member import Member
 
 app = Flask(__name__)
 CORS(app)
 
 
+
 @app.route('/process', methods=['POST'])
 def process_image():
+    members = []
     # 이미지 데이터 처리
     data = request.json.get('image')
     if not data:
@@ -66,12 +69,15 @@ def process_image():
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             _, img_binary = cv2.threshold(img_gray, 150, 255, cv2.THRESH_BINARY)
             result = reader.readtext(img_binary)
+            members.append(Member(result[0][1] if result else "No Text").to_dict())
+            print(members)
             nicknames.append(result[0][1] if result else "No Text")
 
         return jsonify({
             'status': 'success',
             'message': 'Image processed successfully',
             'nicknames': nicknames,
+            'members': members,
         }), 200
     # except Exception as e:
     #     return jsonify({'error': f'Error during processing: {str(e)}'}), 500
