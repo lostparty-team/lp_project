@@ -1,4 +1,5 @@
 import { delay, http, HttpResponse } from 'msw';
+import { MOCK_PARTY } from '@/constants/mockData';
 
 const baseURL = 'http://localhost:3030';
 
@@ -852,4 +853,35 @@ export const handlers = [
     await delay(300);
     return new HttpResponse(null, { status: 200 });
   }),
+
+  // party 정보
+  http.post(`${baseURL}/process`, async () => {
+
+    const responseData = MOCK_PARTY;
+
+    return HttpResponse.json({
+      message: '파티원 정보를 성공적으로 조회했습니다.',
+      data: responseData,
+    });
+  }),
+
+  http.post(`${baseURL}/party`, async (req) => {
+    const { nickname } = await req.json();
+    const mockData = MOCK_PARTY;
+    await delay(200);
+
+
+    if (mockData[nickname]) {
+      return HttpResponse.json({
+        message: '특정 파티원 정보를 성공적으로 조회했습니다.',
+        data: mockData[nickname]
+      });
+    }
+    else {
+      return HttpResponse.json({
+        message: '특정 파티원 정보를 성공적으로 조회했습니다.',
+        data: null
+      });
+    }
+  })
 ];
