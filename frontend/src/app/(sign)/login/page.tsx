@@ -1,16 +1,17 @@
 'use client';
-import { postLogin } from '@/api/auth';
 import { LoginInfo } from '@/types/domain';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
 import { CustomButton, CustomInput } from '@/components/common';
 import BackgroundVideo from '@/components/common/BackgroundVideo';
 import { motion } from 'framer-motion';
 import { pageVariants } from '@/constants/animations';
+import { useAuthStore } from '@/stores/useAuthStore';
+import useAuth from '@/hooks/useAuth';
+import { toast } from 'react-toastify';
+import { data } from 'autoprefixer';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,19 +21,26 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginInfo>();
 
+  /**
+   *! 로그인 로직 임시 해제 
+  const { setIsLogin } = useAuthStore();
+  const { loginMutation } = useAuth();
+  
   const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
     try {
-      const res = await postLogin(data);
-      if (res.status === 200) {
+      const res = await loginMutation.mutateAsync(data);
+      if (res) {
+        setIsLogin(true);
         router.push('/');
         toast.success('로그인에 성공하였습니다.');
-      } else {
-        toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (err) {
       toast.error('로그인 중 오류가 발생했습니다.');
     }
   };
+  */
+
+  const onSubmit = console.log('임시');
 
   return (
     <main className='relative z-10 flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
@@ -53,14 +61,14 @@ export default function LoginPage() {
             <div className='min-h-[102px]'>
               <CustomInput
                 label='아이디'
-                {...register('id', {
+                {...register('userId', {
                   required: '아이디를 입력해주세요.',
                 })}
                 type='text'
                 placeholder='아이디를 입력하세요'
                 className='w-full rounded-md border border-lostark-400/30 bg-black1 px-4 py-2 text-white/50 outline-none transition-all duration-200 placeholder:text-white/30 hover:border-lostark-400/50 focus:border-lostark-400 focus:ring-lostark-400'
               />
-              {errors.id && <span className='text-sm text-red-400'>{errors.id.message}</span>}
+              {errors.userId && <span className='text-sm text-red-400'>{errors.userId.message}</span>}
             </div>
             <div className='min-h-[102px]'>
               <CustomInput

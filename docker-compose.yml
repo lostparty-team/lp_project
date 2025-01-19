@@ -42,30 +42,19 @@ services:
     volumes:
       - ./backend-python:/app   
     command: python app.py
-
+ 
   mysql:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: lp1346
       MYSQL_DATABASE: lp_project
+      # MYSQL_USER: app_user // 배포환경에선 사용자를 따로만들어서 권한을줘서 사용하는게좋음
+      # MYSQL_PASSWORD: app_password
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d # SQL 초기화 스크립트 마운트
 
-  redis:
-    image: redis:7.4.1
-    container_name: redis_container
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    environment:
-      - REDIS_PASSWORD=lp1346
-    command: ["redis-server", "--requirepass", "lp1346"]
-    restart: unless-stopped
-
 volumes:
   mysql_data:
-  redis_data:

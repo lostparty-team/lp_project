@@ -27,23 +27,23 @@ export default function RegisterPage() {
     mode: 'onChange',
   });
   const { idChecked, idCheckStatus, isChecking, setIdChecked, setIdCheckStatus, setIsChecking } = useRegisterStore();
-  const idValue = watch('id');
+  const idValue = watch('userId');
   const passwordValue = watch('password');
 
   useEffect(() => {
     setIdChecked(false);
     // id 중복 확인 통과 시, valid
-    if (!errors.id && idValue) {
+    if (!errors.userId && idValue) {
       setIdCheckStatus('valid');
     } else {
       setIdCheckStatus('initial');
     }
-  }, [idValue, errors.id]);
+  }, [idValue, errors.userId]);
 
   // ID 중복 확인
   const handleCheckId = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const isValid = await trigger('id');
+    const isValid = await trigger('userId');
     if (!isValid) return;
     setIsChecking(true);
     try {
@@ -80,7 +80,7 @@ export default function RegisterPage() {
   };
 
   const getIdSuccessMessage = () => {
-    if (!dirtyFields.id || errors.id) return null;
+    if (!dirtyFields.userId || errors.userId) return null;
     if (idCheckStatus === 'checked') return '사용 가능한 아이디입니다!';
     if (idCheckStatus === 'valid') return '조건을 만족하는 아이디입니다.';
     return null;
@@ -105,25 +105,25 @@ export default function RegisterPage() {
             <div className='min-h-[102px]'>
               <CustomInput
                 label='아이디'
-                {...register('id', {
+                {...register('userId', {
                   required: '아이디를 입력해주세요.',
                   minLength: { value: 2, message: '아이디는 최소 두 글자 이상이어야 합니다.' },
                 })}
                 placeholder='아이디를 입력하세요'
                 error={
-                  errors.id?.message || (idCheckStatus === 'duplicate' ? '중복된 아이디가 존재합니다.' : undefined)
+                  errors.userId?.message || (idCheckStatus === 'duplicate' ? '중복된 아이디가 존재합니다.' : undefined)
                 }
                 disabled={idChecked}
-                isDirty={!!dirtyFields.id}
+                isDirty={!!dirtyFields.userId}
                 successMessage={getIdSuccessMessage()}
                 rightSide={
                   <CustomButton
                     type='button'
-                    disabled={!idValue || !!errors.id || idChecked || isChecking}
+                    disabled={!idValue || !!errors.userId || idChecked || isChecking}
                     onClick={handleCheckId}
                     variant='secondary'
                     size='sm'
-                    className={`${!errors.id && idValue && !idChecked ? 'text-lostark-500 hover:text-lostark-400' : 'cursor-not-allowed text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
+                    className={`${!errors.userId && idValue && !idChecked ? 'text-lostark-500 hover:text-lostark-400' : 'cursor-not-allowed text-white/50'} w-32 rounded-bl-none rounded-tl-none`}
                   >
                     {isChecking ? '확인 중...' : '중복 확인'}
                   </CustomButton>
