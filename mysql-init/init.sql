@@ -8,37 +8,27 @@ USE lp_project;
 -- 문자셋 설정
 SET NAMES utf8mb4;
 
--- User 테이블
-CREATE TABLE IF NOT EXISTS User (
-    id INT AUTO_INCREMENT PRIMARY KEY, 
-    userId VARCHAR(100) UNIQUE,  -- 유저 아이디
-    password VARCHAR(255) NOT NULL,   -- 유저 비밀번호
-    clientId VARCHAR(255) NOT NULL UNIQUE,
-    apiKey VARCHAR(1000) NOT NULL, -- 유저 API Key
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deletedAt DATETIME NULL
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- Posts 테이블 (Dislike와 Blacklist의 참조 테이블)
 CREATE TABLE IF NOT EXISTS Posts (
     id INT AUTO_INCREMENT PRIMARY KEY,   -- 글번호
     title VARCHAR(255) NOT NULL,         -- 글제목
-    author VARCHAR(100) NOT NULL,        -- 작성자 (User 테이블의 userId와 연결)
+    author VARCHAR(255) NOT NULL,        -- 작성자 (API Key에서 추출된 clientId)
     views INT DEFAULT 0,                 -- 조회수 (기본값 0)
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- 생성 시간
-    FOREIGN KEY (author) REFERENCES User(userId) ON DELETE CASCADE -- User와 관계 설정
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP -- 생성 시간
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 
 -- Dislike 테이블 (Posts를 참조)
 CREATE TABLE IF NOT EXISTS Dislike (
     id INT AUTO_INCREMENT PRIMARY KEY,
     postId INT NOT NULL,
-    clientId VARCHAR(255) NOT NULL,
+    clientId VARCHAR(255) NOT NULL, -- clientId (API Key에서 추출)
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY (postId, clientId), -- 같은 글에 대해 같은 유저가 비추천 못하도록 설정
     FOREIGN KEY (postId) REFERENCES Posts(id) ON DELETE CASCADE -- 참조 무결성 보장
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 
 -- Blacklist 테이블 (Posts를 참조)
 CREATE TABLE IF NOT EXISTS Blacklist (
@@ -50,6 +40,7 @@ CREATE TABLE IF NOT EXISTS Blacklist (
     FOREIGN KEY (postId) REFERENCES Posts(id) ON DELETE CASCADE -- Posts와 관계 설정
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
+
 -- Cart 테이블
 CREATE TABLE IF NOT EXISTS Cart (
     id INT AUTO_INCREMENT PRIMARY KEY, -- 고유 ID
@@ -60,15 +51,12 @@ CREATE TABLE IF NOT EXISTS Cart (
     FOREIGN KEY (postId) REFERENCES Posts(id) ON DELETE CASCADE -- 관련 글 삭제 시 동반 삭제
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- 테스트 유저 생성
-INSERT INTO User (userId, password, clientId, apiKey) VALUES
-('test', 'test99', '1000000000057155', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAwNTcxNTUifQ.I1pGqN--4PJ_WTIzJa02FhWr3oDgcp0zgCoQ3lLlmgF1wRFAE7lcj1X7A-WowS5qQDiHR1m_05qdhB8MM1wjgHHYzwyXjrFAmclypz73pjswfHHcLB7O5JWtaW7um22c3vVUtvq1AHJ38XCeT4K32qXsdIpQohbP_nCe2hEfazM7lf0zESfQnwjNyGp5oeGT9-E06h1GV4NAa_7Pc64ThhPUJUXi-gPqm6tuPfxpV75tWT8BERo5-8QuOswe-jvFgylLYSrbpJHqXRQn75rjJeZWQjcZdP0GZIRme9GFZ4WrsvVbpWapzM7ET5jpi4GTgUQp5VkZMvQWv3OaICiuzQ');
-
 -- Posts 테이블 더미 데이터 생성
 INSERT INTO Posts (title, author) VALUES
-('사기꾼 리스트', 'test'),
-('사기꾼 리스트2', 'test'),
-('사기꾼 리스트5', 'test');
+('사기꾼 리스트', '1000000000057155'),
+('사기꾼 리스트2', '1000000000057155'),
+('사기꾼 리스트3', '100000000005746678');
+
 
 -- Blacklist 테이블 더미 데이터 생성
 INSERT INTO Blacklist (postId, nickname, reason) VALUES

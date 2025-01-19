@@ -1,14 +1,14 @@
-import { axiosInstance } from '@/api/axios';
+import { axiosAuthInstance } from '@/api/axios';
 
 const setHeader = (key: string, value: string) => {
-  axiosInstance.defaults.headers.common[key] = value;
+  axiosAuthInstance.defaults.headers.common[key] = value;
 };
 
 const removeHeader = (key: string) => {
-  if (!axiosInstance.defaults.headers.common[key]) {
+  if (!axiosAuthInstance.defaults.headers.common[key]) {
     return;
   }
-  delete axiosInstance.defaults.headers.common[key];
+  delete axiosAuthInstance.defaults.headers.common[key];
 };
 
 export { setHeader, removeHeader };
