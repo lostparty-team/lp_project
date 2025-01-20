@@ -59,25 +59,12 @@ const BlacklistPage = () => {
     setCartRef(cartRef);
   }, [setCartRef]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('lostark-api');
-    const payload: { client_id: string } = jwtDecode(token as string);
-    setCurrentUser(payload.client_id);
-  }, []);
-
   const handleBlacklistSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  // const filteredBlacklist = blacklist.filter(
-  //   (item) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
-  // );
-
-  // console.log(blacklist.map((v) => v.author));
-
   const handleAddToBlacklist = async (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('장바구니에 추가');
 
     const buttonRect = e.currentTarget.getBoundingClientRect();
     const cartRect = cartRef.current?.getBoundingClientRect();
@@ -225,25 +212,6 @@ const BlacklistPage = () => {
       ease: 'easeInOut',
     },
   };
-
-  // const [myBlacklist, setmyBlacklist] = useState([]);
-
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     const res = await getCart();
-  //     setmyBlacklist(res.data);
-  //   };
-  //   fetch();
-  // }, []);
-
-  useEffect(() => {
-    const fetch = async () => {
-      console.log('myBlacklist:', myBlacklist); // 전체 데이터 구조 확인
-    };
-    fetch();
-  }, [myBlacklist]);
-
-  console.log(myBlacklist.map((v: any) => v.postId));
 
   return (
     <motion.div

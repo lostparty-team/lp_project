@@ -49,7 +49,6 @@ const BlacklistCreateModal = () => {
     if (inputRef.current) {
       // 제목 입력 최대 너비 제한
       const width = Math.min(title.length + 4, 400);
-      console.log(width);
       inputRef.current.style.width = `${width + 1}ch`;
     }
   }, [title, isEditing]);
