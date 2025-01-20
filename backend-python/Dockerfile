@@ -1,5 +1,5 @@
 # Python 공식 이미지 사용
-FROM python:3.13
+FROM python:3.11.10
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -9,11 +9,7 @@ COPY requirements.txt requirements.txt
 COPY . .
 
 # 패키지 업데이트 및 필요한 라이브러리 설치
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    tesseract-ocr \
-    tesseract-ocr-kor \
-    tesseract-ocr-eng \
-    libtesseract-dev \
+RUN apt-get update && apt-get install -y libgl1-mesa-glx \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
