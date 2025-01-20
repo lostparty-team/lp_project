@@ -1,4 +1,5 @@
 export interface BlacklistUser {
+  postId: number;
   id: number;
   title: string;
   author: string;
