@@ -16,11 +16,16 @@ import { toast } from 'react-toastify';
 import MyBlacklistItem from './MyBlacklistItem';
 import { pageVariants } from '@/constants/animations';
 import { deleteBlacklist } from '@/api/blacklist';
+import { jwtDecode } from 'jwt-decode';
+import queryClient from '@/api/queryClient';
+
 const BlacklistPage = () => {
   const router = useRouter();
   const cartRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
+  const [currentUser, setCurrentUser] = useState<string>();
+
   const {
     searchTerm,
     flyingItem,
@@ -53,6 +58,12 @@ const BlacklistPage = () => {
   useEffect(() => {
     setCartRef(cartRef);
   }, [setCartRef]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('lostark-api');
+    const payload: { client_id: string } = jwtDecode(token as string);
+    setCurrentUser(payload.client_id);
+  }, []);
 
   const handleBlacklistSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -137,9 +148,10 @@ const BlacklistPage = () => {
             className='rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600'
             onClick={async () => {
               try {
-                const res = await deleteBlacklist(blacklistItem.id);
                 toast.dismiss(postId);
                 toast.success('블랙리스트가 삭제되었습니다.');
+                await deleteBlacklist(blacklistItem.id);
+                await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
               } catch (error) {
                 toast.dismiss(postId);
                 toast.error('블랙리스트 삭제에 실패했습니다.');
@@ -290,6 +302,7 @@ const BlacklistPage = () => {
                 <BlacklistItem
                   key={`blacklist-${blacklistItem.id}`}
                   blacklistItem={blacklistItem}
+                  currentUser={currentUser}
                   onItemClick={handleBlacklistItemClick}
                   onAddClick={handleAddToBlacklist}
                   onDeleteClick={handleDeleteBlacklist}
