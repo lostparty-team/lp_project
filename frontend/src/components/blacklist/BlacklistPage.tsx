@@ -15,6 +15,7 @@ import BlacklistCreateModal from './modal/blacklistCreate';
 import { toast } from 'react-toastify';
 import MyBlacklistItem from './MyBlacklistItem';
 import { pageVariants } from '@/constants/animations';
+import { deleteBlacklist } from '@/api/blacklist';
 const BlacklistPage = () => {
   const router = useRouter();
   const cartRef = useRef<HTMLDivElement>(null);
@@ -34,8 +35,15 @@ const BlacklistPage = () => {
     setIsModalOpen,
   } = useBlacklistStore();
 
-  const { blacklist, myBlacklist, handleAddToMyBlacklist, handleRemoveFromMyBlacklist, isLoading } =
-    useBlacklist(sortType);
+  const {
+    blacklist,
+    myBlacklist,
+    handleAddToMyBlacklist,
+    handleRemoveFromMyBlacklist,
+    isLoading,
+    addToCartMutation,
+    removeFromCartMutation,
+  } = useBlacklist(sortType);
   const { setIsLoading } = useLoadingStore();
   useEffect(() => {
     setIsLoading(isLoading);
@@ -56,45 +64,56 @@ const BlacklistPage = () => {
 
   // console.log(blacklist.map((v) => v.author));
 
-  const handleAddToBlacklist = (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
+  const handleAddToBlacklist = async (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
     e.preventDefault();
+    console.log('장바구니에 추가');
+
     const buttonRect = e.currentTarget.getBoundingClientRect();
     const cartRect = cartRef.current?.getBoundingClientRect();
 
     if (cartRect) {
-      setFlyingItem({
-        id: blacklistItem.id.toString(),
-        x: buttonRect.left,
-        y: buttonRect.top,
-        type: 'add',
-      });
+      try {
+        addToCartMutation(blacklistItem.id);
 
-      setTimeout(() => {
-        setFlyingItem(null);
-        handleAddToMyBlacklist(blacklistItem);
+        setFlyingItem({
+          id: blacklistItem.id.toString(),
+          x: buttonRect.left,
+          y: buttonRect.top,
+          type: 'add',
+        });
 
-        // 장바구니 추가 완료 후 스크롤
         setTimeout(() => {
-          if (cartRef.current) {
-            // 다음 프레임에서 최종 높이 계산
-            requestAnimationFrame(() => {
-              const container = cartRef.current;
-              if (!container) return;
-              const scrollableHeight = container.scrollHeight - container.clientHeight;
-              container.scrollTo({
-                top: scrollableHeight,
-                behavior: 'smooth',
+          setFlyingItem(null);
+          handleAddToMyBlacklist(blacklistItem);
+
+          setTimeout(() => {
+            if (cartRef.current) {
+              requestAnimationFrame(() => {
+                const container = cartRef.current;
+                if (!container) return;
+                const scrollableHeight = container.scrollHeight - container.clientHeight;
+                container.scrollTo({
+                  top: scrollableHeight,
+                  behavior: 'smooth',
+                });
               });
-            });
-          }
-        }, 250); // 아이템 추가 애니메이션 완료 대기
-      });
+            }
+          }, 250);
+        });
+      } catch (error) {
+        console.error('장바구니 추가 실패:', error);
+      }
     }
   };
 
   const handleRemoveFromBlacklist = (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
     e.stopPropagation();
-    handleRemoveFromMyBlacklist(blacklistItem.id);
+    try {
+      removeFromCartMutation(blacklistItem.postId);
+      handleRemoveFromMyBlacklist(blacklistItem.id);
+    } catch (error) {
+      console.error('장바구니 제거 실패:', error);
+    }
   };
 
   const handleDeleteBlacklist = async (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
@@ -118,7 +137,7 @@ const BlacklistPage = () => {
             className='rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600'
             onClick={async () => {
               try {
-                // const res = await deleteBlacklist(blacklistItem.id);
+                const res = await deleteBlacklist(blacklistItem.id);
                 toast.dismiss(postId);
                 toast.success('블랙리스트가 삭제되었습니다.');
               } catch (error) {
@@ -194,6 +213,25 @@ const BlacklistPage = () => {
       ease: 'easeInOut',
     },
   };
+
+  // const [myBlacklist, setmyBlacklist] = useState([]);
+
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     const res = await getCart();
+  //     setmyBlacklist(res.data);
+  //   };
+  //   fetch();
+  // }, []);
+
+  useEffect(() => {
+    const fetch = async () => {
+      console.log('myBlacklist:', myBlacklist); // 전체 데이터 구조 확인
+    };
+    fetch();
+  }, [myBlacklist]);
+
+  console.log(myBlacklist.map((v: any) => v.postId));
 
   return (
     <motion.div
@@ -272,14 +310,16 @@ const BlacklistPage = () => {
               </div>
               <ul className='space-y-2'>
                 <AnimatePresence mode='popLayout'>
-                  {myBlacklist.map((blacklistItem, index) => (
-                    <MyBlacklistItem
-                      key={blacklistItem.id}
-                      blacklistItem={blacklistItem}
-                      onItemClick={handleMyBlacklistItemClick}
-                      onRemoveClick={handleRemoveFromBlacklist}
-                    />
-                  ))}
+                  {[...myBlacklist]
+                    // .sort((a, b) => a - b) // 내림차순 정렬 추가
+                    .map((blacklistItem, index) => (
+                      <MyBlacklistItem
+                        key={`blacklistItem-${index}`}
+                        blacklistItem={blacklistItem}
+                        onItemClick={handleMyBlacklistItemClick}
+                        onRemoveClick={handleRemoveFromBlacklist}
+                      />
+                    ))}
                 </AnimatePresence>
               </ul>
             </div>
