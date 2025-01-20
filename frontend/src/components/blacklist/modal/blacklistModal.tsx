@@ -9,6 +9,7 @@ import { useBlacklistStore } from '@/stores/blacklistStore';
 import { getBlacklistDetail } from '@/api/blacklist';
 import { BlacklistDetail } from '@/types/blacklist';
 import { toast } from 'react-toastify';
+import { useBlacklist } from '@/hooks/useBlacklist';
 
 const BlacklistModal = () => {
   const router = useRouter();
@@ -20,6 +21,8 @@ const BlacklistModal = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+
+  const { postDislikeMutation } = useBlacklist();
 
   useEffect(() => {
     const fetch = async () => {
@@ -51,9 +54,8 @@ const BlacklistModal = () => {
     router.push('/blacklist', { scroll: false });
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+  const handleDislike = (blacklistId: string) => {
+    postDislikeMutation(blacklistId);
   };
 
   useEffect(() => {
@@ -112,12 +114,15 @@ const BlacklistModal = () => {
                     <h2 className='bg-gradient-to-r from-lostark-400 to-lostark-300 bg-clip-text text-3xl font-bold text-transparent text-white'>
                       {blacklist?.post.title}
                     </h2>
+                    {/* 태그 */}
                     <span className='rounded-full bg-lostark-400/20 px-3 py-1 text-sm font-medium text-lostark-400'>
                       블랙리스트
                     </span>
                   </div>
+
+                  {/* dislike */}
                   <button
-                    onClick={handleLike}
+                    onClick={() => handleDislike(id)}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 ${
                       isLiked ? 'bg-lostark-400 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
                     }`}
@@ -129,7 +134,7 @@ const BlacklistModal = () => {
                 <div className='flex items-center justify-between border-t border-white/10 pt-4'>
                   <div className='flex items-center gap-2'>
                     <span className='text-white/60'>작성자:</span>
-                    <span className='text-lg font-medium text-white'>{blacklist?.post.author}</span>
+                    <span className='text-lg font-medium text-white'>{blacklist?.post.author.slice(10)}</span>
                   </div>
                   <div className='flex items-center gap-2 text-sm text-white/60'>
                     {metaItems.map((item, index) => (

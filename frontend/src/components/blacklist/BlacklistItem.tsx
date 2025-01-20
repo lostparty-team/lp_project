@@ -21,14 +21,22 @@ const LIST_ITEM_VARIANTS: Variants = {
 
 interface BlacklistItemProps {
   blacklistItem: BlacklistUser;
+  currentUser?: string;
   onItemClick: (item: BlacklistUser) => void;
   onAddClick: (item: BlacklistUser, e: React.MouseEvent<HTMLButtonElement>) => void;
   onDeleteClick: (item: BlacklistUser, e: React.MouseEvent<HTMLButtonElement>) => void;
   isDeleting: boolean;
 }
 
-const BlacklistItem = ({ blacklistItem, onItemClick, onAddClick, onDeleteClick, isDeleting }: BlacklistItemProps) => {
-  const isAuthor = blacklistItem.author === '트롤러123';
+const BlacklistItem = ({
+  blacklistItem,
+  currentUser,
+  onItemClick,
+  onAddClick,
+  onDeleteClick,
+  isDeleting,
+}: BlacklistItemProps) => {
+  const isAuthor = currentUser && blacklistItem.author === currentUser;
 
   return (
     <motion.li

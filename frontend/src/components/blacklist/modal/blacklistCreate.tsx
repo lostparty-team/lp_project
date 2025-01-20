@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'; // 추가
 import { useLoadingStore } from '@/stores/loadingStore';
 import { handleBackdropClick } from '@/utils/modalUtils';
 import { useBlacklistStore } from '@/stores/blacklistStore';
+import queryClient from '@/api/queryClient';
 
 interface BlacklistUser {
   id: number;
@@ -112,9 +113,14 @@ const BlacklistCreateModal = () => {
     blacklist: { nickname: string; reason: string }[];
   }) => {
     try {
-      console.log('제출');
-      const { data } = await axiosInstance.post('/api/blacklist/create', blacklistData);
+      const getStorage = localStorage.getItem('lostark-api');
+      const { data } = await axiosInstance.post('/api/blacklist/create', blacklistData, {
+        headers: {
+          Authorization: getStorage,
+        },
+      });
       toast.success('블랙리스트가 생성되었습니다.');
+      await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
       return data;
     } catch (err) {
       toast.error('블랙리스트 생성에 실패했습니다.');
