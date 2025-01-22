@@ -28,7 +28,7 @@ const BlacklistModal = () => {
     const fetch = async () => {
       try {
         setIsPageLoading(true);
-        const { data } = await getBlacklistDetail(id as string);
+        const data = await getBlacklistDetail(id as string);
         setBlacklist(data);
       } catch (error) {
         toast.error('블랙리스트 데이터 로딩 실패');

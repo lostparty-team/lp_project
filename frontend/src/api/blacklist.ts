@@ -32,8 +32,9 @@ export const deleteBlacklist = async (id: number) => {
   return data;
 };
 
-export const getBlacklistDetail = (id: string) => {
-  return axiosInstance.get(`/api/blacklist/${id}`);
+export const getBlacklistDetail = async (id: string) => {
+  const { data } = await authRequest('get', `/api/blacklist/${id}`);
+  return data;
 };
 
 export const postDislike = (id: string) => {
