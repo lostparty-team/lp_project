@@ -14,8 +14,8 @@ type ResponseToken = {
   access_token: string;
 };
 
-type ProcessInfo = {
+type PartyScreen = {
   image: Blob;
 };
 
-export type { UserCredentials, RegisterInfo, LoginInfo, ResponseToken, ProcessInfo };
+export type { UserCredentials, RegisterInfo, LoginInfo, ResponseToken, PartyScreen };

@@ -6,5 +6,8 @@ export const API = {
   USER: {
     PROFILE: '/users/me',
   },
-  PROCESS: '/process',
+  PARTY: {
+    SCREEN: '/party/screen',
+    MEMBER: '/party/member',
+  },
 } as const;

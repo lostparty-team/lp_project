@@ -40,7 +40,9 @@ services:
     ports:
       - "5001:5001"
     volumes:
-      - ./backend-python:/app   
+      - ./backend-python:/app
+    env_file:
+      - ./backend-python/.env
     command: python app.py
  
   mysql:
