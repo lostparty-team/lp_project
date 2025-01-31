@@ -1,24 +1,28 @@
 import { AxiosResponse } from 'axios';
-import type { ProcessInfo } from '../types/domain';
-import { axiosPythonInstance, axiosInstance } from '@/api/axios';
+import type { PartyScreen } from '../types/domain';
+import { axiosPythonInstance } from '@/api/axios';
 import { API } from '@/constants/route';
 
-const postProcess = async ({ image }: ProcessInfo): Promise<AxiosResponse> => {
+const getAuthHeader = () => {
+  const token = localStorage.getItem('lostark-api');
+  return token ? { Authorization: token } : {};
+};
 
-  const response = await axiosPythonInstance.post(API.PROCESS, { image }, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
+const authRequest = async (method: string, url: string, data?: any) => {
+  return axiosPythonInstance({
+    method,
+    url,
+    data,
+    headers: getAuthHeader(),
   });
-
-  return response;
 };
 
-const postProcessTest = async (): Promise<AxiosResponse> => {
-
-  const response = await axiosInstance.post(API.PROCESS);
-
-  return response;
+export const getPartyScreenInfo = async (image: PartyScreen) => {
+  const { data } = await authRequest('post', API.PARTY.SCREEN, { image });
+  return data;
 };
 
-export { postProcess, postProcessTest };
+export const getMemberInfo = async (nickname: string) => {
+  const {data} = await authRequest('get', `${API.PARTY.SCREEN}?nickname=${nickname}`);
+  return data;
+}

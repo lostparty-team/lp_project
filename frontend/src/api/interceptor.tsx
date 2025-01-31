@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const PROTECTED_PATHS = ['/party-info'];
 const PROTECTED_API_PATHS = ['/api/blacklist', '/api/party'];
-const TOKEN_KEY = 'accessToken';
+const TOKEN_KEY = 'lostark-api';
 
 interface AxiosInterceptorProps {
   children: React.ReactNode;

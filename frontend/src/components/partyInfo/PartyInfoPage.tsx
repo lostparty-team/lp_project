@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useEffect, useState } from 'react';
 import Tooltip from '@/components/partyInfo/MemberTooltip';
-import { postProcess } from '@/api/process';
+import { getPartyScreenInfo, getMemberInfo } from '@/api/process';
 import { Member } from '@/types/member';
 
 
@@ -28,16 +28,37 @@ const PartyInfo: React.FC = () => {
       content: (
         <div>
           <div>
-            <strong>서버:</strong> {member.server}
+            <strong>무기 레벨:</strong> {member.weaponLevel}
           </div>
           <div>
-            <strong>이름:</strong> {member.name}
+            <strong>아크패시브 포인트:</strong> {member.arkPassivePoints[0]} {member.arkPassivePoints[1]} {member.arkPassivePoints[2]}
           </div>
           <div>
-            <strong>레벨:</strong> {member.level}
+            <strong>각인:</strong>
+            <ul>
+              {member.engravings.map((engraving, index) => (
+                <li key={index}>
+                  {engraving.name} - {engraving.grade} (Level {engraving.gradeLevel}){engraving.abilityStoneLevel !== null ? `, 어빌리티스톤: Level ${engraving.abilityStoneLevel}` : ''}
+                </li>
+              ))}
+            </ul>
           </div>
           <div>
-            <strong>아이템 레벨:</strong> {member.itemLevel}
+            <strong>초월:</strong> 투구 {member.transcendence.helmet} 어깨 {member.transcendence.shoulder} 상의 {member.transcendence.top} 하의 {member.transcendence.pants} 장갑 {member.transcendence.gloves} 무기 {member.transcendence.weapon}
+          </div>
+          <div>
+            <strong>엘릭서:</strong> {40}
+          </div>
+          <div>
+            <strong>팔찌: </strong> {member.bracelet.length > 0 ? (
+            <ul>
+              {member.bracelet.map((effect, index) => (
+                <li key={index}>{effect}</li>
+              ))}
+            </ul>
+          ) : (
+            '효과 없음'
+          )}
           </div>
         </div>
       ),
@@ -114,17 +135,12 @@ const PartyInfo: React.FC = () => {
       const base64Data = canvas.toDataURL('image/png');
 
       // Base64 데이터를 파이썬 백엔드로 전송
-      const response = await postProcess({ image: base64Data });
-      const memberData: Member[] = response.data.members;
+      const response = await getPartyScreenInfo(base64Data);
+      console.log(response);
+      const memberData: Member[] = response.members;
 
       // 상태 업데이트
       setMembers(memberData);
-      console.log(response);
-      // 테스트용 코드 (추후 삭제)
-      // const testResponse = await postProcessTest();
-      // const partyData = testResponse.data.data;
-
-      // console.log('서버 응답:', response.data, testResponse.data);
     } catch (error) {
       console.error('Base64 변환 또는 통신 중 오류 발생:', error);
     }
@@ -163,22 +179,45 @@ const PartyInfo: React.FC = () => {
           {/* 파티원 정보 */}
           <div className='flex-1 rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'>
             <h3 className='mb-4 text-xl font-semibold text-lostark-400'>파티원 정보</h3>
-            <div className='h-full max-h-[calc(100%-48px)] overflow-y-auto'>
-              {Array.isArray(members) && members.map((data, index) => (
-                <div
-                  key={index}
-                  onMouseEnter={(e) => handleMouseEnter(e, data)}
-                  onMouseLeave={handleMouseLeave}
-                  className='mb-2 rounded-lg bg-gradient-to-br from-black2 to-black1 p-4 shadow-lg'
-                >
-                  <div className='flex items-center justify-between'>
-                    <div className='text-lg font-semibold text-lostark-300'>{data.name}</div>
-                    <div className='text-sm text-gray-400'>1680</div>
+            <div className="h-full max-h-[calc(100%-48px)] overflow-y-auto">
+              {Array.isArray(members) &&
+                members.map((data, index) => (
+                  <div
+                    key={index}
+                    onMouseEnter={(e) => {
+                      if (data.level !== null) handleMouseEnter(e, data);
+                    }}
+                    onMouseLeave={handleMouseLeave}
+                    className="mb-2 rounded-lg bg-gradient-to-br from-black2 to-black1 p-4 shadow-lg"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div
+                          className={`text-lg font-semibold ${
+                            data.level === null ? "text-red-500" : "text-lostark-300"
+                          }`}
+                        >
+                          {data.name}
+                        </div>
+                        <button
+                          className="rounded bg-lostark-400 px-2 py-1 text-black hover:bg-lostark-300"
+                          onClick={() => handleUpdateNickname(index)}
+                        >
+                          수정
+                        </button>
+                      </div>
+                      <div className="text-sm text-gray-400">{data.weaponLevel}</div>
+                    </div>
+                    {data.level !== null && (
+                      <div className="text-sm text-gray-400">
+                        세구빛 30각 | 40엘 | {data.transcendence.total}초
+                      </div>
+                    )}
                   </div>
-                  <div className='text-sm text-gray-400'>세구빛 30각 | 40엘 | 126초</div>
-                </div>
-              ))}
-              <div className='rounded-lg bg-black2 p-6 text-center text-gray-400'>파티원을 기다리는 중입니다...</div>
+                ))}
+              <div className="rounded-lg bg-black2 p-6 text-center text-gray-400">
+                파티원을 기다리는 중입니다...
+              </div>
             </div>
           </div>
         </div>

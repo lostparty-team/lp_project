@@ -3,6 +3,8 @@ flask-cors
 flask-jwt-extended
 pillow
 opencv-python-headless
-easyocr
 numpy
 ultralytics
+python-dotenv
+paddlepaddle
+paddleocr>=2.0.1
