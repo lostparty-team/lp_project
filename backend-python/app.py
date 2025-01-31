@@ -1,86 +1,162 @@
+# import libraries
+import os
+from dotenv import load_dotenv
+# import flask
 from flask import Flask, request, jsonify
-import requests
-import base64
-import cv2
-import numpy as np
-from ultralytics import YOLO
-import easyocr
 from flask_cors import CORS
+# import for image processing
+import cv2
+import base64
+import numpy as np
+# import YOLO model
+from ultralytics import YOLO
+# import OCR model
+from paddleocr import PaddleOCR
+# import for HTTP request
+import requests
+# import data class
 from data_class.member import Member
 
+# load dotenv
+load_dotenv()
+EXPRESS_API = os.environ.get("EXPRESS_API")
+
+# initialize flask
 app = Flask(__name__)
 CORS(app)
 
+# load models
+model = YOLO("model/best.pt")
+ocr = PaddleOCR(lang="korean")
 
+def _get_member_info(nickname: str, api_key: str) -> Member:
+    headers = {
+        "Authorization": api_key,
+        "Content-Type": "application/json",
+    }
+    payload = {"nickname": nickname}
+    response = requests.post(f"{EXPRESS_API}/party", json=payload, headers=headers)
+    response_data = response.json()
+    if "error" in response_data:
+        member = Member(name=nickname, data=None)
+    else:
+        member = Member(name=nickname, data=response_data)
+    return member
 
-@app.route('/process', methods=['POST'])
-def process_image():
+@app.route("/party/screen", methods=["POST"])
+def get_party_screen_info():
     members = []
-    # 이미지 데이터 처리
-    data = request.json.get('image')
-    if not data:
-        return jsonify({'error': 'No image data provided'}), 400
+    api_key = request.headers.get("Authorization")
+    image_data = request.json.get("image")
+    if not image_data:
+        return jsonify({
+            "status": "error",
+            "message": "이미지 파라미터가 제공되지 않았습니다.",
+        }), 400
+    if not api_key:
+        return jsonify({
+            "status": "error",
+            "message": "API KEY가 제공되지 않았습니다.",
+        }), 401
 
     try:
-        # Base64 디코딩
-        header, encoded = data.split(',', 1)  # Base64 헤더 분리
-        image_data = base64.b64decode(encoded)
-        np_array = np.frombuffer(image_data, np.uint8)
-        original_image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+        header, encoded = image_data.split(',', 1)
+        decoded_image_data = base64.b64decode(encoded)
+        image_np_array = np.frombuffer(decoded_image_data, np.uint8)
+        original_image = cv2.imdecode(image_np_array, cv2.IMREAD_COLOR)
+        result_image = original_image
     except Exception as e:
-        return jsonify({'error': f'Failed to decode image: {str(e)}'}), 400
+        return jsonify({
+            "status": "error",
+            "message": f"이미지를 변환하는 과정에서 오류가 발생했습니다.: {image_data}",
+        }), 400
 
-    # try:
-    if True:
-        # 모델 로드
-        model = YOLO("model/best.pt")
+    # image processing (find bbox)
+    try:
         original_height, original_width = original_image.shape[:2]
-
-        # 이미지 리사이즈 (640x640)
         resized_image = cv2.resize(original_image, (640, 640))
-
-        # 추론 수행
         results = model(resized_image)
-
-        # 닉네임 이미지 배열 생성
         cropped_images = []
         for result in results:
             idx = 0
             boxes = result.boxes
             for box in boxes:
                 x1, y1, x2, y2 = box.xyxy[0]
+                conf = box.conf[0]
                 cls = int(box.cls[0])
 
-                # 바운딩 박스 좌표를 원본 크기로 변환
                 x1 = int(x1 * original_width / 640)
                 y1 = int(y1 * original_height / 640)
                 x2 = int(x2 * original_width / 640)
                 y2 = int(y2 * original_height / 640)
 
-                if cls == 1:  # 특정 클래스만 처리
+                if cls == 0:
                     cropped_image = original_image[y1:y2, x1:x2]
                     cropped_images.append(cropped_image)
                     idx += 1
-
-        # OCR 텍스트 읽기
-        reader = easyocr.Reader(['ko', 'en'])
-        nicknames = []
-        for img in cropped_images:
-            img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            _, img_binary = cv2.threshold(img_gray, 150, 255, cv2.THRESH_BINARY)
-            result = reader.readtext(img_binary)
-            members.append(Member(result[0][1] if result else "No Text").to_dict())
-            print(members)
-            nicknames.append(result[0][1] if result else "No Text")
-
+                # === TEST CODE ===
+                cv2.rectangle(result_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                cv2.putText(result_image, f"Class {cls}: {conf:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.imwrite("debug/result.jpg", result_image)
+        # =================
+    except Exception as e:
         return jsonify({
-            'status': 'success',
-            'message': 'Image processed successfully',
-            'nicknames': nicknames,
-            'members': members,
+            "status": "error",
+            "message": f"이미지를 처리하는 과정에서 오류가 발생했습니다: {str(e)}",
+        }), 500
+    
+    # ocr
+    try:
+        nicknames = []
+        raw_datas = []
+        idx = 0
+        for img in cropped_images:
+            idx += 1
+            img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img_pad = np.pad(img_gray, ((10, 10), (10, 10)), "constant", constant_values=0)
+            scale_factor = 2
+            img_upscaled = cv2.resize(img_pad, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC)
+            cv2.imwrite(f"debug/{idx}.jpg", img_upscaled)
+            result = ocr.ocr(img_upscaled)[0]
+            if result:
+                nicknames.append(result[0][1][0])
+                member = _get_member_info(nickname=result[0][1][0], api_key=api_key)
+                members.append(member.to_dict())
+        return jsonify({
+            "status": "success",
+            "message": "화면으로부터 공대원 정보를 성공적으로 받아왔습니다.",
+            "nicknames": nicknames,
+            "members": members,
         }), 200
-    # except Exception as e:
-    #     return jsonify({'error': f'Error during processing: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"OCR 과정에서 오류가 발생했습니다: {str(e)}",
+        }), 500
+
+@app.route('/party/member', methods=['GET'])
+def get_party_member_info():
+    api_key = request.headers.get("Authorization")
+    nickname = request.args.get("nickname")
+    if not nickname:
+        return jsonify({
+            "status": "error",
+            "message": "닉네임 파라미터가 제공되지 않았습니다.",
+        }), 400
+    if not api_key:
+        return jsonify({
+            "status": "error",
+            "message": "API KEY가 제공되지 않았습니다.",
+        }), 401
+    
+    member = _get_member_info(nickname=nickname, api_key=api_key)
+
+    return jsonify({
+        "status": "success",
+        "message": "해당 공대원의 정보를 성공적으로 받아왔습니다.",
+        "data": member.to_dict(),
+    }), 200
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host="0.0.0.0", port=5001)
