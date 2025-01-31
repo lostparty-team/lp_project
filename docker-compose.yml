@@ -22,17 +22,17 @@ services:
       - /app/node_modules # node_modules는 컨테이너 내부에서 관리
     command: npm run start
 
-  backend-nest:
-    build:
-      context: ./backend-nest
-    ports:
-      - "4000:4000" # NestJS 서버
-    links:
-      - mysql
-    volumes:
-      - ./backend-nest:/app
-      - /app/node_modules # node_modules는 컨테이너 내부에서 관리
-    command: npm run start:dev
+  # backend-nest:
+  #   build:
+  #     context: ./backend-nest
+  #   ports:
+  #     - "4000:4000" # NestJS 서버
+  #   links:
+  #     - mysql
+  #   volumes:
+  #     - ./backend-nest:/app
+  #     - /app/node_modules # node_modules는 컨테이너 내부에서 관리
+  #   command: npm run start:dev
 
   backend-python:
     build:
