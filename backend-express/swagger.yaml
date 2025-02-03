@@ -70,6 +70,7 @@ paths:
                       reason:
                         type: string
                         description: 사유
+                        
       responses:
         '201':
           description: 게시글 작성 성공
@@ -332,6 +333,43 @@ paths:
                     type: string
                     description: "에러 메시지"
                     example: "데이터를 가져오는 중 오류가 발생했습니다."
+
+  /userdata:
+    get:
+      summary: "메인 페이지 통계 조회"
+      description: "블랙리스트 관련 통계, 방문자 통계를 조회합니다."
+      tags:
+        - userdata
+      responses:
+        '200':
+          description: "메인 페이지 통계 조회 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  블랙리스트등록된유저수:
+                    type: integer
+                    example: 4564
+                  오늘블랙리스트등록된유저수:
+                    type: integer
+                    example: 124
+                  블랙리스트명단작성수:
+                    type: integer
+                    example: 781
+                  오늘블랙리스트명단작성수:
+                    type: integer
+                    example: 31
+                  방문자수:
+                    type: integer
+                    example: 99154
+                  오늘방문자수:
+                    type: integer
+                    example: 99
+        '500':
+          description: "서버 오류"
+
+
 components:
   securitySchemes:
     ApiKeyAuth:

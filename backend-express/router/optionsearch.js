@@ -1,10 +1,10 @@
 // 옵션 목록 정의
-const 상특옵목록 = ["추가 피해 +1.60%", "공격력 +390"];
-const 상공용목록 = ["방어력 +250"];
-const 중특옵목록 = ["무기 공격력 +480"];
-const 중공용목록 = ["공격 속도 +5%"];
-const 하특옵목록 = ["치명타 확률 +3%"];
-const 하공용목록 = ["최대 생명력 +10%"];
+const 상특옵목록 = ["추가 피해 +2.60%", "적에게 주는 피해 +2.00%", "공격력 +1.55%", "무기 공격력 +3.00%", "치명타 적중률 +1.55%", "치명타 피해 +4.00%"];
+const 상공용목록 = ["공격력 +390", "무기 공격력 +960"];
+const 중특옵목록 = ["추가 피해 +1.60%", "적에게 주는 피해 +1.20%", "공격력 +0.95%", "무기 공격력 +1.80%", "치명타 적중률 +0.95%", "치명타 피해 +2.40%"];
+const 중공용목록 = ["공격력 +195", "무기 공격력 +480"];
+const 하특옵목록 = ["추가 피해 +0.60%", "적에게 주는 피해 +0.55%", "공격력 +0.40%", "무기 공격력 +0.80%", "치명타 적중률 +0.40%", "치명타 피해 +1.10%"];
+const 하공용목록 = ["공격력 +80", "무기 공격력 +195"];
 
 // 모든 목록을 배열에 담아 관리
 const 옵션목록 = [
@@ -24,10 +24,9 @@ function 악세옵션목록분석(response) {
         let count = 0;
 
         // ArmoryEquipment 인덱스 6, 7을 순회하며 옵션 포함 여부 확인
-        for (let index = 6; index < 10; index++) {
+        for (let index = 6; index < 11; index++) {
             try {
                 const 데이터 = JSON.parse(response.data.ArmoryEquipment[index].Tooltip).Element_005.value.Element_001;
-
                 // 옵션 목록에 있는 단어를 순회하며 포함 여부 확인
                 for (let 단어 of 옵션.목록) {
                     if (데이터.includes(단어)) {
@@ -71,7 +70,7 @@ function 보석검사(response) {
             }
         });
     } catch (error) {
-        console.error("Error parsing gem data:", error.message);
+        console.error("보석 데이터 없음");
     }
 
     return 결과;
