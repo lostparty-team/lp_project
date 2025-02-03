@@ -23,6 +23,29 @@ const 팔찌옵션추출함수 = (input) => {
   });
 };
 
+const 엘릭서설명정리 = (text) => {
+  if (!text) return ""; // 값이 없을 경우 빈 문자열 반환
+
+  const match = text.match(/^(.*?Lv\.\d+)/); // "Lv." 다음 숫자까지 추출
+  return match ? match[0].trim() : text; // 첫 번째 숫자까지만 반환
+};
+
+const 엘릭서추출함수 = (tooltip) => {
+  if (!tooltip) return { 엘릭서1: "", 엘릭서2: "" };
+
+  let 장비엘릭서;
+  if (tooltip.Element_000.value.includes("25") || !tooltip.Element_005.type.includes("SingleTextBox")) {
+    장비엘릭서 = tooltip.Element_009?.value;
+  } else {
+    장비엘릭서 = tooltip.Element_010?.value;
+  }
+
+  return {
+    엘릭서1: 엘릭서설명정리(HTML태그제거(장비엘릭서?.Element_000?.contentStr?.Element_000?.contentStr || "")),
+    엘릭서2: 엘릭서설명정리(HTML태그제거(장비엘릭서?.Element_000?.contentStr?.Element_001?.contentStr || ""))
+  };
+};
+
 const 초월추출함수 = (input) => {
   const regex = /<\/img>\s*(-?\d+\.?\d*)/g; // </img> 뒤의 숫자 추출 (음수와 소수점 포함)
   const matches = [...input.matchAll(regex)];
@@ -75,6 +98,20 @@ router.post("/", extractClientId, async (req, res) => {
     
         초월최종[parts[idx]] = 초월값 || 0;
     });
+
+    let 엘릭서정보 = {};
+
+    // 장비별 엘릭서 정보 추출 (무기 제외)
+    [1, 5, 2, 3, 4].forEach((i, idx) => { // 무기(0번 인덱스)는 제외
+      const tooltipRaw = response.data.ArmoryEquipment[i]?.Tooltip;
+      if (tooltipRaw) {
+        const tooltip = JSON.parse(tooltipRaw);
+        엘릭서정보[parts[idx]] = 엘릭서추출함수(tooltip);
+      } else {
+        엘릭서정보[parts[idx]] = { 엘릭서1: "", 엘릭서2: "" };
+      }
+    });
+    
 
     //팔찌
     const 팔찌 = 팔찌옵션추출함수(JSON.parse(response.data.ArmoryEquipment[12].Tooltip).Element_004.value.Element_001)
@@ -143,12 +180,35 @@ router.post("/", extractClientId, async (req, res) => {
     // 블랙리스트 포함 여부 확인
     const isBlacklisted = cartNicknames.some((item) => item.nickname === nickname);
 
+    // console.log('무기레벨')
+    // console.log(무기정보)
+    // console.log('직업각인')
+    // console.log(직업각인)
+    // console.log(포인트)
+    // console.log(초월최종)
+    // console.log(고대)
+    // console.log(유물)
+    // console.log(악세옵션)
+    // console.log(팔찌)
+    // console.log(보석)
+    // console.log(isBlacklisted)
+
+    const tooltip = JSON.parse(response.data.ArmoryEquipment[0]?.Tooltip);
+
+    const 무기깡강화 = HTML태그제거(tooltip?.Element_000?.value || "").match(/\+\d+/)?.[0]; // +22강
+    const 무기상재 = HTML태그제거(tooltip?.Element_005?.value || "").match(/\d+단계/)?.[0]; // 30단계
+    const 아이템레벨 = parseFloat(response.data.ArmoryProfile.ItemMaxLevel.replace(/,/g, ""))
+
     // 응답 데이터 반환
     res.json({
+      아이템레벨: 아이템레벨,
       무기레벨: 무기정보,
+      무기강화: 무기깡강화,
+      무기상재: 무기상재,
       직업각인: 직업각인,
       포인트: 포인트,
       초월: 초월최종,
+      엘릭서: 엘릭서정보,
       // 진화포인트: 진화포인트,
       // 깨달음포인트: 깨달음포인트,
       // 도약포인트: 도약포인트,
