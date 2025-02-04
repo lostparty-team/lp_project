@@ -47,7 +47,7 @@ const NavLinks = () => {
             API 입력
           </button>
         </li>
-        <li key={authLink.href}>
+        {/* <li key={authLink.href}>
           <Link
             href={authLink.href}
             className='relative text-lg transition-colors hover:text-lostark-400'
@@ -55,7 +55,7 @@ const NavLinks = () => {
           >
             {authLink.name}
           </Link>
-        </li>
+        </li> */}
       </ul>
       <ApiInputModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </nav>
