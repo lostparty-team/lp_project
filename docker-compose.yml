@@ -4,6 +4,7 @@ services:
       context: ./frontend
     ports:
       - "3000:3000" # next 개발 서버
+    env_file: .env
     volumes:
       - ./frontend:/app # 코드 변경 시 자동 반영
       - /app/node_modules # node_modules는 컨테이너 내부에서 관리
@@ -16,6 +17,7 @@ services:
       context: ./backend-express
     ports:
       - "5000:5000" # Express 서버
+    env_file: .env
     volumes:
       - ./backend-express:/app
       - /app/node_modules # node_modules는 컨테이너 내부에서 관리
@@ -38,10 +40,9 @@ services:
       context: ./backend-python
     ports:
       - "5001:5001"
+    env_file: .env
     volumes:
       - ./backend-python:/app
-    env_file:
-      - ./backend-python/.env
     command: python app.py
  
   mysql:
