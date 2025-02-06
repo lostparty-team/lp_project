@@ -8,24 +8,63 @@ import SearchAutocomplete from '@/components/common/SearchAutocomplete';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { pageVariants } from '@/constants/animations';
 import Image from 'next/image';
-
-const STATS_DATA = [
-  { label: '가입자 수', value: '15,234', unit: '명', icon: <Users className='h-6 w-6' /> },
-  { label: '오늘 방문자 수', value: '391', unit: '명', icon: <Eye className='h-6 w-6' /> },
-  { label: '등록된 블랙리스트', value: '1,432', unit: '건', icon: <Layers className='h-6 w-6' /> },
-  { label: '오늘 추가된 블랙리스트', value: '234', unit: '건', icon: <ClipboardCheck className='h-6 w-6' /> },
-];
+import { useStats } from '@/hooks/useStats';
+import { useEffect } from 'react';
 
 const POPULAR_PARTIES = [
-  { title: '발탄 하드 파티', level: '1620+', time: '오후 8시' },
-  { title: '쿠크세이튼 노말', level: '1580+', time: '오후 9시' },
-  { title: '일리아칸 하드', level: '1600+', time: '오후 10시' },
+  {
+    title: '아브렐슈드 하드 1-4',
+    level: '1620+',
+    time: '매주 수요일 20:00',
+  },
+  {
+    title: '일리아칸 하드',
+    level: '1600+',
+    time: '매주 목요일 21:00',
+  },
+  {
+    title: '카양겔 하드',
+    level: '1580+',
+    time: '매주 금요일 22:00',
+  },
 ];
 
 const MainPage = () => {
   const router = useRouter();
   const { setSearchTerm } = useBlacklistStore();
   const { blacklist } = useBlacklist('popular');
+  const { data: statsData, isLoading } = useStats();
+
+  useEffect(() => {
+    getStatsData();
+  }, []);
+
+  const getStatsData = () => [
+    {
+      label: '오늘 방문자 수',
+      value: statsData?.오늘방문자수.toLocaleString() || '0',
+      unit: '명',
+      icon: <Eye className='h-6 w-6' />,
+    },
+    {
+      label: '블랙리스트 사용자 수',
+      value: statsData?.블랙리스트등록된유저수.toLocaleString() || '0',
+      unit: '명',
+      icon: <Users className='h-6 w-6' />,
+    },
+    {
+      label: '블랙리스트 게시글 수',
+      value: statsData?.블랙리스트명단작성수.toLocaleString() || '0',
+      unit: '개',
+      icon: <Layers className='h-6 w-6' />,
+    },
+    {
+      label: '오늘 등록된 게시글 수',
+      value: statsData?.오늘블랙리스트명단작성수.toLocaleString() || '0',
+      unit: '개',
+      icon: <ClipboardCheck className='h-6 w-6' />,
+    },
+  ];
 
   const overlayGradients = 'from-black1 via-transparent to-black1';
 
@@ -83,7 +122,7 @@ const MainPage = () => {
         {/* 통계 */}
         <section className='container relative z-20 mx-auto -mt-20 px-4'>
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
-            {STATS_DATA.map((stat, idx) => (
+            {getStatsData().map((stat, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -95,7 +134,7 @@ const MainPage = () => {
                   <div className='rounded-xl bg-lostark-400/10 p-3 text-lostark-400'>{stat.icon}</div>
                   <div>
                     <h3 className='text-3xl font-bold text-lostark-400'>
-                      {stat.value} {stat.unit}
+                      {isLoading ? '로딩중...' : `${stat.value} ${stat.unit}`}
                     </h3>
                     <p className='text-gray-400'>{stat.label}</p>
                   </div>
