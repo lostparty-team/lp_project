@@ -6,7 +6,13 @@ const { 직업각인함수 } = require("./class");
 const { 악세옵션목록분석, 보석검사 } = require("./optionsearch");
 const extractClientId = require("../middleware/extractClientId");
 
-const HTML태그제거 = (input) => input.replace(/<[^>]*>/g, "");
+const HTML태그제거 = (input) => {
+  if (typeof input !== "string") {
+    console.error("HTML태그제거 오류: input이 문자열이 아님", input);
+    return ""; // 빈 문자열 반환
+  }
+  return input.replace(/<[^>]*>/g, "");
+};
 
 const 무기레벨추출함수 = (input) => {
   const match = input.match(/\b\d{4}\b/);
@@ -16,9 +22,9 @@ const 무기레벨추출함수 = (input) => {
 const 팔찌옵션추출함수 = (input) => {
   const regex = /<img.*?>.*?(?=<img|$)/g; // <img> 태그로 시작하고 다음 <img> 태그까지 또는 문자열 끝까지 추출
   const matches = [...input.matchAll(regex)]; // 정규식으로 매칭된 결과를 배열로 추출
-  return matches.map(match => {
+  return matches.map((match) => {
     let text = HTML태그제거(match[0]); // HTML 태그 제거
-    text = text.replace(/\.([^\d\s])/g, '. $1'); // '.' 뒤에 숫자가 아닌 경우 공백 추가
+    text = text.replace(/\.([^\d\s])/g, ". $1"); // '.' 뒤에 숫자가 아닌 경우 공백 추가
     return text.trim(); // 앞뒤 공백 제거
   });
 };
@@ -34,22 +40,33 @@ const 엘릭서추출함수 = (tooltip) => {
   if (!tooltip) return { 엘릭서1: "", 엘릭서2: "" };
 
   let 장비엘릭서;
-  if (tooltip.Element_000.value.includes("25") || !tooltip.Element_005.type.includes("SingleTextBox")) {
+  if (
+    tooltip.Element_000.value.includes("25") ||
+    !tooltip.Element_005.type.includes("SingleTextBox")
+  ) {
     장비엘릭서 = tooltip.Element_009?.value;
   } else {
     장비엘릭서 = tooltip.Element_010?.value;
   }
 
   return {
-    엘릭서1: 엘릭서설명정리(HTML태그제거(장비엘릭서?.Element_000?.contentStr?.Element_000?.contentStr || "")),
-    엘릭서2: 엘릭서설명정리(HTML태그제거(장비엘릭서?.Element_000?.contentStr?.Element_001?.contentStr || ""))
+    엘릭서1: 엘릭서설명정리(
+      HTML태그제거(
+        장비엘릭서?.Element_000?.contentStr?.Element_000?.contentStr || ""
+      )
+    ),
+    엘릭서2: 엘릭서설명정리(
+      HTML태그제거(
+        장비엘릭서?.Element_000?.contentStr?.Element_001?.contentStr || ""
+      )
+    ),
   };
 };
 
 const 초월추출함수 = (input) => {
   const regex = /<\/img>\s*(-?\d+\.?\d*)/g; // </img> 뒤의 숫자 추출 (음수와 소수점 포함)
   const matches = [...input.matchAll(regex)];
-  return matches.map(match => match[1]); // 매칭된 숫자 부분만 반환
+  return matches.map((match) => match[1]); // 매칭된 숫자 부분만 반환
 };
 
 router.post("/", extractClientId, async (req, res) => {
@@ -73,36 +90,40 @@ router.post("/", extractClientId, async (req, res) => {
       }
     );
 
-
     let 초월최종 = {};
 
     // 장비별 초월 정보 추출
-    const parts = ['투구', '견장', '상의', '하의', '장갑', '무기'];
+    const parts = ["투구", "견장", "상의", "하의", "장갑", "무기"];
     [1, 5, 2, 3, 4, 0].forEach((i, idx) => {
-        const tooltipRaw = response.data.ArmoryEquipment[i]?.Tooltip;
-        let 초월값 = 0;
-    
-        if (tooltipRaw) {
-            const tooltip = JSON.parse(tooltipRaw);
-            const 초월 = 초월추출함수(tooltip.Element_009?.value?.Element_000?.topStr || "");
-    
-            if (초월.length > 0) {
-                초월값 = 초월[0];
-            } else {
-                const 초월1 = 초월추출함수(tooltip.Element_008?.value?.Element_000?.topStr || "");
-                if (초월1.length > 0) {
-                    초월값 = 초월1[0];
-                }
-            }
+      const tooltipRaw = response.data.ArmoryEquipment[i]?.Tooltip;
+      let 초월값 = 0;
+
+      if (tooltipRaw) {
+        const tooltip = JSON.parse(tooltipRaw);
+        const 초월 = 초월추출함수(
+          tooltip.Element_009?.value?.Element_000?.topStr || ""
+        );
+
+        if (초월.length > 0) {
+          초월값 = 초월[0];
+        } else {
+          const 초월1 = 초월추출함수(
+            tooltip.Element_008?.value?.Element_000?.topStr || ""
+          );
+          if (초월1.length > 0) {
+            초월값 = 초월1[0];
+          }
         }
-    
-        초월최종[parts[idx]] = 초월값 || 0;
+      }
+
+      초월최종[parts[idx]] = 초월값 || 0;
     });
 
     let 엘릭서정보 = {};
 
     // 장비별 엘릭서 정보 추출 (무기 제외)
-    [1, 5, 2, 3, 4].forEach((i, idx) => { // 무기(0번 인덱스)는 제외
+    [1, 5, 2, 3, 4].forEach((i, idx) => {
+      // 무기(0번 인덱스)는 제외
       const tooltipRaw = response.data.ArmoryEquipment[i]?.Tooltip;
       if (tooltipRaw) {
         const tooltip = JSON.parse(tooltipRaw);
@@ -111,58 +132,64 @@ router.post("/", extractClientId, async (req, res) => {
         엘릭서정보[parts[idx]] = { 엘릭서1: "", 엘릭서2: "" };
       }
     });
-    
 
     //팔찌
-    const 팔찌 = 팔찌옵션추출함수(JSON.parse(response.data.ArmoryEquipment[12].Tooltip).Element_004.value.Element_001)
+    const 팔찌 = 팔찌옵션추출함수(
+      JSON.parse(response.data.ArmoryEquipment[12].Tooltip).Element_004.value
+        .Element_001
+    );
 
-    const 각인 = []
+    const 각인 = [];
 
     //각인
-    for (i=0; i<5; i++){
+    for (i = 0; i < 5; i++) {
       각인상세 = {
-          등급 : response.data.ArmoryEngraving.ArkPassiveEffects[i].Grade,
-          등급레벨 : response.data.ArmoryEngraving.ArkPassiveEffects[i].Level,
-          각인이름 : response.data.ArmoryEngraving.ArkPassiveEffects[i].Name,
-          어빌리티스톤레벨 : response.data.ArmoryEngraving.ArkPassiveEffects[i].AbilityStoneLevel
-      }
-      각인.push(각인상세)
+        등급: response.data.ArmoryEngraving.ArkPassiveEffects[i].Grade,
+        등급레벨: response.data.ArmoryEngraving.ArkPassiveEffects[i].Level,
+        각인이름: response.data.ArmoryEngraving.ArkPassiveEffects[i].Name,
+        어빌리티스톤레벨:
+          response.data.ArmoryEngraving.ArkPassiveEffects[i].AbilityStoneLevel,
+      };
+      각인.push(각인상세);
     }
 
     //악세
     let 고대 = 0;
     let 유물 = 0;
-    for (i=6; i<11; i++){
-      const 악세 = response.data.ArmoryEquipment[i].Grade
-      if(악세 == '고대'){
-        고대++
+    for (i = 6; i < 11; i++) {
+      const 악세 = response.data.ArmoryEquipment[i].Grade;
+      if (악세 == "고대") {
+        고대++;
       }
-      if(악세 == '유물'){
-        유물++
+      if (악세 == "유물") {
+        유물++;
       }
     }
-    악세등급 = 고대 , 유물
-
+    (악세등급 = 고대), 유물;
 
     //진화 깨달음 도약 포인트
-    포인트 = []
+    포인트 = [];
 
-    const 진화포인트 = response.data.ArkPassive.Points[0].Value
-    const 깨달음포인트 = response.data.ArkPassive.Points[1].Value
-    const 도약포인트 = response.data.ArkPassive.Points[2].Value
+    const 진화포인트 = response.data.ArkPassive.Points[0].Value;
+    const 깨달음포인트 = response.data.ArkPassive.Points[1].Value;
+    const 도약포인트 = response.data.ArkPassive.Points[2].Value;
 
-    포인트.push(진화포인트)
-    포인트.push(깨달음포인트)
-    포인트.push(도약포인트)
+    포인트.push(진화포인트);
+    포인트.push(깨달음포인트);
+    포인트.push(도약포인트);
 
     // Lost Ark API 응답 데이터 처리
     // const 직업각인 = 직업각인함수(
     //   JSON.parse(response.data.ArkPassive?.Effects?.[0]?.ToolTip)?.Element_000?.value || ""
     // );
-    const 직업각인 = 직업각인함수(JSON.parse(response.data.ArkPassive?.Effects?.[0]?.ToolTip)?.Element_000?.value || "")
+    const 직업각인 = 직업각인함수(
+      JSON.parse(response.data.ArkPassive?.Effects?.[0]?.ToolTip)?.Element_000
+        ?.value || ""
+    );
     const 무기정보 = 무기레벨추출함수(
       HTML태그제거(
-        JSON.parse(response.data.ArmoryEquipment[0]?.Tooltip)?.Element_001?.value?.leftStr2 || ""
+        JSON.parse(response.data.ArmoryEquipment[0]?.Tooltip)?.Element_001
+          ?.value?.leftStr2 || ""
       )
     );
     const 악세옵션 = 악세옵션목록분석(response);
@@ -178,7 +205,9 @@ router.post("/", extractClientId, async (req, res) => {
     const [cartNicknames] = await db.query(cartQuery, [clientId]);
 
     // 블랙리스트 포함 여부 확인
-    const isBlacklisted = cartNicknames.some((item) => item.nickname === nickname);
+    const isBlacklisted = cartNicknames.some(
+      (item) => item.nickname === nickname
+    );
 
     // console.log('무기레벨')
     // console.log(무기정보)
@@ -195,9 +224,15 @@ router.post("/", extractClientId, async (req, res) => {
 
     const tooltip = JSON.parse(response.data.ArmoryEquipment[0]?.Tooltip);
 
-    const 무기깡강화 = HTML태그제거(tooltip?.Element_000?.value || "").match(/\+\d+/)?.[0]; // +22강
-    const 무기상재 = HTML태그제거(tooltip?.Element_005?.value || "").match(/\d+단계/)?.[0]; // 30단계
-    const 아이템레벨 = parseFloat(response.data.ArmoryProfile.ItemMaxLevel.replace(/,/g, ""))
+    const 무기깡강화 = HTML태그제거(tooltip?.Element_000?.value || "").match(
+      /\+\d+/
+    )?.[0]; // +22강
+    const 무기상재 = HTML태그제거(tooltip?.Element_005?.value || "").match(
+      /\d+단계/
+    )?.[0]; // 30단계
+    const 아이템레벨 = parseFloat(
+      response.data.ArmoryProfile.ItemMaxLevel.replace(/,/g, "")
+    );
 
     // 응답 데이터 반환
     res.json({
@@ -223,7 +258,9 @@ router.post("/", extractClientId, async (req, res) => {
   } catch (error) {
     console.error("API 요청 중 오류 발생:", error.message);
 
-    res.status(500).json({ error: "데이터를 가져오는 중 오류가 발생했습니다." });
+    res
+      .status(500)
+      .json({ error: "데이터를 가져오는 중 오류가 발생했습니다." });
   }
 });
 
