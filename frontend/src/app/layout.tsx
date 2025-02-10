@@ -26,9 +26,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           {/* <AxiosInterceptor> */}
           <ToastProvider />
-          <NavigationBar />
-          <LoadingSpinner />
-          {children}
+          <div className='mx-auto max-w-6xl'>
+            <NavigationBar />
+            <LoadingSpinner />
+            {children}
+          </div>
           {/* </AxiosInterceptor> */}
         </QueryProvider>
         {/* </MSWProvider> */}

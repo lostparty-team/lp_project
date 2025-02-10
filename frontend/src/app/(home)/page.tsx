@@ -69,7 +69,7 @@ const MainPage = () => {
   const overlayGradients = 'from-black1 via-transparent to-black1';
 
   return (
-    <div className='min-h-screen overflow-x-hidden bg-gradient-to-b from-black1 to-black2 text-gray-100'>
+    <div className='min-h-screen overflow-x-hidden text-gray-100'>
       <motion.div variants={pageVariants} initial='initial' animate='animate' exit='exit'>
         <section className='relative flex h-[80vh] items-center justify-center overflow-hidden'>
           {/* 배경 */}

@@ -219,7 +219,7 @@ const BlacklistPage = () => {
       initial='initial'
       animate='animate'
       exit='exit'
-      className='min-h-screen overflow-x-hidden bg-gradient-to-b from-black1 to-black2 p-8'
+      className='min-h-screen overflow-x-hidden p-8'
     >
       <div className='relative min-h-screen bg-black1 text-gray-100'>
         {/* 인기 블랙리스트 */}
