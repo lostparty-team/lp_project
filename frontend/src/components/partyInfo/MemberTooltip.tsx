@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface TooltipProps {
@@ -20,7 +20,7 @@ const Tooltip: React.FC<TooltipProps> = ({ content, position, visible }) => {
     color: 'white',
     padding: '8px',
     borderRadius: '4px',
-    pointerEvents: 'none', // 툴팁에 이벤트 전달 방지
+    pointerEvents: 'none',
   } as React.CSSProperties;
 
   return createPortal(
