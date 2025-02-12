@@ -1,5 +1,4 @@
 import { AxiosResponse } from 'axios';
-import type { PartyScreen } from '../types/domain';
 import { axiosPythonInstance } from '@/api/axios';
 import { API } from '@/constants/route';
 
@@ -17,12 +16,12 @@ const authRequest = async (method: string, url: string, data?: any) => {
   });
 };
 
-export const getPartyScreenInfo = async (image: PartyScreen) => {
+export const getPartyScreenInfo = async (image: string) => {
   const { data } = await authRequest('post', API.PARTY.SCREEN, { image });
   return data;
 };
 
 export const getMemberInfo = async (nickname: string) => {
-  const {data} = await authRequest('get', `${API.PARTY.SCREEN}?nickname=${nickname}`);
+  const {data} = await authRequest('get', `${API.PARTY.MEMBER}?nickname=${nickname}`);
   return data;
 }
