@@ -25,23 +25,49 @@ export type Transcendence = {
   gloves: string;
   helmet: string;
   pants: string;
+  total: number;
 };
 
-export type Bracelet = string[];
+export type Elixir = {
+  elixir1: string;
+  elixir1Level: number;
+  elixir2: string;
+  elixir2Level: number;
+};
 
-export type Member = {
-  name: string;
-  level: number;
+export type Elixirs = {
+  helmet: Elixir;
+  shoulder: Elixir;
+  top: Elixir;
+  pants: Elixir;
+  gloves: Elixir;
+  total: number;
+};
+
+export type Weapon = {
+  level: string;
+  refinement: string;
+  advancedReforging: string;
+};
+
+export type MemberData = {
   itemLevel: number;
   engravings: Engraving[];
   ancientAccessoryCount: number;
-  weaponLevel: string;
+  weapon: Weapon;
   gems: Gem;
-  isBlacklisted: boolean;
   accessories: Accessories;
   relicAccessoryCount: number;
-  classEngraving: string;
+  enlightenmentStyle: string;
   transcendence: Transcendence;
-  bracelet: Bracelet;
+  bracelet: string[];
   arkPassivePoints: number[];
+  elixir: Elixirs;
+};
+
+export type Member = {
+  id: number;
+  name: string;
+  data: MemberData;
+  isBlacklisted: boolean;
 };

@@ -26,8 +26,8 @@ app = Flask(__name__)
 CORS(app)
 
 # load models
-model = YOLO("model/best.pt")
-ocr = PaddleOCR(lang="korean")
+with app.app_context():
+    model = YOLO("model/best.pt")
 
 def _get_member_info(nickname: str, api_key: str) -> Member:
     headers = {
@@ -45,6 +45,7 @@ def _get_member_info(nickname: str, api_key: str) -> Member:
 
 @app.route("/party/screen", methods=["POST"])
 def get_party_screen_info():
+    global model, ocr
     members = []
     api_key = request.headers.get("Authorization")
     image_data = request.json.get("image")
@@ -107,8 +108,8 @@ def get_party_screen_info():
     
     # ocr
     try:
+        ocr = PaddleOCR(lang="korean")
         nicknames = []
-        raw_datas = []
         idx = 0
         for img in cropped_images:
             idx += 1
