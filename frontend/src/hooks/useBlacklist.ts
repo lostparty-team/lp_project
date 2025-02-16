@@ -5,12 +5,12 @@ import queryClient from '@/api/queryClient';
 import { getBlacklist, deleteBlacklist, postDislike, getCart, addToCart, removeFromCart } from '@/api/blacklist';
 import { toast } from 'react-toastify';
 
-export const useBlacklist = (sortType?: SortType) => {
+export const useBlacklist = (sortType?: SortType, page: number = 1) => {
   const { addToMyBlacklist, removeFromMyBlacklist } = useBlacklistStore();
 
-  const { data: blacklist = [], isLoading } = useQuery({
-    queryKey: ['blacklist', sortType],
-    queryFn: () => getBlacklist(sortType),
+  const { data, isLoading } = useQuery({
+    queryKey: ['blacklist', sortType, page],
+    queryFn: () => getBlacklist(sortType, page),
     staleTime: 1000 * 60 * 5, // 5분
     gcTime: 1000 * 60 * 30, // 30분
     refetchOnMount: false,
@@ -99,7 +99,10 @@ export const useBlacklist = (sortType?: SortType) => {
   });
 
   return {
-    blacklist,
+    blacklist: data?.data || [],
+    totalPages: data?.totalPages || 1,
+    currentPage: data?.currentPage || 1,
+    totalPosts: data?.totalPosts || 0,
     myBlacklist: Array.isArray(myBlacklist.data) ? myBlacklist.data : [],
     isLoading,
     isMyBlacklistLoading,
