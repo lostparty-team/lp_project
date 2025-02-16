@@ -24,12 +24,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={pretendard.className}>
         {/* <MSWProvider> */}
         <QueryProvider>
-          <AxiosInterceptor>
-            <ToastProvider />
+          {/* <AxiosInterceptor> */}
+          <ToastProvider />
+          <div className='mx-auto max-w-6xl'>
             <NavigationBar />
             <LoadingSpinner />
             {children}
-          </AxiosInterceptor>
+          </div>
+          {/* </AxiosInterceptor> */}
         </QueryProvider>
         {/* </MSWProvider> */}
       </body>

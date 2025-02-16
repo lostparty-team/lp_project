@@ -38,6 +38,8 @@ const BlacklistPage = () => {
     setSortType,
     setCartRef,
     setIsModalOpen,
+    currentPage,
+    setCurrentPage,
   } = useBlacklistStore();
 
   const {
@@ -48,7 +50,8 @@ const BlacklistPage = () => {
     isLoading,
     addToCartMutation,
     removeFromCartMutation,
-  } = useBlacklist(sortType);
+    totalPages,
+  } = useBlacklist(sortType, currentPage);
   const { setIsLoading } = useLoadingStore();
   useEffect(() => {
     setIsLoading(isLoading);
@@ -213,13 +216,20 @@ const BlacklistPage = () => {
     },
   };
 
+  // 페이지 변경 핸들러
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // 페이지 상단으로 스크롤
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <motion.div
       variants={pageVariants}
       initial='initial'
       animate='animate'
       exit='exit'
-      className='min-h-screen overflow-x-hidden bg-gradient-to-b from-black1 to-black2 p-8'
+      className='min-h-screen overflow-x-hidden p-8'
     >
       <div className='relative min-h-screen bg-black1 text-gray-100'>
         {/* 인기 블랙리스트 */}
@@ -262,22 +272,51 @@ const BlacklistPage = () => {
 
           {/* 블랙리스트 목록 */}
           <div className='grid grid-cols-2 gap-8 lg:grid-cols-3'>
-            <ul
-              role='list'
-              className='col-span-2 space-y-4 rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'
-            >
-              {blacklist.map((blacklistItem: BlacklistUser) => (
-                <BlacklistItem
-                  key={`blacklist-${blacklistItem.id}`}
-                  blacklistItem={blacklistItem}
-                  currentUser={currentUser}
-                  onItemClick={handleBlacklistItemClick}
-                  onAddClick={handleAddToBlacklist}
-                  onDeleteClick={handleDeleteBlacklist}
-                  isDeleting={isDeletingId === blacklistItem.id}
-                />
-              ))}
-            </ul>
+            <div className='col-span-2'>
+              <ul role='list' className='space-y-4 rounded-lg bg-gradient-to-br from-black2 to-black1 p-6 shadow-lg'>
+                {blacklist.map((blacklistItem: BlacklistUser) => (
+                  <BlacklistItem
+                    key={`blacklist-${blacklistItem.id}`}
+                    blacklistItem={blacklistItem}
+                    currentUser={currentUser}
+                    onItemClick={handleBlacklistItemClick}
+                    onAddClick={handleAddToBlacklist}
+                    onDeleteClick={handleDeleteBlacklist}
+                    isDeleting={isDeletingId === blacklistItem.id}
+                  />
+                ))}
+              </ul>
+              {/* 페이지네이션 */}
+              <div className='mt-8 flex justify-center gap-2'>
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className='rounded-lg bg-black2 px-4 py-2 text-white/80 transition-all duration-300 hover:enabled:bg-black2/70 disabled:opacity-50'
+                >
+                  이전
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`rounded-lg px-4 py-2 transition-all duration-300 ${
+                      currentPage === page ? 'bg-lostark-400 text-white' : 'bg-black2 text-white/80 hover:bg-black2/70'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className='rounded-lg bg-black2 px-4 py-2 text-white/80 transition-all duration-300 hover:enabled:bg-black2/70 disabled:opacity-50'
+                >
+                  다음
+                </button>
+              </div>
+            </div>
             {/* 내가 담은 블랙리스트 */}
             <div
               ref={cartRef}
