@@ -2,10 +2,8 @@ import localFont from 'next/font/local';
 import NavigationBar from '@/components/common/navigationBar';
 import ToastProvider from '@/components/common/toastProvider';
 import '@/styles/globals.css';
-import { MSWProvider } from './msw-provider';
 import QueryProvider from '@/providers/QueryProvider';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { AxiosInterceptor } from '@/api/interceptor';
 import AdBanner from '@/components/common/AdBanner';
 export const metadata = {
   title: '로스트파티',

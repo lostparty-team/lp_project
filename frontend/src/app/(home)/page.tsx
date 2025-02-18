@@ -1,6 +1,5 @@
 'use client';
-import { ClockIcon } from '@/styles/icons';
-import { ArrowRight, Users, Award, ClipboardCheck, Eye, Layers } from 'lucide-react';
+import { ArrowRight, Users, ClipboardCheck, Eye, Layers } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useBlacklistStore } from '@/stores/blacklistStore';
@@ -10,24 +9,7 @@ import { pageVariants } from '@/constants/animations';
 import Image from 'next/image';
 import { useStats } from '@/hooks/useStats';
 import { useEffect } from 'react';
-
-const POPULAR_PARTIES = [
-  {
-    title: '아브렐슈드 하드 1-4',
-    level: '1620+',
-    time: '매주 수요일 20:00',
-  },
-  {
-    title: '일리아칸 하드',
-    level: '1600+',
-    time: '매주 목요일 21:00',
-  },
-  {
-    title: '카양겔 하드',
-    level: '1580+',
-    time: '매주 금요일 22:00',
-  },
-];
+import { BlacklistUser } from '@/types/blacklist';
 
 const MainPage = () => {
   const router = useRouter();
@@ -151,7 +133,7 @@ const MainPage = () => {
             <p className='text-gray-400'>최근에 등록된 블랙리스트 정보입니다</p>
           </motion.div>
           <div className='space-y-4'>
-            {blacklist?.slice(0, 3).map((blacklistItem, index) => (
+            {blacklist?.slice(0, 3).map((blacklistItem: BlacklistUser) => (
               <motion.div
                 key={`blacklist-${blacklistItem.id}`}
                 initial={{ opacity: 0, y: 20 }}
