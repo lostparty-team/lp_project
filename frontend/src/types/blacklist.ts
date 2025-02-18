@@ -4,7 +4,7 @@ export interface BlacklistUser {
   title: string;
   author: string;
   views: number;
-  created_at?: Date;
+  created_at?: string;
   cart_count?: number;
   dislikes?: number;
 }
