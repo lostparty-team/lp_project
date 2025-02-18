@@ -1,7 +1,7 @@
 export const pageVariants = {
   initial: {
-    opacity: 0,
-    x: 5,
+    opacity: 0.5,
+    x: 0,
   },
   animate: {
     opacity: 1,

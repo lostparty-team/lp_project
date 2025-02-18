@@ -332,7 +332,6 @@ const BlacklistPage = () => {
             </div>
           </div>
         </section>
-
         <AnimatePresence>
           {flyingItem && flyingItem.type === 'add' && (
             <motion.div
@@ -351,10 +350,6 @@ const BlacklistPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <footer className='border-t border-black2 py-12'>
-          <div className='mx-auto px-4 text-center text-white/50'>Copyright © All rights reserved.</div>
-        </footer>
 
         <AnimatePresence>{isCreateModalOpen && <BlacklistCreateModal />}</AnimatePresence>
       </div>
