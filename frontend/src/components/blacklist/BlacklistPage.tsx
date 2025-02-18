@@ -5,9 +5,7 @@ import BlacklistItem from './BlacklistItem';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { Plus, Search } from 'lucide-react';
-import LikeButton from '@/components/common/LikeButton';
 import { BlacklistUser, SortType } from '@/types/blacklist';
-import PopularList from '@/components/blacklist/PopularList';
 import { useLoadingStore } from '@/stores/loadingStore';
 import { useRouter } from 'next/navigation';
 import { CustomButton } from '../common';
@@ -16,7 +14,6 @@ import { toast } from 'react-toastify';
 import MyBlacklistItem from './MyBlacklistItem';
 import { pageVariants } from '@/constants/animations';
 import { deleteBlacklist } from '@/api/blacklist';
-import { jwtDecode } from 'jwt-decode';
 import queryClient from '@/api/queryClient';
 
 const BlacklistPage = () => {
@@ -24,7 +21,7 @@ const BlacklistPage = () => {
   const cartRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
-  const [currentUser, setCurrentUser] = useState<string>();
+  const [currentUser] = useState<string>();
 
   const {
     searchTerm,
@@ -188,7 +185,7 @@ const BlacklistPage = () => {
     if (searchInputRef.current && searchTerm) {
       searchInputRef.current.value = searchTerm;
       const filteredResults = blacklist.filter(
-        (item) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
+        (item: { title: string }) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
       );
       if (filteredResults.length === 0) {
         toast.info('검색 결과가 없습니다.');
