@@ -22,9 +22,10 @@ export interface BlacklistDetail {
     id: number;
     title: string;
     author: string;
-    createdAt?: string;
-    likeCount?: number;
-    cartQuantity?: number;
+    created_at?: string;
+    dislikes?: number;
+    userDisliked?: boolean;
+    views?: number;
   };
   data: BlacklistUserDetail[];
 }
