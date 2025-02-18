@@ -26,15 +26,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastProvider />
           <aside>
             <AdBanner position='left' />
+            <AdBanner position='right' />
           </aside>
           <div className='mx-auto max-w-6xl'>
             <NavigationBar />
             <LoadingSpinner />
             {children}
           </div>
-          <aside>
-            <AdBanner position='right' />
-          </aside>
           <Footer />
         </QueryProvider>
       </body>
