@@ -210,9 +210,9 @@ const BlacklistPage = () => {
   };
 
   // 페이지 변경 핸들러
-  const handlePageChange = (page: number) => {
+  const handlePageChange = async (page: number) => {
     setCurrentPage(page);
-    // 페이지 상단으로 스크롤
+    await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
