@@ -24,28 +24,28 @@ const MainPage = () => {
 
   const getStatsData = () => [
     {
-      label: '오늘 방문자 수',
+      label: '오늘 방문자',
       value: statsData?.오늘방문자수.toLocaleString() || '0',
       unit: '명',
       icon: <Eye className='h-6 w-6' />,
     },
     {
-      label: '블랙리스트 사용자 수',
-      value: statsData?.블랙리스트등록된유저수.toLocaleString() || '0',
+      label: '오늘 등록된 사용자',
+      value: statsData?.오늘블랙리스트등록된유저수.toLocaleString() || '0',
       unit: '명',
       icon: <Users className='h-6 w-6' />,
     },
     {
-      label: '블랙리스트 게시글 수',
-      value: statsData?.블랙리스트명단작성수.toLocaleString() || '0',
-      unit: '개',
-      icon: <Layers className='h-6 w-6' />,
-    },
-    {
-      label: '오늘 등록된 게시글 수',
+      label: '오늘 등록된 게시글',
       value: statsData?.오늘블랙리스트명단작성수.toLocaleString() || '0',
       unit: '개',
       icon: <ClipboardCheck className='h-6 w-6' />,
+    },
+    {
+      label: '전체 게시글',
+      value: statsData?.블랙리스트명단작성수.toLocaleString() || '0',
+      unit: '개',
+      icon: <Layers className='h-6 w-6' />,
     },
   ];
 
