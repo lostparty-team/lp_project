@@ -248,7 +248,6 @@ const BlacklistPage = () => {
               <option value='popular'>인기순</option>
               <option value='newest'>최신순</option>
             </select>
-            <LikeButton />
             <div className='relative flex-1'>
               <input
                 ref={searchInputRef}
