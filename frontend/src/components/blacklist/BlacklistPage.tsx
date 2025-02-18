@@ -232,11 +232,6 @@ const BlacklistPage = () => {
       className='min-h-screen overflow-x-hidden p-8'
     >
       <div className='relative min-h-screen bg-black1 text-gray-100'>
-        {/* 인기 블랙리스트 */}
-        <section className='container mx-auto px-4 pt-16'>
-          <h1 className='mb-8 text-3xl font-bold text-lostark-400'>가장 인기 있는 블랙리스트</h1>
-          <PopularList blacklist={blacklist} onItemClick={setSelectedBlacklistData} />
-        </section>
         <section className='container mx-auto px-4 py-16'>
           <div className='mb-6 flex items-center space-x-4'>
             <select
