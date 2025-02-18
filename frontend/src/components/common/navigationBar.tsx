@@ -42,7 +42,7 @@ const NavLinks = () => {
         <li>
           <button
             onClick={() => setIsModalOpen(true)}
-            className='relative text-lg transition-colors hover:text-lostark-400'
+            className='relative text-lg outline-none transition-colors hover:text-lostark-400'
           >
             API 입력
           </button>
