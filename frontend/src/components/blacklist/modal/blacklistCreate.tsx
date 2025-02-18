@@ -7,9 +7,9 @@ import { axiosInstance } from '@/api/axios';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion'; // 추가
 import { useLoadingStore } from '@/stores/loadingStore';
-import { handleBackdropClick } from '@/utils/modalUtils';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import queryClient from '@/api/queryClient';
+import { useModalDrag } from '@/hooks/useModalDrag';
 
 interface BlacklistUser {
   id: number;
@@ -150,9 +150,12 @@ const BlacklistCreateModal = () => {
     }
   };
 
+  const { handleMouseDown, handleMouseUp } = useModalDrag({ onClose: handleClose });
+
   return (
     <motion.div
-      onClick={(e) => handleBackdropClick(e, handleClose)}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

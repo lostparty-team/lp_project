@@ -5,9 +5,7 @@ import BlacklistItem from './BlacklistItem';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { Plus, Search } from 'lucide-react';
-import LikeButton from '@/components/common/LikeButton';
 import { BlacklistUser, SortType } from '@/types/blacklist';
-import PopularList from '@/components/blacklist/PopularList';
 import { useLoadingStore } from '@/stores/loadingStore';
 import { useRouter } from 'next/navigation';
 import { CustomButton } from '../common';
@@ -16,7 +14,6 @@ import { toast } from 'react-toastify';
 import MyBlacklistItem from './MyBlacklistItem';
 import { pageVariants } from '@/constants/animations';
 import { deleteBlacklist } from '@/api/blacklist';
-import { jwtDecode } from 'jwt-decode';
 import queryClient from '@/api/queryClient';
 
 const BlacklistPage = () => {
@@ -24,7 +21,7 @@ const BlacklistPage = () => {
   const cartRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
-  const [currentUser, setCurrentUser] = useState<string>();
+  const [currentUser] = useState<string>();
 
   const {
     searchTerm,
@@ -180,15 +177,11 @@ const BlacklistPage = () => {
     setSortType(e.target.value as SortType);
   };
 
-  const handleMyBlacklistItemClick = (blacklistItem: BlacklistUser) => {
-    setSelectedBlacklistData(blacklistItem);
-  };
-
   useEffect(() => {
     if (searchInputRef.current && searchTerm) {
       searchInputRef.current.value = searchTerm;
       const filteredResults = blacklist.filter(
-        (item) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
+        (item: { title: string }) => item?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false,
       );
       if (filteredResults.length === 0) {
         toast.info('검색 결과가 없습니다.');
@@ -217,9 +210,9 @@ const BlacklistPage = () => {
   };
 
   // 페이지 변경 핸들러
-  const handlePageChange = (page: number) => {
+  const handlePageChange = async (page: number) => {
     setCurrentPage(page);
-    // 페이지 상단으로 스크롤
+    await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -232,11 +225,6 @@ const BlacklistPage = () => {
       className='min-h-screen overflow-x-hidden p-8'
     >
       <div className='relative min-h-screen bg-black1 text-gray-100'>
-        {/* 인기 블랙리스트 */}
-        <section className='container mx-auto px-4 pt-16'>
-          <h1 className='mb-8 text-3xl font-bold text-lostark-400'>가장 인기 있는 블랙리스트</h1>
-          <PopularList blacklist={blacklist} onItemClick={setSelectedBlacklistData} />
-        </section>
         <section className='container mx-auto px-4 py-16'>
           <div className='mb-6 flex items-center space-x-4'>
             <select
@@ -248,7 +236,6 @@ const BlacklistPage = () => {
               <option value='popular'>인기순</option>
               <option value='newest'>최신순</option>
             </select>
-            <LikeButton />
             <div className='relative flex-1'>
               <input
                 ref={searchInputRef}
@@ -336,7 +323,7 @@ const BlacklistPage = () => {
                       <MyBlacklistItem
                         key={`blacklistItem-${index}`}
                         blacklistItem={blacklistItem}
-                        onItemClick={handleMyBlacklistItemClick}
+                        onItemClick={handleBlacklistItemClick}
                         onRemoveClick={handleRemoveFromBlacklist}
                       />
                     ))}
@@ -345,7 +332,6 @@ const BlacklistPage = () => {
             </div>
           </div>
         </section>
-
         <AnimatePresence>
           {flyingItem && flyingItem.type === 'add' && (
             <motion.div
@@ -364,10 +350,6 @@ const BlacklistPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <footer className='border-t border-black2 py-12'>
-          <div className='mx-auto px-4 text-center text-white/50'>Copyright © All rights reserved.</div>
-        </footer>
 
         <AnimatePresence>{isCreateModalOpen && <BlacklistCreateModal />}</AnimatePresence>
       </div>

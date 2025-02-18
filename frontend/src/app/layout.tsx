@@ -2,11 +2,10 @@ import localFont from 'next/font/local';
 import NavigationBar from '@/components/common/navigationBar';
 import ToastProvider from '@/components/common/toastProvider';
 import '@/styles/globals.css';
-import { MSWProvider } from './msw-provider';
 import QueryProvider from '@/providers/QueryProvider';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { AxiosInterceptor } from '@/api/interceptor';
 import AdBanner from '@/components/common/AdBanner';
+import Footer from '@/components/common/Footer';
 export const metadata = {
   title: '로스트파티',
   description: '로스트파티',
@@ -25,13 +24,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={pretendard.className}>
         <QueryProvider>
           <ToastProvider />
-          {/* <AdBanner position='left' /> */}
+          <aside>
+            <AdBanner position='left' />
+            <AdBanner position='right' />
+          </aside>
           <div className='mx-auto max-w-6xl'>
             <NavigationBar />
             <LoadingSpinner />
             {children}
           </div>
-          {/* <AdBanner position='right' /> */}
+          <Footer />
         </QueryProvider>
       </body>
     </html>

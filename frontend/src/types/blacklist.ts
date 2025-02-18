@@ -4,7 +4,7 @@ export interface BlacklistUser {
   title: string;
   author: string;
   views: number;
-  created_at?: Date;
+  created_at?: string;
   cart_count?: number;
   dislikes?: number;
 }
@@ -22,9 +22,10 @@ export interface BlacklistDetail {
     id: number;
     title: string;
     author: string;
-    createdAt?: string;
-    likeCount?: number;
-    cartQuantity?: number;
+    created_at?: string;
+    dislikes?: number;
+    userDisliked?: boolean;
+    views?: number;
   };
   data: BlacklistUserDetail[];
 }

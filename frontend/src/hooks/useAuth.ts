@@ -1,9 +1,9 @@
-import { getProfile, logout, postLogin, postSignup } from '@/api/auth';
+import { logout, postLogin, postSignup } from '@/api/auth';
 import queryClient from '@/api/queryClient';
 import { AUTH_HEADER } from '@/constants/auth';
 import { UseMutationCustomOptions } from '@/types/common';
 import { removeHeader, setHeader } from '@/utils/header';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 const useRegister = (mutationOptions?: UseMutationCustomOptions) => {
   return useMutation({
@@ -27,16 +27,6 @@ const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
     ...mutationOptions,
   });
 };
-
-// const useMe = (mutationOptions?: UseMutationCustomOptions) => {
-//   return useMutation({
-//     mutationFn: getProfile,
-//     onSuccess: ({ id, userId, clientId, apiKey, createdAt, updatedAt, deletedAt }) => {
-//       console.log(userId);
-//     },
-//     ...mutationOptions,
-//   });
-// };
 
 const useLogout = (mutationOptions?: UseMutationCustomOptions) => {
   return useMutation({

@@ -1,5 +1,5 @@
 'use client';
-import { Flip, Slide, ToastContainer, Zoom } from 'react-toastify';
+import { Flip, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 const ToastProvider = () => {
