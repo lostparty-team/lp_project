@@ -69,7 +69,7 @@ const MainPage = () => {
           ))}
 
           {/* Hero */}
-          <div className='container relative z-10 mx-auto px-4 text-center'>
+          <div className='container relative mx-auto px-4 text-center'>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className='mx-auto max-w-3xl'>
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
