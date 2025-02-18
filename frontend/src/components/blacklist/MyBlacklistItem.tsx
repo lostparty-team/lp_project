@@ -29,9 +29,7 @@ const MyBlacklistItem = ({
       whileHover={{ scale: 1.02 }}
     >
       <button className='w-full text-left' onClick={() => onItemClick(blacklistItem)}>
-        <p className='text-sm text-lostark-300'>{blacklistItem?.title || '이름 없음'}</p>
-        <p className='text-sm text-gray-400'>{blacklistItem.author}</p>
-        <p className='text-sm text-gray-400'>{blacklistItem.postId}</p>
+        <p className='text-sm text-lostark-300'>{blacklistItem?.title || '제목 없음'}</p>
       </button>
       <button onClick={(e) => onRemoveClick(blacklistItem, e)} className='rounded-full bg-red-500 p-2 hover:bg-red-600'>
         <Minus className='text-white' size={14} />
