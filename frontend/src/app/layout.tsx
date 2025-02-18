@@ -5,6 +5,7 @@ import '@/styles/globals.css';
 import QueryProvider from '@/providers/QueryProvider';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import AdBanner from '@/components/common/AdBanner';
+import Footer from '@/components/common/Footer';
 export const metadata = {
   title: '로스트파티',
   description: '로스트파티',
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </div>
           {/* <AdBanner position='right' /> */}
+          <Footer />
         </QueryProvider>
       </body>
     </html>

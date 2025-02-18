@@ -177,9 +177,6 @@ const MainPage = () => {
             </button>
           </motion.div>
         </section>
-
-        {/* Footer */}
-        <Footer />
       </motion.div>
     </div>
   );
