@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { useStats } from '@/hooks/useStats';
 import { useEffect } from 'react';
 import { BlacklistUser } from '@/types/blacklist';
+import Footer from '@/components/common/Footer';
 
 const MainPage = () => {
   const router = useRouter();
@@ -178,22 +179,7 @@ const MainPage = () => {
         </section>
 
         {/* Footer */}
-        <footer className='border-t border-lostark-400/10 bg-black1 py-16'>
-          <div className='container mx-auto px-4'>
-            <div className='mb-12 flex flex-wrap justify-center gap-8'>
-              {['이용약관', '개인정보처리방침', '문의하기', '후원하기'].map((item) => (
-                <motion.a
-                  key={item}
-                  whileHover={{ scale: 1.05 }}
-                  className='relative text-white/70 transition-all duration-300 hover:text-lostark-400'
-                >
-                  {item}
-                </motion.a>
-              ))}
-            </div>
-            <p className='text-center text-white/50'>© 2024 로스트아크 파티파인더. All rights reserved.</p>
-          </div>
-        </footer>
+        <Footer />
       </motion.div>
     </div>
   );
