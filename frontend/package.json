@@ -32,16 +32,10 @@
     "eslint-config-next": "15.0.3",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "msw": "^2.6.6",
     "postcss": "^8.4.49",
     "prettier": "^3.4.1",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.15",
     "typescript": "5.7.2"
-  },
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
   }
 }
