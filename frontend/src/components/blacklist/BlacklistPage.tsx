@@ -177,10 +177,6 @@ const BlacklistPage = () => {
     setSortType(e.target.value as SortType);
   };
 
-  const handleMyBlacklistItemClick = (blacklistItem: BlacklistUser) => {
-    setSelectedBlacklistData(blacklistItem);
-  };
-
   useEffect(() => {
     if (searchInputRef.current && searchTerm) {
       searchInputRef.current.value = searchTerm;
@@ -327,7 +323,7 @@ const BlacklistPage = () => {
                       <MyBlacklistItem
                         key={`blacklistItem-${index}`}
                         blacklistItem={blacklistItem}
-                        onItemClick={handleMyBlacklistItemClick}
+                        onItemClick={handleBlacklistItemClick}
                         onRemoveClick={handleRemoveFromBlacklist}
                       />
                     ))}
