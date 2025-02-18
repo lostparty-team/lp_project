@@ -24,13 +24,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={pretendard.className}>
         <QueryProvider>
           <ToastProvider />
-          {/* <AdBanner position='left' /> */}
+          <aside>
+            <AdBanner position='left' />
+          </aside>
           <div className='mx-auto max-w-6xl'>
             <NavigationBar />
             <LoadingSpinner />
             {children}
           </div>
-          {/* <AdBanner position='right' /> */}
+          <aside>
+            <AdBanner position='right' />
+          </aside>
           <Footer />
         </QueryProvider>
       </body>
