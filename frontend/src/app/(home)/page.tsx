@@ -144,44 +144,6 @@ const MainPage = () => {
           </div>
         </section>
 
-        {/* 파티 */}
-        <section className='container mx-auto px-4 py-24'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className='mb-12'
-          >
-            <h2 className='mb-2 text-4xl font-bold text-lostark-400'>인기 파티</h2>
-            <p className='text-gray-400'>현재 모집중인 인기 있는 파티들입니다</p>
-          </motion.div>
-          <div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
-            {POPULAR_PARTIES.map((party, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                className='group rounded-2xl border border-lostark-300/20 bg-gradient-to-br from-black2/80 to-black1/80 p-8 backdrop-blur-sm transition-all duration-300 hover:border-lostark-300'
-              >
-                <h3 className='mb-4 text-2xl font-semibold text-lostark-200'>{party.title}</h3>
-                <div className='space-y-3 text-sm text-gray-400'>
-                  <div className='flex items-center space-x-2'>
-                    <Award className='h-4 w-4 text-lostark-400' />
-                    <span>아이템 레벨: {party.level}</span>
-                  </div>
-                  <div className='flex items-center space-x-2'>
-                    <ClockIcon className='h-4 w-4 text-lostark-400' />
-                    <span>{party.time}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
         {/* 등록된 블랙리스트 */}
         <section className='container mx-auto px-4 py-24'>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className='mb-12'>
