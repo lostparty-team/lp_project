@@ -42,6 +42,62 @@ paths:
                 type: object
         '500':
           description: 서버 오류
+  /api/blacklist/search:
+    get:
+      summary: 블랙리스트 제목 검색
+      description: 제목을 입력하여 부분 검색을 통해 블랙리스트 게시글 목록을 조회합니다. 검색 결과에 대해서만 페이지네이션이 적용됩니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: title
+          in: query
+          description: 검색할 게시글 제목 (부분 일치 가능)
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: 페이지 번호
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: sort
+          in: query
+          description: 정렬 기준 (latest 또는 cart_count)
+          required: false
+          schema:
+            type: string
+            default: latest
+      responses:
+        '200':
+          description: 검색 결과 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "블랙리스트 검색 결과를 성공적으로 조회했습니다."
+                  data:
+                    type: array
+                    items:
+                      type: object
+                  totalPosts:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  sort:
+                    type: string
+                    example: "latest"
+        '500':
+          description: 서버 오류
   /api/blacklist/create:
     post:
       summary: 블랙리스트 게시글 작성
