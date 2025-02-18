@@ -4,25 +4,32 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ThumbsUp } from 'lucide-react';
-import { handleBackdropClick } from '@/utils/modalUtils';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { getBlacklistDetail } from '@/api/blacklist';
 import { BlacklistDetail } from '@/types/blacklist';
 import { toast } from 'react-toastify';
 import { useBlacklist } from '@/hooks/useBlacklist';
+import { useModalDrag } from '@/hooks/useModalDrag';
 
 const BlacklistModal = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const { setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
   const [blacklist, setBlacklist] = useState<BlacklistDetail | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-
   const { postDislikeMutation } = useBlacklist();
+
+  const handleClose = () => {
+    setIsVisible(false);
+    router.push('/blacklist', { scroll: false });
+  };
+
+  const { handleMouseDown, handleMouseUp } = useModalDrag({ onClose: handleClose });
 
   useEffect(() => {
     const fetch = async () => {
@@ -48,11 +55,6 @@ const BlacklistModal = () => {
       setIsVisible(true);
     }
   }, [pathname, setIsModalOpen, setSelectedBlacklistData]);
-
-  const handleClose = () => {
-    setIsVisible(false);
-    router.push('/blacklist', { scroll: false });
-  };
 
   const handleDislike = (blacklistId: string) => {
     postDislikeMutation(blacklistId);
@@ -81,7 +83,8 @@ const BlacklistModal = () => {
     <AnimatePresence mode='wait'>
       {isVisible && (
         <motion.div
-          onClick={(e) => handleBackdropClick(e, handleClose)}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
