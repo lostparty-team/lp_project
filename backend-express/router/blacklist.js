@@ -4,9 +4,9 @@ const db = require('../config/db'); // MySQL 연결 가져오기
 const extractClientId = require('../middleware/extractClientId');
 
 
-// 블랙리스트 목록 조회
+// 블랙리스트 목록 조회 (검색 기능 포함)
 router.get('/', async (req, res) => {
-  const { page = 1, sort = 'latest' } = req.query;
+  const { page = 1, sort = 'latest', title = '' } = req.query;
   const limit = 10;
   const offset = (page - 1) * limit;
 
@@ -16,10 +16,17 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    const countQuery = `SELECT COUNT(*) AS totalPosts FROM Posts`;
-    const [[{ totalPosts }]] = await db.query(countQuery);
+    // 검색어가 있을 경우 조건 추가
+    const whereClause = title ? 'WHERE title LIKE ?' : '';
+    const likePattern = `%${title}%`;
+
+    // 전체 게시글 수 (검색어 적용 여부에 따라)
+    const countQuery = `SELECT COUNT(*) AS totalPosts FROM Posts ${whereClause}`;
+    const countParams = title ? [likePattern] : [];
+    const [[{ totalPosts }]] = await db.query(countQuery, countParams);
     const totalPages = Math.ceil(totalPosts / limit);
 
+    // 게시글 목록 조회
     const selectQuery = `
       SELECT 
         p.id, 
@@ -32,11 +39,13 @@ router.get('/', async (req, res) => {
       FROM Posts p
       LEFT JOIN Cart c ON p.id = c.postId
       LEFT JOIN Dislike d ON p.id = d.postId
+      ${whereClause}
       GROUP BY p.id, p.title, p.author, p.views, p.created_at
       ORDER BY ${orderByClause}
       LIMIT ? OFFSET ?
     `;
-    const [rows] = await db.query(selectQuery, [limit, offset]);
+    const selectParams = title ? [likePattern, limit, offset] : [limit, offset];
+    const [rows] = await db.query(selectQuery, selectParams);
 
     res.status(200).json({
       message: '블랙리스트 목록을 성공적으로 조회했습니다.',
@@ -45,67 +54,13 @@ router.get('/', async (req, res) => {
       totalPages,
       currentPage: Number(page),
       sort,
+      search: title,
     });
   } catch (error) {
     res.status(500).json({ message: '블랙리스트를 조회하지 못했습니다.', error });
   }
 });
 
-// 블랙리스트 제목 검색 (부분 검색 지원 및 검색 결과에 대한 페이지네이션)
-router.get('/search', async (req, res) => {
-  const { title = '', page = 1, sort = 'latest' } = req.query;
-  const limit = 10;
-  const offset = (page - 1) * limit;
-
-  let orderByClause = 'p.id DESC';
-  if (sort === 'cart_count') {
-    orderByClause = 'cart_count DESC';
-  }
-
-  try {
-    // 검색어를 이용해 검색 패턴 생성
-    const likePattern = `%${title}%`;
-
-    // 검색 결과 총 게시글 수 계산 (검색 결과에 해당하는 게시글만)
-    const countQuery = `
-      SELECT COUNT(*) AS totalPosts FROM Posts
-      WHERE title LIKE ?
-    `;
-    const [[{ totalPosts }]] = await db.query(countQuery, [likePattern]);
-    const totalPages = Math.ceil(totalPosts / limit);
-
-    // 검색 결과 목록 조회 (기존 블랙리스트 목록 조회와 유사하지만 WHERE 절에 검색 조건 추가)
-    const selectQuery = `
-      SELECT 
-        p.id, 
-        p.title, 
-        p.author, 
-        p.views, 
-        p.created_at, 
-        COUNT(c.id) AS cart_count, 
-        COUNT(d.id) AS dislikes 
-      FROM Posts p
-      LEFT JOIN Cart c ON p.id = c.postId
-      LEFT JOIN Dislike d ON p.id = d.postId
-      WHERE p.title LIKE ?
-      GROUP BY p.id, p.title, p.author, p.views, p.created_at
-      ORDER BY ${orderByClause}
-      LIMIT ? OFFSET ?
-    `;
-    const [rows] = await db.query(selectQuery, [likePattern, limit, offset]);
-
-    res.status(200).json({
-      message: '블랙리스트 검색 결과를 성공적으로 조회했습니다.',
-      data: rows,
-      totalPosts,
-      totalPages,
-      currentPage: Number(page),
-      sort,
-    });
-  } catch (error) {
-    res.status(500).json({ message: '블랙리스트 검색 결과를 조회하지 못했습니다.', error });
-  }
-});
 
 // 블랙리스트 작성
 router.post('/create', extractClientId, async (req, res) => {
