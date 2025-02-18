@@ -5,9 +5,9 @@ import { useRouter, usePathname, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ThumbsUp } from 'lucide-react';
 import { useBlacklistStore } from '@/stores/blacklistStore';
-import { toast } from 'react-toastify';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { useModalDrag } from '@/hooks/useModalDrag';
+import { BlacklistUserDetail } from '@/types/blacklist';
 
 const BlacklistModal = () => {
   const router = useRouter();
@@ -159,7 +159,7 @@ const BlacklistModal = () => {
                       </div>
                     </div>
                   ) : blacklistDetail?.data.length ? (
-                    blacklistDetail.data.map((user, idx) => (
+                    blacklistDetail.data.map((user: BlacklistUserDetail, idx: number) => (
                       <div
                         key={idx}
                         className='group flex w-full items-center border-b border-white/10 px-2 transition hover:bg-white/5'
