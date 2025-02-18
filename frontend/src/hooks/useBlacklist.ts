@@ -2,10 +2,18 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { SortType } from '@/types/blacklist';
 import queryClient from '@/api/queryClient';
-import { getBlacklist, deleteBlacklist, postDislike, getCart, addToCart, removeFromCart } from '@/api/blacklist';
+import {
+  getBlacklist,
+  deleteBlacklist,
+  postDislike,
+  getCart,
+  addToCart,
+  removeFromCart,
+  getBlacklistDetail,
+} from '@/api/blacklist';
 import { toast } from 'react-toastify';
 
-export const useBlacklist = (sortType?: SortType, page: number = 1) => {
+export const useBlacklist = (sortType?: SortType, page: number = 1, blacklistId?: string) => {
   const { addToMyBlacklist, removeFromMyBlacklist } = useBlacklistStore();
 
   const { data, isLoading } = useQuery({
@@ -28,6 +36,17 @@ export const useBlacklist = (sortType?: SortType, page: number = 1) => {
     retry: false,
   });
 
+  const { data: blacklistDetail } = useQuery({
+    queryKey: ['blacklistModal', blacklistId],
+    queryFn: () => (blacklistId ? getBlacklistDetail(blacklistId) : null),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+    enabled: !!blacklistId,
+  });
+
   const { mutate: deleteBlacklistMutation } = useMutation({
     mutationFn: deleteBlacklist,
     onSuccess: () => {
@@ -40,6 +59,7 @@ export const useBlacklist = (sortType?: SortType, page: number = 1) => {
     onSuccess: () => {
       toast.success('비추천이 완료되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['blacklist'] });
+      queryClient.invalidateQueries({ queryKey: ['blacklistModal'] });
     },
     onError: (error: any) => {
       const statusCode = error?.response?.status;
@@ -112,5 +132,6 @@ export const useBlacklist = (sortType?: SortType, page: number = 1) => {
     postDislikeMutation,
     addToCartMutation,
     removeFromCartMutation,
+    blacklistDetail,
   };
 };
