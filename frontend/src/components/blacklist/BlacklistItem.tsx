@@ -50,7 +50,7 @@ const BlacklistItem = ({
         <button className='w-full text-left outline-none' onClick={() => onItemClick(blacklistItem)}>
           <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
           <p className='text-sm text-gray-400'>
-            담은 수 {blacklistItem.cart_count} | 비추천 {blacklistItem.dislikes}
+            {blacklistItem.created_at?.split('T')[0]} | 조회수 {blacklistItem.views} | 비추천 {blacklistItem.dislikes}
           </p>
         </button>
         <div className='flex gap-2'>

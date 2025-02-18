@@ -53,10 +53,16 @@ const BlacklistModal = () => {
     };
   }, []);
 
-  const metaItems = [
-    { label: '작성일', value: '2024-12-14' },
-    { label: '담은수', value: 128 },
-    { label: '비추천', value: 2930 },
+  const commonStyles = {
+    statItem: 'flex items-center gap-2',
+    statDivider: 'mx-2 h-4 w-[1px] bg-white/20',
+    statLabel: 'font-semibold text-lostark-400',
+  };
+
+  const statsData = [
+    { label: '작성일', value: blacklistDetail?.post.created_at.split('T')[0] },
+    { label: '조회수', value: blacklistDetail?.post.views },
+    { label: '비추천', value: blacklistDetail?.post.dislikes },
   ];
 
   return (
@@ -125,13 +131,13 @@ const BlacklistModal = () => {
                     <span className='text-lg font-medium text-white'>{blacklistDetail?.post.author.slice(10)}</span>
                   </div>
                   <div className='flex items-center gap-2 text-sm text-white/60'>
-                    {metaItems.map((item, index) => (
-                      <div key={`item-${index}`} className='flex items-center'>
-                        {index > 0 && <div className='mx-2 h-4 w-[1px] bg-white/20'></div>}
-                        <div className='flex items-center gap-2'>
-                          <span className='font-semibold text-lostark-400'>{item.label}</span>
-                          <span>{item.value}</span>
+                    {statsData.map((stat, index) => (
+                      <div key={stat.label} className='flex items-center'>
+                        <div className={commonStyles.statItem}>
+                          <span className={commonStyles.statLabel}>{stat.label}</span>
+                          <span>{stat.value}</span>
                         </div>
+                        {index < statsData.length - 1 && <div className={commonStyles.statDivider} />}
                       </div>
                     ))}
                   </div>

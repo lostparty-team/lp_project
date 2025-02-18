@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useStats } from '@/hooks/useStats';
 import { useEffect } from 'react';
 import { BlacklistUser } from '@/types/blacklist';
-import Footer from '@/components/common/Footer';
+import { CustomButton } from '@/components/common';
 
 const MainPage = () => {
   const router = useRouter();
@@ -139,25 +139,24 @@ const MainPage = () => {
                 key={`blacklist-${blacklistItem.id}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className='flex cursor-pointer items-center justify-between rounded-lg bg-black2 p-4 transition-all duration-300 hover:bg-black1'
+                className='flex cursor-pointer items-center justify-between rounded-lg border border-lostark-400/20 bg-black2 p-4 transition-all hover:border hover:border-lostark-400'
                 onClick={() => router.push(`/blacklist/${blacklistItem.id}`)}
               >
                 <div className='w-full'>
-                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
+                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '제목 없음'}</p>
                   <p className='text-sm text-gray-400'>
-                    {blacklistItem.id} | {blacklistItem.author} | 신고 {blacklistItem.id}회
+                    조회수 {blacklistItem.views} | 비추천 {blacklistItem.dislikes}
                   </p>
-                  <p className='mt-2 line-clamp-1 text-sm text-gray-400'>{blacklistItem.id}</p>
+                  <p className='mt-2 line-clamp-1 text-sm text-gray-400'>{blacklistItem.created_at?.split('T')[0]}</p>
                 </div>
                 <div className='ml-4 flex items-center gap-2'>
-                  <span className='rounded-full bg-red-500/10 px-3 py-1 text-sm text-red-400'>{blacklistItem.id}</span>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className='rounded-full bg-lostark-400 p-2 text-white hover:bg-lostark-500'
+                    className='rounded-full border border-lostark-500 bg-black1 p-2'
                     onClick={() => router.push(`/blacklist/${blacklistItem.id}`)}
                   >
-                    <ArrowRight size={20} />
+                    <ArrowRight size={20} color='#bd9c7c' />
                   </motion.button>
                 </div>
               </motion.div>
@@ -169,12 +168,7 @@ const MainPage = () => {
             viewport={{ once: true }}
             className='mt-8 text-center'
           >
-            <button
-              onClick={() => router.push('/blacklist')}
-              className='rounded-lg bg-lostark-400 px-6 py-3 text-white transition-all duration-300 hover:bg-lostark-500'
-            >
-              전체 블랙리스트 보기
-            </button>
+            <CustomButton onClick={() => router.push('/blacklist')}>전체 블랙리스트 보기</CustomButton>
           </motion.div>
         </section>
       </motion.div>
