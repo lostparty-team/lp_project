@@ -229,6 +229,11 @@ router.post("/", extractClientId, async (req, res) => {
       ? parseFloat(response.data.ArmoryProfile.ItemMaxLevel.replace(/,/g, ""))
       : "정보없음";
 
+      const 카드효과 = response.data.ArmoryCard.Effects[0].Items
+      .slice()
+      .reverse()
+      .find(item => item?.Name !== undefined)?.Name || '카드없음';
+
     res.json({
       아이템레벨: 아이템레벨,
       무기레벨: 무기정보,
@@ -244,6 +249,7 @@ router.post("/", extractClientId, async (req, res) => {
       팔찌: 팔찌,
       보석: 보석,
       각인: 각인,
+      카드효과: 카드효과,
       블랙리스트포함여부: isBlacklisted
     });
   } catch (error) {
