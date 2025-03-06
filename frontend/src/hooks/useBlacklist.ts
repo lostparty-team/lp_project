@@ -13,12 +13,12 @@ import {
 } from '@/api/blacklist';
 import { toast } from 'react-toastify';
 
-export const useBlacklist = (sortType?: SortType, page: number = 1, blacklistId?: string) => {
+export const useBlacklist = (sortType?: SortType, page: number = 1, blacklistId?: string, searchTitle?: string) => {
   const { addToMyBlacklist, removeFromMyBlacklist } = useBlacklistStore();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['blacklist', sortType, page],
-    queryFn: () => getBlacklist(sortType, page),
+    queryKey: ['blacklist', sortType, page, searchTitle],
+    queryFn: () => getBlacklist(sortType, page, searchTitle),
     staleTime: 1000 * 60 * 5, // 5분
     gcTime: 1000 * 60 * 30, // 30분
     refetchOnMount: false,

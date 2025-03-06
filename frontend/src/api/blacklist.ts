@@ -15,11 +15,12 @@ const authRequest = async (method: string, url: string, data?: any) => {
   });
 };
 
-export const getBlacklist = async (sortType?: SortType, page: number = 1) => {
+export const getBlacklist = async (sortType?: SortType, page: number = 1, title?: string) => {
   const { data } = await axiosInstance.get('/api/blacklist', {
     params: {
       page,
       sort: sortType,
+      title,
     },
   });
   return data;
