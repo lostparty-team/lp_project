@@ -54,3 +54,14 @@ export const removeFromCart = async (id: number) => {
   const { data } = await authRequest('delete', `/api/blacklist/cart/${id}`, { id });
   return data;
 };
+
+export const getSearchSuggestions = async (query: string) => {
+  if (!query || query.trim().length < 1) return { data: [] };
+
+  const { data } = await axiosInstance.get('/api/blacklist', {
+    params: {
+      title: query,
+    },
+  });
+  return data;
+};
