@@ -14,8 +14,7 @@ import { CustomButton } from '@/components/common';
 
 const MainPage = () => {
   const router = useRouter();
-  const { setSearchTerm } = useBlacklistStore();
-  const { blacklist } = useBlacklist('popular');
+  const { blacklist } = useBlacklist('latest');
   const { data: statsData, isLoading } = useStats();
 
   useEffect(() => {
@@ -90,13 +89,7 @@ const MainPage = () => {
                 transition={{ delay: 0.2 }}
                 className='relative mx-auto max-w-2xl'
               >
-                <SearchAutocomplete
-                  suggestions={blacklist}
-                  onSearch={(term) => {
-                    setSearchTerm(term);
-                    router.push('/blacklist');
-                  }}
-                />
+                <SearchAutocomplete suggestions={blacklist} />
               </motion.div>
             </motion.div>
           </div>

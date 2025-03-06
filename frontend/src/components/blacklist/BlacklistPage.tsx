@@ -7,7 +7,7 @@ import { useBlacklistStore } from '@/stores/blacklistStore';
 import { Plus, Search } from 'lucide-react';
 import { BlacklistUser, SortType } from '@/types/blacklist';
 import { useLoadingStore } from '@/stores/loadingStore';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomButton } from '../common';
 import BlacklistCreateModal from './modal/blacklistCreate';
 import { toast } from 'react-toastify';
@@ -18,6 +18,7 @@ import queryClient from '@/api/queryClient';
 
 const BlacklistPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const cartRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
@@ -39,9 +40,21 @@ const BlacklistPage = () => {
     setCurrentPage,
   } = useBlacklistStore();
 
+  // 검색어 감지
   useEffect(() => {
-    setSearchTerm('');
-  }, [setSearchTerm]);
+    const urlSearchTerm = searchParams?.get('search');
+    if (urlSearchTerm) {
+      setSearchTerm(urlSearchTerm);
+      if (searchInputRef.current) {
+        searchInputRef.current.value = urlSearchTerm;
+      }
+    } else {
+      setSearchTerm('');
+      if (searchInputRef.current) {
+        searchInputRef.current.value = '';
+      }
+    }
+  }, [searchParams, setSearchTerm]);
 
   const { blacklist, myBlacklist, isLoading, addToCartMutation, removeFromCartMutation, totalPages } = useBlacklist(
     sortType,
@@ -60,10 +73,11 @@ const BlacklistPage = () => {
     setCartRef(cartRef);
   }, [setCartRef]);
 
-  // 검색
+  // 검색 입력 시 상태 업데이트 및 URL 변경
   const handleBlacklistSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value);
+      const newSearchTerm = e.target.value;
+      setSearchTerm(newSearchTerm);
       setCurrentPage(1);
     },
     [setSearchTerm, setCurrentPage],
@@ -128,7 +142,7 @@ const BlacklistPage = () => {
   const handleDeleteBlacklist = useCallback(
     async (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
       e.stopPropagation();
-      if (isDeletingId !== null) return; // 이미 삭제 진행 중이면 중단
+      if (isDeletingId !== null) return;
 
       setIsDeletingId(blacklistItem.id);
 
@@ -285,7 +299,7 @@ const BlacklistPage = () => {
               <input
                 ref={searchInputRef}
                 type='text'
-                value={searchTerm}
+                defaultValue={searchTerm}
                 onChange={handleBlacklistSearch}
                 aria-label='블랙리스트 검색'
                 placeholder='제목을 입력하세요...'
