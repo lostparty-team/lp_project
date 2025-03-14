@@ -70,6 +70,7 @@ npm run dev
 | FE (dev) |     https://localhost:3000/      |
 | :-: | :------------------------------: |
 | BE (dev) | https://localhost:5000/api-docs/ |
+
 | FE (prod) |     https://localhost:3000/      |
 | :-: | :------------------------------: |
 | BE (prod) | https://localhost:5000/api-docs/ |
@@ -83,6 +84,6 @@ npm run dev
 | 김도환 | FrontEnd | [<img src="https://github.com/ehghks021203.png" width="100px">](https://github.com/ehghks021203) |
 | 최종현 | FrontEnd |    [<img src="https://github.com/elbyss.png" width="100px">](https://github.com/elbyss)    |
 | 김재찬 | BackEnd  |      [<img src="https://github.com/kjc6735.png" width="100px">](https://github.com/kjc6735)      | • 사용자 인증 및 보안 강화를 위한 로그인·로그아웃 기능 구현 (실효성 검토 후 미적용)
-| 성인석 | BackEnd  | [<img src="https://github.com/HaeSung99.png" width="100px">](https://github.com/HaeSung99) | • Dockerfile 작성 및 개발환경 구축 <br> • 데이터베이스 설계 및 구현 <br> • API 및 기능 명세서 작성 <br> • 페이지 구성 설계 및 OpenAPI를 활용한 데이터 재가공 <br> • 팀원 모집 및 프로젝트 관리 (노션 정리 포함)
+| 성인석 | BackEnd  | [<img src="https://github.com/HaeSung99.png" width="100px">](https://github.com/HaeSung99) | • Dockerfile 작성 및 개발환경 구축 <br> • DB 구조 설계 및 API 연동 <br> • API 및 기능 명세서 작성 <br> • 페이지 구성 설계 및 OpenAPI를 활용한 데이터 재가공 <br> • 팀원 모집 및 프로젝트 관리 (노션 정리 포함)
 
 </div>
