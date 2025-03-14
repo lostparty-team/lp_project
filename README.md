@@ -141,11 +141,7 @@ npm run dev
 | :----: | :------: | :----------------------------------------------------------------------------------------------: |  :----------------------------------------------------------------------------------------: |
 | 김도환 | FrontEnd | [<img src="https://github.com/ehghks021203.png" width="100px">](https://github.com/ehghks021203) |
 | 최종현 | FrontEnd |    [<img src="https://github.com/elbyss.png" width="100px">](https://github.com/elbyss)    |
-| 김재찬 | BackEnd  |      [<img src="https://github.com/kjc6735.png" width="100px">](https://github.com/kjc6735)      | 로그인,로그아웃 보안담당
-| 성인석 | BackEnd  | [<img src="https://github.com/HaeSung99.png" width="100px">](https://github.com/HaeSung99) | • Dockerfile 작성 및 개발환경 구축
-• 데이터베이스 설계 및 구현
-• API 및 기능 명세서 작성
-• 페이지 구성 설계 및 OpenAPI를 활용한 데이터 재가공
-• 팀원 모집 및 프로젝트 관리 (노션 정리 포함)
+| 김재찬 | BackEnd  |      [<img src="https://github.com/kjc6735.png" width="100px">](https://github.com/kjc6735)      | • 로그인,로그아웃 구현 및 보안
+| 성인석 | BackEnd  | [<img src="https://github.com/HaeSung99.png" width="100px">](https://github.com/HaeSung99) | • Dockerfile 작성 및 개발환경 구축 \n • 데이터베이스 설계 및 구현 \n • API 및 기능 명세서 작성 \n • 페이지 구성 설계 및 OpenAPI를 활용한 데이터 재가공 \n • 팀원 모집 및 프로젝트 관리 (노션 정리 포함)
 
 </div>
