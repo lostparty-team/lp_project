@@ -1,4 +1,4 @@
-# 🚀 로스트파티 (LostParty)
+# 🚀 로아파티 (LoA Party)
 
 ![Badge](https://img.shields.io/badge/Project-LostParty-darkgoldenrod?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
@@ -10,7 +10,7 @@
 
 ## 🎮 프로젝트 소개
 
-**로스트파티**는 게임 로스트아크에서 파티원의 닉네임을 화면 공유 및 OCR 기술을 활용해 감지하고, 이를 블랙리스트 데이터베이스와 비교하여 악성 유저 여부를 검증하는 웹 서비스입니다.
+**로아파티**는 게임 로스트아크에서 파티원의 닉네임을 화면 공유 및 OCR 기술을 활용해 감지하고, 이를 블랙리스트 데이터베이스와 비교하여 악성 유저 여부를 검증하는 웹 서비스입니다.
 
 ## 🖼️ 데모 화면
 
@@ -23,12 +23,17 @@
 - 화면 공유를 통해 **파티원의 닉네임을 자동으로 감지**합니다.
 - **Tesseract.js, EasyOCR**를 활용한 **OCR 기술**로 파티원 닉네임을 추출합니다.
 
-### ⚠️ 2. 블랙리스트 조회
+- ### 🔎 2. 파티원 정보 추출 (API)
+
+- 추출된 닉네임을 통해 LOSTARK API 를 이용하여 제공받은 파티원의 캐릭터 정보를 가공하여 사용자에게 제공합니다.
+- **LOSTARK**에서 제공한 **OPENAPI**를 사용합니다.
+
+### ⚠️ 3. 블랙리스트 조회
 
 - 추출된 닉네임이 **블랙리스트에 등록된 유저인지 실시간으로 확인**합니다.
 - **등록된 데이터베이스 기반으로 조회**가 가능합니다.
 
-### 📋 3. 블랙리스트 등록 및 관리
+### 📋 4. 블랙리스트 등록 및 관리
 
 - 사용자가 직접 **악성 유저를 블랙리스트에 등록**할 수 있습니다.
 - 등록된 사용자 목록 **검색 및 추가**를 할 수 있습니다.
@@ -39,7 +44,7 @@
 | ------------ | --------------------- |
 | **Frontend** | Next.js, TypeScript   |
 | **Backend**  | Express.js, Nest.js   |
-| **Database** | SQLite                |
+| **Database** | MYSQL                 |
 | **OCR**      | Tesseract.js, EasyOCR |
 | **Deploy**   | Vercel, AWS           |
 
