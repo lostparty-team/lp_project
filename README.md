@@ -1,4 +1,4 @@
-# 🚀 로아파티 (LoA Party)
+# 🚀 로스트파티 (LostParty)
 
 ![Badge](https://img.shields.io/badge/Project-LostParty-darkgoldenrod?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
@@ -10,7 +10,7 @@
 
 ## 🎮 프로젝트 소개
 
-**로아파티**는 게임 로스트아크에서 파티원의 닉네임을 화면 공유 및 OCR 기술을 활용해 감지하고, 이를 블랙리스트 데이터베이스와 비교하여 악성 유저 여부를 검증하는 웹 서비스입니다.
+**로스트파티**는 게임 로스트아크에서 파티원의 닉네임을 화면 공유 및 OCR 기술을 활용해 감지하고, 이를 블랙리스트 데이터베이스와 비교하여 악성 유저 여부를 검증하고, 파티원의 아이템 정보를 가공하여 제공해주는 웹 서비스입니다.
 
 ## 🖼️ 데모 화면
 
@@ -21,9 +21,9 @@
 ### 🔎 1. 닉네임 감지 (OCR)
 
 - 화면 공유를 통해 **파티원의 닉네임을 자동으로 감지**합니다.
-- **Tesseract.js, EasyOCR**를 활용한 **OCR 기술**로 파티원 닉네임을 추출합니다.
+- **PaddleOCR**를 활용한 **OCR 기술**로 파티원 닉네임을 추출합니다.
 
-- ### 🔎 2. 파티원 정보 추출 (API)
+### 📋 2. 파티원 정보 추출 (API)
 
 - 추출된 닉네임을 통해 LOSTARK API 를 이용하여 제공받은 파티원의 캐릭터 정보를 가공하여 사용자에게 제공합니다.
 - **LOSTARK**에서 제공한 **OPENAPI**를 사용합니다.
@@ -45,7 +45,7 @@
 | **Frontend** | Next.js, TypeScript   |
 | **Backend**  | Express.js, Nest.js   |
 | **Database** | MYSQL                 |
-| **OCR**      | Tesseract.js, EasyOCR |
+| **OCR**      | PaddleOCR             |
 | **Deploy**   | Vercel, AWS           |
 
 ---
@@ -74,9 +74,11 @@ npm run dev
 
 <div align="center">
 
-|  팀원  |   담당   |                                              프로필                                              |  팀원  |   담당   |                                           프로필                                           |
+|  팀원  |   담당   |                                              프로필                                              |  팀원  |   담당   |                                           주요기여기능                                           |
 | :----: | :------: | :----------------------------------------------------------------------------------------------: | :----: | :------: | :----------------------------------------------------------------------------------------: |
-| 김도환 | FrontEnd | [<img src="https://github.com/ehghks021203.png" width="100px">](https://github.com/ehghks021203) | 최종현 | FrontEnd |    [<img src="https://github.com/elbyss.png" width="100px">](https://github.com/elbyss)    |
-| 김재찬 | BackEnd  |      [<img src="https://github.com/kjc6735.png" width="100px">](https://github.com/kjc6735)      | 성인석 | BackEnd  | [<img src="https://github.com/HaeSung99.png" width="100px">](https://github.com/HaeSung99) |
+| 김도환 | FrontEnd | [<img src="https://github.com/ehghks021203.png" width="100px">](https://github.com/ehghks021203) 
+| 최종현 | FrontEnd |    [<img src="https://github.com/elbyss.png" width="100px">](https://github.com/elbyss)    |
+| 김재찬 | BackEnd  |      [<img src="https://github.com/kjc6735.png" width="100px">](https://github.com/kjc6735)      
+| 성인석 | BackEnd  | [<img src="https://github.com/HaeSung99.png" width="100px">](https://github.com/HaeSung99) |
 
 </div>
