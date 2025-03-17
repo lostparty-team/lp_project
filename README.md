@@ -41,7 +41,7 @@
 ## 🧮 로스트파티 사용 방법
 
 | 페이지 | 이미지 | 설명 |
-|:------|:------------------:|:------|
+|:--------|:--------------:|:--------|
 | **메인화면** | <img src="https://github.com/user-attachments/assets/1d1249f0-9d00-4216-ab34-1e6c2d4b2bde" style="width: 100%; max-width: 400px;"> | 서비스의 메인화면으로, 전체적인 UI와 주요 기능을 확인할 수 있습니다. |
 | **API키 입력** | <img src="https://github.com/user-attachments/assets/21356c24-3641-4dfa-a527-9c58141a5d00" style="width: 100%; max-width: 400px;"> | API 키를 입력하여 인증을 완료하는 페이지입니다. |
 | **블랙리스트 페이지** | <img src="https://github.com/user-attachments/assets/7bc8abee-b4d8-4ffb-81e5-1919dde68381" style="width: 100%; max-width: 400px;"> | 블랙리스트 목록을 확인하고 관리할 수 있습니다. |
