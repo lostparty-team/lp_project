@@ -41,8 +41,4 @@ async def get_party_member_info(nickname: str, authorization: str = Header(None)
     
     member = get_member_info(nickname=nickname, api_key=authorization)
 
-    return JSONResponse(content={
-        "status": "success",
-        "message": "해당 공대원의 정보를 성공적으로 받아왔습니다.",
-        "data": member.to_dict(),
-    }, status_code=200)
+    return {"status": "success", "message": "해당 공대원의 정보를 성공적으로 받아왔습니다.", "data": member.to_dict()}

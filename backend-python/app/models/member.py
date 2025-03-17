@@ -66,6 +66,7 @@ class Member:
         self.points = []
         self.is_blacklisted = False
         self.enlightenment_style = '없음'
+        self.card = '카드없음'
 
         if data:
             self._parse_data(data)
@@ -86,8 +87,8 @@ class Member:
                 {
                     'name': engraving['각인이름'],
                     'grade': engraving['등급'],
-                    'gradeLevel': engraving['등급레벨'],
-                    'abilityStoneLevel': engraving['어빌리티스톤레벨'],
+                    'gradeLevel': 0 if engraving['등급레벨'] == '정보없음' else engraving['등급레벨'],
+                    'abilityStoneLevel': 0 if engraving['어빌리티스톤레벨'] == '정보없음' else engraving['어빌리티스톤레벨'],
                 }
                 for engraving in data.get('각인', [])
             ]
@@ -163,6 +164,7 @@ class Member:
             self.relic_accessory_count = data.get('유물악세개수', 0)
             self.bracelet = data.get('팔찌', [])
             self.points = data.get('포인트', [])
+            self.card = data.get('카드효과', '카드없음')
             self.is_blacklisted = data.get('블랙리스트포함여부', False)
 
         except KeyError as e:
@@ -198,6 +200,7 @@ class Member:
                     'relicAccessoryCount': self.relic_accessory_count,
                     'bracelet': self.bracelet,
                     'arkPassivePoints': self.points,  
+                    'card': self.card,
                 },
                 'isBlacklisted': self.is_blacklisted,
                 'raw': self.data,
