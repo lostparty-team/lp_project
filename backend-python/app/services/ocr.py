@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from paddleocr import PaddleOCR
 
-ocr = PaddleOCR(lang="korean")
+ocr = PaddleOCR(use_angle_cls=False, lang="korean", use_gpu=True)
 
 def extract_text_from_image(image):
     img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
