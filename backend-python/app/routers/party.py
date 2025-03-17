@@ -28,11 +28,16 @@ async def get_party_screen_info(request: Request, authorization: str = Header(No
                 nicknames.append(nickname)
                 member = get_member_info(nickname, authorization)
                 members.append(member.to_dict())
-        return {"status": "success", "message": "화면으로부터 공대원 정보를 성공적으로 받아왔습니다.", "nicknames": nicknames, "members": members}
+        return {
+            "status": "success", 
+            "message": "화면으로부터 공대원 정보를 성공적으로 받아왔습니다.", 
+            "nicknames": nicknames, 
+            "members": members
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"OCR 과정에서 오류가 발생했습니다: {str(e)}")
 
-@router.get('/party/member')
+@router.get("/party/member")
 async def get_party_member_info(nickname: str, authorization: str = Header(None)):
     if not nickname:
         raise HTTPException(status_code=400, detail="닉네임 파라미터가 제공되지 않았습니다.")
@@ -41,4 +46,8 @@ async def get_party_member_info(nickname: str, authorization: str = Header(None)
     
     member = get_member_info(nickname=nickname, api_key=authorization)
 
-    return {"status": "success", "message": "해당 공대원의 정보를 성공적으로 받아왔습니다.", "data": member.to_dict()}
+    return {
+        "status": "success", 
+        "message": "해당 공대원의 정보를 성공적으로 받아왔습니다.", 
+        "data": member.to_dict()
+    }

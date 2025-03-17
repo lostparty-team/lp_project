@@ -2,11 +2,13 @@ import base64
 import cv2
 import numpy as np
 from ultralytics import YOLO
+from datetime import datetime
 
 model = YOLO("yolo/best.pt")
 
 def process_image(image_data: str):
-    header, encoded = image_data.split(',', 1)
+    print("YOLOv8을 활용한 닉네임 바운딩 박스 크롭", datetime.now())
+    _, encoded = image_data.split(',', 1)
     decoded_image = np.frombuffer(base64.b64decode(encoded), np.uint8)
     original_image = cv2.imdecode(decoded_image, cv2.IMREAD_COLOR)
     original_height, original_width = original_image.shape[:2]
