@@ -63,6 +63,7 @@ export type MemberData = {
   bracelet: string[];
   arkPassivePoints: number[];
   elixir: Elixirs;
+  card: string;
 };
 
 export type Member = {
