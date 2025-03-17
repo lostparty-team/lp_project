@@ -41,6 +41,7 @@
 ## 🧮 User flow
 
 ![파티구인창](https://github.com/user-attachments/assets/8188602d-aaec-42e0-b48f-729f237c6d80)
+<img src="https://github.com/user-attachments/assets/8188602d-aaec-42e0-b48f-729f237c6d80" width="50%" height="50%"/>
 -메인홈페이지 접속
 (이미지)
 -API키 저장(로컬스토리지)
