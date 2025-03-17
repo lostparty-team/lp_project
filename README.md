@@ -40,10 +40,15 @@
 
 ## 🧮 로스트파티 사용 방법
 
-| 메인화면 | API키 입력 | 블랙리스트 페이지 | 블랙리스트 작성 및 적용 | 인게임 파티 구인창 | 파티원 정보 |
-|------|------|------|------|------|------|
-| 설명1 | 설명2 | 설명3 | 설명4 | 설명5 | 설명6 |
-| ![메인페이지](https://github.com/user-attachments/assets/1d1249f0-9d00-4216-ab34-1e6c2d4b2bde) | ![API키입력](https://github.com/user-attachments/assets/21356c24-3641-4dfa-a527-9c58141a5d00) | ![블랙리스트페이지](https://github.com/user-attachments/assets/7bc8abee-b4d8-4ffb-81e5-1919dde68381) | ![블랙리스트 작성및적용](https://github.com/user-attachments/assets/e6016932-11cb-4fe5-b5c0-20bd7e984f71) | ![인게임파티구인창](https://github.com/user-attachments/assets/53bf64f0-5133-4e96-a9a9-3d714fcc75ca) | ![파티원정보](https://github.com/user-attachments/assets/e6016932-11cb-4fe5-b5c0-20bd7e984f71) |
+| 페이지 | 이미지 | 설명 |
+|------|------|------|
+| 메인화면 | ![메인페이지](https://github.com/user-attachments/assets/1d1249f0-9d00-4216-ab34-1e6c2d4b2bde) | 서비스의 메인화면으로, 전체적인 UI를 확인할 수 있습니다. |
+| API키 입력 | ![API키입력](https://github.com/user-attachments/assets/21356c24-3641-4dfa-a527-9c58141a5d00) | API 키를 입력하는 페이지로, 인증 과정을 거칩니다. |
+| 블랙리스트 페이지 | ![블랙리스트페이지](https://github.com/user-attachments/assets/7bc8abee-b4d8-4ffb-81e5-1919dde68381) | 블랙리스트 목록을 확인하고 관리할 수 있는 페이지입니다. |
+| 블랙리스트 작성 및 적용 | ![블랙리스트 작성및적용](https://github.com/user-attachments/assets/e6016932-11cb-4fe5-b5c0-20bd7e984f71) | 새로운 블랙리스트를 추가하고 적용하는 기능을 제공합니다. |
+| 인게임 파티 구인창 | ![인게임파티구인창](https://github.com/user-attachments/assets/53bf64f0-5133-4e96-a9a9-3d714fcc75ca) | 게임 내에서 파티를 모집할 수 있는 인터페이스를 보여줍니다. |
+| 파티원 정보 | ![파티원정보](https://github.com/user-attachments/assets/e6016932-11cb-4fe5-b5c0-20bd7e984f71) | 파티원들의 정보를 확인하고 관리할 수 있습니다. |
+
 
 
 
