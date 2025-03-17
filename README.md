@@ -43,8 +43,8 @@
 | 메인화면 | API키입력 | 블랙리스트페이지 | 블랙리스트 작성및적용 | 인게임파티구인창 | 파티원정보 |
 |------|------|------|------|------|------|
 | 설명1 | 설명2 | 설명3 | 설명4 | 설명4 | 설명4 |
-| ![메인화면]([링크](https://github.com/user-attachments/assets/307a77ae-ad19-4447-979f-af92fa8383df)) 
-| ![API키입력](https://github.com/user-attachments/assets/21356c24-3641-4dfa-a527-9c58141a5d00)
+|  ![메인페이지](https://github.com/user-attachments/assets/1d1249f0-9d00-4216-ab34-1e6c2d4b2bde) |
+| ![API키입력](https://github.com/user-attachments/assets/21356c24-3641-4dfa-a527-9c58141a5d00) |
 | ![블랙리스트페이지](https://github.com/user-attachments/assets/7bc8abee-b4d8-4ffb-81e5-1919dde68381)
 | ![블랙리스트 작성및적용](https://github.com/user-attachments/assets/e6016932-11cb-4fe5-b5c0-20bd7e984f71)
 | ![인게임파티구인창](https://github.com/user-attachments/assets/53bf64f0-5133-4e96-a9a9-3d714fcc75ca) 
