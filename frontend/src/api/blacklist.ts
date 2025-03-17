@@ -15,11 +15,12 @@ const authRequest = async (method: string, url: string, data?: any) => {
   });
 };
 
-export const getBlacklist = async (sortType?: SortType, page: number = 1) => {
+export const getBlacklist = async (sortType?: SortType, page: number = 1, title?: string) => {
   const { data } = await axiosInstance.get('/api/blacklist', {
     params: {
       page,
       sort: sortType,
+      title,
     },
   });
   return data;
@@ -51,5 +52,16 @@ export const addToCart = async (id: number) => {
 
 export const removeFromCart = async (id: number) => {
   const { data } = await authRequest('delete', `/api/blacklist/cart/${id}`, { id });
+  return data;
+};
+
+export const getSearchSuggestions = async (query: string) => {
+  if (!query || query.trim().length < 1) return { data: [] };
+
+  const { data } = await axiosInstance.get('/api/blacklist', {
+    params: {
+      title: query,
+    },
+  });
   return data;
 };

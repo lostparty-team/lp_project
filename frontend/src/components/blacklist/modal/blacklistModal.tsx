@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ThumbsUp } from 'lucide-react';
+import { X, ThumbsDown } from 'lucide-react';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { useModalDrag } from '@/hooks/useModalDrag';
@@ -118,7 +118,7 @@ const BlacklistModal = () => {
                         : 'bg-white/10 text-white/70 hover:bg-white/20'
                     }`}
                   >
-                    <ThumbsUp
+                    <ThumbsDown
                       size={20}
                       className={`transition-transform duration-200 ${blacklistDetail?.post.userDisliked ? 'scale-110' : ''}`}
                     />
