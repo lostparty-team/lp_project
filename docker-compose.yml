@@ -43,8 +43,8 @@ services:
     env_file: .env
     volumes:
       - ./backend-python:/app
-    command: python app.py
- 
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5001 --reload
+
   mysql:
     image: mysql:8.0
     environment:
