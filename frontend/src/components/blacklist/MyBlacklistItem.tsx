@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { BlacklistUser } from '@/types/blacklist';
 import { Minus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const MyBlacklistItem = ({
   blacklistItem,
@@ -11,6 +12,14 @@ const MyBlacklistItem = ({
   onItemClick: (item: BlacklistUser) => void;
   onRemoveClick: (item: BlacklistUser, e: React.MouseEvent) => void;
 }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (!blacklistItem || !blacklistItem.postId) return;
+    onItemClick(blacklistItem);
+    router.push(`/blacklist/${blacklistItem.postId}`, { scroll: false });
+  };
+
   return (
     <motion.li
       layout
@@ -28,9 +37,8 @@ const MyBlacklistItem = ({
       className='flex items-center justify-between overflow-hidden rounded-lg bg-black2 p-2'
       whileHover={{ scale: 1.02 }}
     >
-      <button className='w-full text-left' onClick={() => onItemClick(blacklistItem)}>
-        <p className='text-sm text-lostark-300'>{blacklistItem?.title || '이름 없음'}</p>
-        <p className='text-sm text-gray-400'>{blacklistItem.author}</p>
+      <button className='w-full text-left' onClick={handleClick}>
+        <p className='text-sm text-lostark-300'>{blacklistItem?.title || '제목 없음'}</p>
       </button>
       <button onClick={(e) => onRemoveClick(blacklistItem, e)} className='rounded-full bg-red-500 p-2 hover:bg-red-600'>
         <Minus className='text-white' size={14} />

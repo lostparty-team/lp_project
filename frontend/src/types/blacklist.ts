@@ -1,13 +1,15 @@
 export interface BlacklistUser {
+  postId: number;
   id: number;
   title: string;
   author: string;
-  createdAt?: Date;
-  likeCount?: number;
-  cartQuantity?: number;
+  views: number;
+  created_at?: string;
+  cart_count?: number;
+  dislikes?: number;
 }
 
-export type SortType = 'newest' | 'popular';
+export type SortType = 'latest' | 'popular';
 
 export interface BlacklistUserDetail {
   nickname: string;
@@ -20,9 +22,10 @@ export interface BlacklistDetail {
     id: number;
     title: string;
     author: string;
-    createdAt?: string;
-    likeCount?: number;
-    cartQuantity?: number;
+    created_at?: string;
+    dislikes?: number;
+    userDisliked?: boolean;
+    views?: number;
   };
   data: BlacklistUserDetail[];
 }

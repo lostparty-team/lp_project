@@ -1,9 +1,5 @@
 export const COMMON_NAV_LINKS = [
   {
-    name: '공지사항',
-    href: '/notification',
-  },
-  {
     name: '파티원 정보',
     href: '/party-info',
   },

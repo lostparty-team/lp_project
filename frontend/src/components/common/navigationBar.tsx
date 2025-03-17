@@ -5,9 +5,11 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLayoutEffect, useState } from 'react';
+import ApiInputModal from './ApiInputModal';
 
 const NavLinks = () => {
   const { isLogin, setIsLogin } = useAuthStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
@@ -37,7 +39,15 @@ const NavLinks = () => {
             </Link>
           </li>
         ))}
-        <li key={authLink.href}>
+        <li>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className='relative text-lg outline-none transition-colors hover:text-lostark-400'
+          >
+            API 입력
+          </button>
+        </li>
+        {/* <li key={authLink.href}>
           <Link
             href={authLink.href}
             className='relative text-lg transition-colors hover:text-lostark-400'
@@ -45,8 +55,9 @@ const NavLinks = () => {
           >
             {authLink.name}
           </Link>
-        </li>
+        </li> */}
       </ul>
+      <ApiInputModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </nav>
   );
 };

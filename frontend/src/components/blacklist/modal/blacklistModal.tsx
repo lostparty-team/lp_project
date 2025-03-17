@@ -3,38 +3,28 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ThumbsUp } from 'lucide-react';
-import { handleBackdropClick } from '@/utils/modalUtils';
+import { X, ThumbsDown } from 'lucide-react';
 import { useBlacklistStore } from '@/stores/blacklistStore';
-import { getBlacklistDetail } from '@/api/blacklist';
-import { BlacklistDetail } from '@/types/blacklist';
-import { toast } from 'react-toastify';
+import { useBlacklist } from '@/hooks/useBlacklist';
+import { useModalDrag } from '@/hooks/useModalDrag';
+import { BlacklistUserDetail } from '@/types/blacklist';
 
 const BlacklistModal = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const { setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
-  const [blacklist, setBlacklist] = useState<BlacklistDetail | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+  const { postDislikeMutation, blacklistDetail } = useBlacklist(undefined, 1, id);
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        setIsPageLoading(true);
-        const { data } = await getBlacklistDetail(id as string);
-        setBlacklist(data);
-      } catch (error) {
-        toast.error('블랙리스트 데이터 로딩 실패');
-      } finally {
-        setIsPageLoading(false);
-      }
-    };
-    fetch();
-  }, [id]);
+  const handleClose = () => {
+    setIsVisible(false);
+    router.push('/blacklist', { scroll: false });
+  };
+
+  const { handleMouseDown, handleMouseUp } = useModalDrag({ onClose: handleClose });
 
   useEffect(() => {
     if (pathname === '/blacklist') {
@@ -46,14 +36,8 @@ const BlacklistModal = () => {
     }
   }, [pathname, setIsModalOpen, setSelectedBlacklistData]);
 
-  const handleClose = () => {
-    setIsVisible(false);
-    router.push('/blacklist', { scroll: false });
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+  const handleDislike = (blacklistId: string) => {
+    postDislikeMutation(blacklistId);
   };
 
   useEffect(() => {
@@ -69,17 +53,24 @@ const BlacklistModal = () => {
     };
   }, []);
 
-  const metaItems = [
-    { label: '작성일', value: '2024-12-14' },
-    { label: '담은수', value: 128 },
-    { label: '비추천', value: 2930 },
+  const commonStyles = {
+    statItem: 'flex items-center gap-2',
+    statDivider: 'mx-2 h-4 w-[1px] bg-white/20',
+    statLabel: 'font-semibold text-lostark-400',
+  };
+
+  const statsData = [
+    { label: '작성일', value: blacklistDetail?.post.created_at.split('T')[0] },
+    { label: '조회수', value: blacklistDetail?.post.views },
+    { label: '비추천', value: blacklistDetail?.post.dislikes },
   ];
 
   return (
     <AnimatePresence mode='wait'>
       {isVisible && (
         <motion.div
-          onClick={(e) => handleBackdropClick(e, handleClose)}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -110,35 +101,43 @@ const BlacklistModal = () => {
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <h2 className='bg-gradient-to-r from-lostark-400 to-lostark-300 bg-clip-text text-3xl font-bold text-transparent text-white'>
-                      {blacklist?.post.title}
+                      {blacklistDetail?.post.title}
                     </h2>
+                    {/* 태그 */}
                     <span className='rounded-full bg-lostark-400/20 px-3 py-1 text-sm font-medium text-lostark-400'>
                       블랙리스트
                     </span>
                   </div>
+
+                  {/* dislike */}
                   <button
-                    onClick={handleLike}
+                    onClick={() => handleDislike(id)}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 ${
-                      isLiked ? 'bg-lostark-400 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
+                      blacklistDetail?.post.userDisliked
+                        ? 'bg-lostark-400 text-white'
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
                     }`}
                   >
-                    <ThumbsUp size={20} className={`transition-transform duration-200 ${isLiked ? 'scale-110' : ''}`} />
-                    <span className='font-medium'>{likeCount}</span>
+                    <ThumbsDown
+                      size={20}
+                      className={`transition-transform duration-200 ${blacklistDetail?.post.userDisliked ? 'scale-110' : ''}`}
+                    />
+                    <span className='font-medium'>{blacklistDetail?.post.dislikes}</span>
                   </button>
                 </div>
                 <div className='flex items-center justify-between border-t border-white/10 pt-4'>
                   <div className='flex items-center gap-2'>
                     <span className='text-white/60'>작성자:</span>
-                    <span className='text-lg font-medium text-white'>{blacklist?.post.author}</span>
+                    <span className='text-lg font-medium text-white'>{blacklistDetail?.post.author.slice(10)}</span>
                   </div>
                   <div className='flex items-center gap-2 text-sm text-white/60'>
-                    {metaItems.map((item, index) => (
-                      <div key={`item-${index}`} className='flex items-center'>
-                        {index > 0 && <div className='mx-2 h-4 w-[1px] bg-white/20'></div>}
-                        <div className='flex items-center gap-2'>
-                          <span className='font-semibold text-lostark-400'>{item.label}</span>
-                          <span>{item.value}</span>
+                    {statsData.map((stat, index) => (
+                      <div key={stat.label} className='flex items-center'>
+                        <div className={commonStyles.statItem}>
+                          <span className={commonStyles.statLabel}>{stat.label}</span>
+                          <span>{stat.value}</span>
                         </div>
+                        {index < statsData.length - 1 && <div className={commonStyles.statDivider} />}
                       </div>
                     ))}
                   </div>
@@ -151,7 +150,7 @@ const BlacklistModal = () => {
                   <div className='flex w-2/5 items-center gap-2 px-6'>
                     <span className='font-medium text-lostark-400'>닉네임</span>
                     <span className='rounded-full bg-lostark-400/20 px-2 py-0.5 text-xs text-lostark-400'>
-                      {blacklist?.data.length || 0}
+                      {blacklistDetail?.data.length || 0}
                     </span>
                   </div>
                   <div className='w-3/5 px-6 font-medium text-lostark-400'>제재 사유</div>
@@ -165,8 +164,8 @@ const BlacklistModal = () => {
                         로딩 중...
                       </div>
                     </div>
-                  ) : blacklist?.data.length ? (
-                    blacklist.data.map((user, idx) => (
+                  ) : blacklistDetail?.data.length ? (
+                    blacklistDetail.data.map((user: BlacklistUserDetail, idx: number) => (
                       <div
                         key={idx}
                         className='group flex w-full items-center border-b border-white/10 px-2 transition hover:bg-white/5'

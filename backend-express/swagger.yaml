@@ -14,34 +14,88 @@ tags:
 paths:
   /api/blacklist:
     get:
-      summary: 블랙리스트 목록 조회
-      description: 페이지와 정렬 기준에 따라 블랙리스트 게시글 목록을 조회합니다.
+      summary: "블랙리스트 목록 조회 및 제목 검색"
+      description: >
+        페이지, 정렬, 그리고 선택적으로 제목 검색어를 이용해 블랙리스트 게시글 목록을 조회합니다.
+        검색어(title)를 제공하면 해당 검색어에 해당하는 게시글만 반환하며, 페이지네이션이 적용됩니다.
       tags:
         - blacklist
       parameters:
         - name: page
           in: query
-          description: 페이지 번호
+          description: "페이지 번호"
           required: false
           schema:
             type: integer
             default: 1
         - name: sort
           in: query
-          description: 정렬 기준 (latest 또는 cart_count)
+          description: "정렬 기준 (latest 또는 cart_count)"
           required: false
           schema:
             type: string
             default: latest
+        - name: title
+          in: query
+          description: "검색할 게시글 제목 (부분 검색 지원, 제공하지 않으면 전체 목록 조회)"
+          required: false
+          schema:
+            type: string
       responses:
         '200':
-          description: 목록 조회 성공
+          description: "목록 조회 성공"
           content:
             application/json:
               schema:
                 type: object
+                properties:
+                  message:
+                    type: string
+                    example: "블랙리스트 목록을 성공적으로 조회했습니다."
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "블랙리스트 제목"
+                        author:
+                          type: string
+                          example: "작성자"
+                        views:
+                          type: integer
+                          example: 123
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: "2025-02-18T00:00:00Z"
+                        cart_count:
+                          type: integer
+                          example: 5
+                        dislikes:
+                          type: integer
+                          example: 2
+                  totalPosts:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  sort:
+                    type: string
+                    example: "latest"
+                  search:
+                    type: string
+                    example: "검색어"
         '500':
-          description: 서버 오류
+          description: "서버 오류"
   /api/blacklist/create:
     post:
       summary: 블랙리스트 게시글 작성
@@ -70,6 +124,7 @@ paths:
                       reason:
                         type: string
                         description: 사유
+                        
       responses:
         '201':
           description: 게시글 작성 성공
@@ -332,6 +387,43 @@ paths:
                     type: string
                     description: "에러 메시지"
                     example: "데이터를 가져오는 중 오류가 발생했습니다."
+
+  /userdata:
+    get:
+      summary: "메인 페이지 통계 조회"
+      description: "블랙리스트 관련 통계, 방문자 통계를 조회합니다."
+      tags:
+        - userdata
+      responses:
+        '200':
+          description: "메인 페이지 통계 조회 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  블랙리스트등록된유저수:
+                    type: integer
+                    example: 4564
+                  오늘블랙리스트등록된유저수:
+                    type: integer
+                    example: 124
+                  블랙리스트명단작성수:
+                    type: integer
+                    example: 781
+                  오늘블랙리스트명단작성수:
+                    type: integer
+                    example: 31
+                  방문자수:
+                    type: integer
+                    example: 99154
+                  오늘방문자수:
+                    type: integer
+                    example: 99
+        '500':
+          description: "서버 오류"
+
+
 components:
   securitySchemes:
     ApiKeyAuth:

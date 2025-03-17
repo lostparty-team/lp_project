@@ -7,8 +7,9 @@ import { axiosInstance } from '@/api/axios';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion'; // 추가
 import { useLoadingStore } from '@/stores/loadingStore';
-import { handleBackdropClick } from '@/utils/modalUtils';
 import { useBlacklistStore } from '@/stores/blacklistStore';
+import queryClient from '@/api/queryClient';
+import { useModalDrag } from '@/hooks/useModalDrag';
 
 interface BlacklistUser {
   id: number;
@@ -48,7 +49,6 @@ const BlacklistCreateModal = () => {
     if (inputRef.current) {
       // 제목 입력 최대 너비 제한
       const width = Math.min(title.length + 4, 400);
-      console.log(width);
       inputRef.current.style.width = `${width + 1}ch`;
     }
   }, [title, isEditing]);
@@ -112,9 +112,14 @@ const BlacklistCreateModal = () => {
     blacklist: { nickname: string; reason: string }[];
   }) => {
     try {
-      console.log('제출');
-      const { data } = await axiosInstance.post('/api/blacklist/create', blacklistData);
+      const getStorage = localStorage.getItem('lostark-api');
+      const { data } = await axiosInstance.post('/api/blacklist/create', blacklistData, {
+        headers: {
+          Authorization: getStorage,
+        },
+      });
       toast.success('블랙리스트가 생성되었습니다.');
+      await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
       return data;
     } catch (err) {
       toast.error('블랙리스트 생성에 실패했습니다.');
@@ -145,9 +150,12 @@ const BlacklistCreateModal = () => {
     }
   };
 
+  const { handleMouseDown, handleMouseUp } = useModalDrag({ onClose: handleClose });
+
   return (
     <motion.div
-      onClick={(e) => handleBackdropClick(e, handleClose)}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

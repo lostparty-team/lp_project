@@ -1,10 +1,10 @@
-version: '3.8'
 services:
   frontend:
     build:
       context: ./frontend
     ports:
       - "3000:3000" # next 개발 서버
+    env_file: .env
     volumes:
       - ./frontend:/app # 코드 변경 시 자동 반영
       - /app/node_modules # node_modules는 컨테이너 내부에서 관리
@@ -17,30 +17,32 @@ services:
       context: ./backend-express
     ports:
       - "5000:5000" # Express 서버
+    env_file: .env
     volumes:
       - ./backend-express:/app
       - /app/node_modules # node_modules는 컨테이너 내부에서 관리
     command: npm run start
 
-  backend-nest:
-    build:
-      context: ./backend-nest
-    ports:
-      - "4000:4000" # NestJS 서버
-    links:
-      - mysql
-    volumes:
-      - ./backend-nest:/app
-      - /app/node_modules # node_modules는 컨테이너 내부에서 관리
-    command: npm run start:dev
+  # backend-nest:
+  #   build:
+  #     context: ./backend-nest
+  #   ports:
+  #     - "4000:4000" # NestJS 서버
+  #   links:
+  #     - mysql
+  #   volumes:
+  #     - ./backend-nest:/app
+  #     - /app/node_modules # node_modules는 컨테이너 내부에서 관리
+  #   command: npm run start:dev
 
   backend-python:
     build:
       context: ./backend-python
     ports:
       - "5001:5001"
+    env_file: .env
     volumes:
-      - ./backend-python:/app   
+      - ./backend-python:/app
     command: python app.py
  
   mysql:

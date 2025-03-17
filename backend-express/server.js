@@ -8,8 +8,11 @@ const YAML = require("yamljs"); // YAML 파일 로드 패키지
 const swaggerDocs = YAML.load('./swagger.yaml'); // swagger.yaml 파일 로드
 
 const visitorTracker = require('./middleware/visitorTracker');
+const swaggerAuth = require('./middleware/swaggerAuth');
+
 
 app.use(express.json({ limit: '10mb' })); // POST 요청의 JSON 데이터 파싱
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
   origin: 'http://localhost:3000', // React 도메인
@@ -19,6 +22,7 @@ app.use(cors({
 // Swagger UI 연결
 app.use(
   "/api-docs",
+  swaggerAuth,  // 관리자 인증 미들웨어 적용
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocs)
 );

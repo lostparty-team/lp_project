@@ -1,6 +1,5 @@
 'use client';
-import { ClockIcon } from '@/styles/icons';
-import { ArrowRight, Users, Award, ClipboardCheck, Eye, Layers } from 'lucide-react';
+import { ArrowRight, Users, ClipboardCheck, Eye, Layers } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useBlacklistStore } from '@/stores/blacklistStore';
@@ -8,29 +7,51 @@ import SearchAutocomplete from '@/components/common/SearchAutocomplete';
 import { useBlacklist } from '@/hooks/useBlacklist';
 import { pageVariants } from '@/constants/animations';
 import Image from 'next/image';
-
-const STATS_DATA = [
-  { label: '가입자 수', value: '15,234', unit: '명', icon: <Users className='h-6 w-6' /> },
-  { label: '오늘 방문자 수', value: '391', unit: '명', icon: <Eye className='h-6 w-6' /> },
-  { label: '등록된 블랙리스트', value: '1,432', unit: '건', icon: <Layers className='h-6 w-6' /> },
-  { label: '오늘 추가된 블랙리스트', value: '234', unit: '건', icon: <ClipboardCheck className='h-6 w-6' /> },
-];
-
-const POPULAR_PARTIES = [
-  { title: '발탄 하드 파티', level: '1620+', time: '오후 8시' },
-  { title: '쿠크세이튼 노말', level: '1580+', time: '오후 9시' },
-  { title: '일리아칸 하드', level: '1600+', time: '오후 10시' },
-];
+import { useStats } from '@/hooks/useStats';
+import { useEffect } from 'react';
+import { BlacklistUser } from '@/types/blacklist';
+import { CustomButton } from '@/components/common';
 
 const MainPage = () => {
   const router = useRouter();
-  const { setSearchTerm } = useBlacklistStore();
-  const { blacklist } = useBlacklist('popular');
+  const { blacklist } = useBlacklist('latest');
+  const { data: statsData, isLoading } = useStats();
+
+  useEffect(() => {
+    getStatsData();
+  }, []);
+
+  const getStatsData = () => [
+    {
+      label: '오늘 방문자',
+      value: statsData?.오늘방문자수.toLocaleString() || '0',
+      unit: '명',
+      icon: <Eye className='h-6 w-6' />,
+    },
+    {
+      label: '오늘 등록된 사용자',
+      value: statsData?.오늘블랙리스트등록된유저수.toLocaleString() || '0',
+      unit: '명',
+      icon: <Users className='h-6 w-6' />,
+    },
+    {
+      label: '오늘 등록된 게시글',
+      value: statsData?.오늘블랙리스트명단작성수.toLocaleString() || '0',
+      unit: '개',
+      icon: <ClipboardCheck className='h-6 w-6' />,
+    },
+    {
+      label: '전체 게시글',
+      value: statsData?.블랙리스트명단작성수.toLocaleString() || '0',
+      unit: '개',
+      icon: <Layers className='h-6 w-6' />,
+    },
+  ];
 
   const overlayGradients = 'from-black1 via-transparent to-black1';
 
   return (
-    <div className='min-h-screen overflow-x-hidden bg-gradient-to-b from-black1 to-black2 text-gray-100'>
+    <div className='min-h-screen overflow-x-hidden text-gray-100'>
       <motion.div variants={pageVariants} initial='initial' animate='animate' exit='exit'>
         <section className='relative flex h-[80vh] items-center justify-center overflow-hidden'>
           {/* 배경 */}
@@ -47,7 +68,7 @@ const MainPage = () => {
           ))}
 
           {/* Hero */}
-          <div className='container relative z-10 mx-auto px-4 text-center'>
+          <div className='container relative mx-auto px-4 text-center'>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className='mx-auto max-w-3xl'>
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
@@ -68,13 +89,7 @@ const MainPage = () => {
                 transition={{ delay: 0.2 }}
                 className='relative mx-auto max-w-2xl'
               >
-                <SearchAutocomplete
-                  suggestions={blacklist}
-                  onSearch={(term) => {
-                    setSearchTerm(term);
-                    router.push('/blacklist');
-                  }}
-                />
+                <SearchAutocomplete suggestions={blacklist} />
               </motion.div>
             </motion.div>
           </div>
@@ -83,7 +98,7 @@ const MainPage = () => {
         {/* 통계 */}
         <section className='container relative z-20 mx-auto -mt-20 px-4'>
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
-            {STATS_DATA.map((stat, idx) => (
+            {getStatsData().map((stat, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -95,47 +110,9 @@ const MainPage = () => {
                   <div className='rounded-xl bg-lostark-400/10 p-3 text-lostark-400'>{stat.icon}</div>
                   <div>
                     <h3 className='text-3xl font-bold text-lostark-400'>
-                      {stat.value} {stat.unit}
+                      {isLoading ? '로딩중...' : `${stat.value} ${stat.unit}`}
                     </h3>
                     <p className='text-gray-400'>{stat.label}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* 파티 */}
-        <section className='container mx-auto px-4 py-24'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className='mb-12'
-          >
-            <h2 className='mb-2 text-4xl font-bold text-lostark-400'>인기 파티</h2>
-            <p className='text-gray-400'>현재 모집중인 인기 있는 파티들입니다</p>
-          </motion.div>
-          <div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
-            {POPULAR_PARTIES.map((party, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                className='group rounded-2xl border border-lostark-300/20 bg-gradient-to-br from-black2/80 to-black1/80 p-8 backdrop-blur-sm transition-all duration-300 hover:border-lostark-300'
-              >
-                <h3 className='mb-4 text-2xl font-semibold text-lostark-200'>{party.title}</h3>
-                <div className='space-y-3 text-sm text-gray-400'>
-                  <div className='flex items-center space-x-2'>
-                    <Award className='h-4 w-4 text-lostark-400' />
-                    <span>아이템 레벨: {party.level}</span>
-                  </div>
-                  <div className='flex items-center space-x-2'>
-                    <ClockIcon className='h-4 w-4 text-lostark-400' />
-                    <span>{party.time}</span>
                   </div>
                 </div>
               </motion.div>
@@ -150,30 +127,29 @@ const MainPage = () => {
             <p className='text-gray-400'>최근에 등록된 블랙리스트 정보입니다</p>
           </motion.div>
           <div className='space-y-4'>
-            {blacklist?.slice(0, 3).map((blacklistItem, index) => (
+            {blacklist?.slice(0, 3).map((blacklistItem: BlacklistUser) => (
               <motion.div
                 key={`blacklist-${blacklistItem.id}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className='flex cursor-pointer items-center justify-between rounded-lg bg-black2 p-4 transition-all duration-300 hover:bg-black1'
+                className='flex cursor-pointer items-center justify-between rounded-lg border border-lostark-400/20 bg-black2 p-4 transition-all hover:border hover:border-lostark-400'
                 onClick={() => router.push(`/blacklist/${blacklistItem.id}`)}
               >
                 <div className='w-full'>
-                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
+                  <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '제목 없음'}</p>
                   <p className='text-sm text-gray-400'>
-                    {blacklistItem.id} | {blacklistItem.author} | 신고 {blacklistItem.id}회
+                    조회수 {blacklistItem.views} | 비추천 {blacklistItem.dislikes}
                   </p>
-                  <p className='mt-2 line-clamp-1 text-sm text-gray-400'>{blacklistItem.id}</p>
+                  <p className='mt-2 line-clamp-1 text-sm text-gray-400'>{blacklistItem.created_at?.split('T')[0]}</p>
                 </div>
                 <div className='ml-4 flex items-center gap-2'>
-                  <span className='rounded-full bg-red-500/10 px-3 py-1 text-sm text-red-400'>{blacklistItem.id}</span>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className='rounded-full bg-lostark-400 p-2 text-white hover:bg-lostark-500'
+                    className='rounded-full border border-lostark-500 bg-black1 p-2'
                     onClick={() => router.push(`/blacklist/${blacklistItem.id}`)}
                   >
-                    <ArrowRight size={20} />
+                    <ArrowRight size={20} color='#bd9c7c' />
                   </motion.button>
                 </div>
               </motion.div>
@@ -185,32 +161,9 @@ const MainPage = () => {
             viewport={{ once: true }}
             className='mt-8 text-center'
           >
-            <button
-              onClick={() => router.push('/blacklist')}
-              className='rounded-lg bg-lostark-400 px-6 py-3 text-white transition-all duration-300 hover:bg-lostark-500'
-            >
-              전체 블랙리스트 보기
-            </button>
+            <CustomButton onClick={() => router.push('/blacklist')}>전체 블랙리스트 보기</CustomButton>
           </motion.div>
         </section>
-
-        {/* Footer */}
-        <footer className='border-t border-lostark-400/10 bg-black1 py-16'>
-          <div className='container mx-auto px-4'>
-            <div className='mb-12 flex flex-wrap justify-center gap-8'>
-              {['이용약관', '개인정보처리방침', '문의하기', '후원하기'].map((item) => (
-                <motion.a
-                  key={item}
-                  whileHover={{ scale: 1.05 }}
-                  className='relative text-white/70 transition-all duration-300 hover:text-lostark-400'
-                >
-                  {item}
-                </motion.a>
-              ))}
-            </div>
-            <p className='text-center text-white/50'>© 2024 로스트아크 파티파인더. All rights reserved.</p>
-          </div>
-        </footer>
       </motion.div>
     </div>
   );
