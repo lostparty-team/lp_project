@@ -249,13 +249,17 @@ const PartyInfo: React.FC = () => {
   }, [members]);
 
   const startScreenSharing = async () => {
-    const stream = await requestPermissionFromUserToAccessScreen();
-    recordedData.current = [];
-    recorderRef.current = new MediaRecorder(stream);
-    recorderRef.current.addEventListener('dataavailable', collectVideoData);
-    recorderRef.current.addEventListener('stop', () => setIsScreenSharing(false));
-    recorderRef.current.addEventListener('start', () => setIsScreenSharing(true));
-    recorderRef.current.start(100);
+    try {
+      const stream = await requestPermissionFromUserToAccessScreen();
+      recordedData.current = [];
+      recorderRef.current = new MediaRecorder(stream);
+      recorderRef.current.addEventListener('dataavailable', collectVideoData);
+      recorderRef.current.addEventListener('stop', () => setIsScreenSharing(false));
+      recorderRef.current.addEventListener('start', () => setIsScreenSharing(true));
+      recorderRef.current.start(100);
+    } catch (error) {
+      toast.error('화면 공유가 중단되었습니다.');
+    }
   };
 
   const requestPermissionFromUserToAccessScreen = async () => {
@@ -353,8 +357,8 @@ const PartyInfo: React.FC = () => {
   }, [isLoading, isAnyMemberLoading]);
 
   return (
-    <div className='min-h-screen bg-black1 text-gray-100'>
-      <section className='container mx-auto px-4 py-16'>
+    <div className='bg-black1 text-gray-100'>
+      <section className='container mx-auto px-4 py-10'>
         {/* 타이틀 애니메이션 적용 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -463,7 +467,7 @@ const PartyInfo: React.FC = () => {
                       <div className='text-sm text-gray-400'>{loadingText}</div>
                     ) : data.data ? (
                       <div className='text-sm text-gray-400'>
-                        {data.data.enlightenmentStyle} | 세구빛 30각 | {data.data.elixir?.total}엘 |{' '}
+                        {data.data.enlightenmentStyle} | {data.data.card} | {data.data.elixir?.total}엘 |{' '}
                         {data.data.transcendence?.total}초
                       </div>
                     ) : (
@@ -483,24 +487,6 @@ const PartyInfo: React.FC = () => {
 
       {/* Tooltip */}
       <Tooltip content={tooltip.content} position={{ x: tooltip.x, y: tooltip.y }} visible={tooltip.visible} />
-
-      {/* Footer */}
-      <footer className='border-t border-lostark-400/10 bg-black1 py-16'>
-        <div className='container mx-auto px-4'>
-          <div className='mb-12 flex flex-wrap justify-center gap-8'>
-            {['이용약관', '개인정보처리방침', '문의하기', '후원하기'].map((item) => (
-              <motion.a
-                key={item}
-                whileHover={{ scale: 1.05 }}
-                className='relative text-white/70 transition-all duration-300 hover:text-lostark-400'
-              >
-                {item}
-              </motion.a>
-            ))}
-          </div>
-          <p className='text-center text-white/50'>© 2024 로스트아크 파티파인더. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };

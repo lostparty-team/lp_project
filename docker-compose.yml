@@ -43,8 +43,15 @@ services:
     env_file: .env
     volumes:
       - ./backend-python:/app
-    command: python app.py
- 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1  # 사용할 GPU 수 (모두 사용하려면 'all')
+              capabilities: [gpu]
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5001 --reload
+
   mysql:
     image: mysql:8.0
     environment:
