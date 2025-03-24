@@ -1,18 +1,24 @@
-FROM python:3.11.10
+FROM nvidia/cuda:11.8.0-runtime-ubuntu20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-COPY . .
-
 RUN apt-get update && apt-get install -y \
+    python3-pip \
     libgl1-mesa-glx \
     libgeos-c1v5 \
+    libglib2.0-0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --upgrade pip
+
+COPY requirements.txt requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY . .
 
 EXPOSE 5001
 
-CMD ["python", "app.py"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5001", "--reload"]

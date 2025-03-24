@@ -1,10 +1,12 @@
-flask
-flask-cors
-flask-jwt-extended
+fastapi
+uvicorn
 pillow
 opencv-python-headless
 numpy
 ultralytics
 python-dotenv
 paddlepaddle
-paddleocr>=2.0.1
+paddlepaddle-gpu==2.6.1
+paddleocr>=2.10.0
+httpx
+python-multipart
