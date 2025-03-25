@@ -14,13 +14,7 @@ def extract_text_from_image(image):
     
     img_pad = np.pad(img_black, ((10, 10), (10, 10)), "constant", constant_values=0)
     img_upscaled = cv2.resize(img_pad, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-   
-    # 타임스탬프로 고유한 파일 이름 생성
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"upscaled_image_{timestamp}.png"
-    cv2.imwrite(filename, img_upscaled)
-    print(f"이미지가 '{filename}'로 저장되었습니다.")
-
+    
     result = ocr.ocr(img_upscaled)
     print(result)
     if result and len(result) > 0 and len(result[0]) > 0:
