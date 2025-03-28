@@ -9,5 +9,4 @@ RUN npm install
 
 COPY . .
 
-# Express 서버 실행(nodemon 으로 핫리로드 적용중)
 CMD ["npm", "run", "start"]

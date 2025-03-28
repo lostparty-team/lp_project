@@ -3,4 +3,4 @@ dist/
 build/
 logs/
 .next/
-.env
+.env*

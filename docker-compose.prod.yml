@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+
+  backend-express:
+    build:
+      context: ./backend-express
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - NODE_ENV=production
+
+  backend-python:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile.prod
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: lp1346
+      MYSQL_DATABASE: lp_project
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"  # SSL 적용 시 Certbot과 연동
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend-express
+      - backend-python
+
+volumes:
+  mysql_data:

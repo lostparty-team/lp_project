@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    env_file: .env.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    command: npm run dev
+
+  backend-express:
+    build:
+      context: ./backend-express
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file: .env.dev
+    volumes:
+      - ./backend-express:/app
+      - /app/node_modules
+    command: npm run dev
+
+  backend-python:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5001:5001"
+    env_file: .env.dev
+    volumes:
+      - ./backend-python:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5001 --reload
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: lp1346
+      MYSQL_DATABASE: lp_project
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+volumes:
+  mysql_data:
