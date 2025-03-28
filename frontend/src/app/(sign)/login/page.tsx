@@ -21,27 +21,6 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginInfo>();
 
-  /**
-   *! 로그인 로직 임시 해제 
-  const { setIsLogin } = useAuthStore();
-  const { loginMutation } = useAuth();
-  
-  const onSubmit: SubmitHandler<LoginInfo> = async (data) => {
-    try {
-      const res = await loginMutation.mutateAsync(data);
-      if (res) {
-        setIsLogin(true);
-        router.push('/');
-        toast.success('로그인에 성공하였습니다.');
-      }
-    } catch (err) {
-      toast.error('로그인 중 오류가 발생했습니다.');
-    }
-  };
-  */
-
-  const onSubmit = console.log('임시');
-
   return (
     <main className='relative z-10 flex h-[calc(100dvh-65px)] w-full items-center justify-center overflow-hidden bg-black1'>
       <BackgroundVideo />
@@ -57,7 +36,7 @@ export default function LoginPage() {
             <h1 className='text-2xl font-semibold tracking-wider text-lostark-400'>로그인</h1>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+          <form className='space-y-4'>
             <div className='min-h-[102px]'>
               <CustomInput
                 label='아이디'

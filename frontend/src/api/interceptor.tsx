@@ -16,7 +16,8 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isProtectedRoute = (path: string) => {
+  const isProtectedRoute = (path: string | null) => {
+    if (!path) return false;
     return PROTECTED_PATHS.some((route) => path.startsWith(route));
   };
 

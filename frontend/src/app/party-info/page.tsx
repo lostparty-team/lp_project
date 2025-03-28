@@ -1,8 +1,9 @@
 'use client';
-import PartyInfoPage from '@/components/PartyInfo/PartyInfoPage';
+
+import PartyInfo from '@/components/partyInfo/PartyInfoPage';
 
 const page = () => {
-  return <PartyInfoPage />;
+  return <PartyInfo />;
 };
 
 export default page;
