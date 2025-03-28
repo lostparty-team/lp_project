@@ -4,18 +4,20 @@ const cors = require('cors');
 require('dotenv').config();
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs"); // YAML 파일 로드 패키지
+const cookieParser = require('cookie-parser');
 
 const swaggerDocs = YAML.load('./swagger.yaml'); // swagger.yaml 파일 로드
 
 const visitorTracker = require('./middleware/visitorTracker');
 const swaggerAuth = require('./middleware/swaggerAuth');
 
-
+app.use(cookieParser());
 app.use(express.json({ limit: '10mb' })); // POST 요청의 JSON 데이터 파싱
 app.use(express.urlencoded({ extended: true }));
 
+// CORS 설정
 app.use(cors({
-  origin: 'http://localhost:3000', // React 도메인
+  origin: process.env.ALLOWED_ORIGIN,
   methods: ['GET', 'POST', 'DELETE'],
 }));
 
