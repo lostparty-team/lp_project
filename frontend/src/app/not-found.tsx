@@ -6,8 +6,6 @@ import BackgroundVideo from '@/components/common/BackgroundVideo';
 const NotFound = () => {
   return (
     <div className='relative z-10 flex h-[calc(100dvh-65px)] flex-col items-center justify-center gap-4 bg-black1'>
-      <BackgroundVideo />
-
       <motion.h1
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
