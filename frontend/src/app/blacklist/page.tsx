@@ -1,10 +1,13 @@
 'use client';
 import BlacklistPage from '@/components/blacklist/BlacklistPage';
+import { Suspense } from 'react';
 
 const page = () => {
   return (
     <div className='overflow-x-hidden'>
-      <BlacklistPage />
+      <Suspense>
+        <BlacklistPage />
+      </Suspense>
     </div>
   );
 };
