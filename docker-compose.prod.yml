@@ -40,6 +40,7 @@ services:
       - "443:443"  # SSL 적용 시 Certbot과 연동
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - frontend
       - backend-express
