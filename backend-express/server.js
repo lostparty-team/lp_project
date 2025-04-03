@@ -12,8 +12,8 @@ const visitorTracker = require('./middleware/visitorTracker');
 const swaggerAuth = require('./middleware/swaggerAuth');
 
 app.use(cookieParser());
-app.use(express.json({ limit: '10mb' })); // POST 요청의 JSON 데이터 파싱
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' })); // POST 요청의 JSON 데이터 파싱
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // CORS 설정
 app.use(cors({
