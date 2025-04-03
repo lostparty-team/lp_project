@@ -40,8 +40,10 @@ services:
 
   mysql:
     image: mysql:8.0
+    env_file:
+      - .env.dev
     environment:
-      MYSQL_ROOT_PASSWORD: lp1346
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: lp_project
     ports:
       - "3307:3306"
