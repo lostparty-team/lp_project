@@ -38,7 +38,7 @@ const blacklistRouter = require("./router/blacklist");
 const userdataRouter = require("./router/userdata");
 
 app.use("/product", testRouter);
-app.use("/party", partyRouter);
+app.use("/ex/party", partyRouter);
 app.use("/api/blacklist", blacklistRouter);
 app.use("/userdata", visitorTracker, userdataRouter);
 
