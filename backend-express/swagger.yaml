@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:5000
     description: 로컬 개발 서버
+  - url: https://lostparty.com
+    description: 배포 서버
 tags:
   - name: blacklist
     description: 블랙리스트 관련 API
