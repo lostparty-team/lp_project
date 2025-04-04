@@ -8,6 +8,8 @@ services:
     restart: always
     environment:
       - NODE_ENV=production
+    env_file:
+      - .env.prod
 
   backend-express:
     build:
@@ -16,12 +18,16 @@ services:
     restart: always
     environment:
       - NODE_ENV=production
+    env_file:
+      - .env.prod
 
   backend-python:
     build:
       context: ./backend-python
       dockerfile: Dockerfile.prod
     restart: always
+    env_file:
+      - .env.prod
 
   mysql:
     image: mysql:8.0
