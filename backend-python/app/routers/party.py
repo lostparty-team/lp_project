@@ -5,7 +5,7 @@ from app.services.member import get_member_info
 
 router = APIRouter()
 
-@router.post("/party/screen")
+@router.post("/py/party/screen")
 async def get_party_screen_info(request: Request, authorization: str = Header(None)):
     members = []
     data = await request.json()
@@ -37,7 +37,7 @@ async def get_party_screen_info(request: Request, authorization: str = Header(No
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"OCR 과정에서 오류가 발생했습니다: {str(e)}")
 
-@router.get("/party/member")
+@router.get("/py/party/member")
 async def get_party_member_info(nickname: str, authorization: str = Header(None)):
     if not nickname:
         raise HTTPException(status_code=400, detail="닉네임 파라미터가 제공되지 않았습니다.")
