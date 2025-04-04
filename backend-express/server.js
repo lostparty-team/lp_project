@@ -24,9 +24,11 @@ app.use(cors({
 // Swagger UI 연결
 app.use(
   "/api-docs",
-  swaggerAuth,  // 관리자 인증 미들웨어 적용
+  swaggerAuth,
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocs)
+  swaggerUi.setup(swaggerDocs, {
+    explorer: true // ✅ 이 옵션이 있어야 서버 드롭다운이 보여요!
+  })
 );
 
 // 라우터 관리 부분
