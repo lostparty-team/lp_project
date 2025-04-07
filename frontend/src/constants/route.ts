@@ -7,7 +7,7 @@ export const API = {
     PROFILE: '/users/me',
   },
   PARTY: {
-    SCREEN: '/party/screen',
-    MEMBER: '/party/member',
+    SCREEN: '/py/party/screen',
+    MEMBER: '/py/party/member',
   },
 } as const;
