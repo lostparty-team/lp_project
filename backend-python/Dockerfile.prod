@@ -18,9 +18,9 @@ RUN python3 -m pip install --upgrade pip
 COPY requirements.txt requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# RUN mkdir -p /root/.paddleocr/whl/det/ml && \
-#     curl -L -o /tmp/det.tar https://paddleocr.bj.bcebos.com/PP-OCRv3/multilingual/Multilingual_PP-OCRv3_det_infer.tar && \
-#     tar -xf /tmp/det.tar -C /root/.paddleocr/whl/det/ml/
+RUN mkdir -p /root/.paddleocr/whl/det/ml/Multilingual_PP-OCRv3_det_infer && \
+    curl -L -o /root/.paddleocr/whl/det/ml/Multilingual_PP-OCRv3_det_infer.tar https://paddleocr.bj.bcebos.com/PP-OCRv3/multilingual/Multilingual_PP-OCRv3_det_infer.tar && \
+    tar -xf /root/.paddleocr/whl/det/ml/Multilingual_PP-OCRv3_det_infer.tar -C /root/.paddleocr/whl/det/ml/
 
 COPY . .
 
