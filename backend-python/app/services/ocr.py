@@ -3,7 +3,7 @@ import numpy as np
 from paddleocr import PaddleOCR
 from datetime import datetime
 
-ocr = PaddleOCR(use_angle_cls=False, lang="korean", use_gpu=True)
+ocr = PaddleOCR(use_angle_cls=False, lang="korean", use_gpu=False)
 
 def extract_text_from_image(image):
     img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
