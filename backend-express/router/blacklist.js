@@ -61,6 +61,69 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 내가 작성한 블랙리스트 목록 조회
+router.get('/myblacklist', extractClientId, async (req, res) => {
+  const { page = 1, sort = 'latest', title = '' } = req.query;
+  const limit = 10;
+  const offset = (page - 1) * limit;
+  const clientId = req.clientId;
+
+  let orderByClause = 'p.id DESC';
+  if (sort === 'cart_count') {
+    orderByClause = 'cart_count DESC';
+  }
+
+  try {
+    const whereConditions = ['p.author = ?'];
+    const queryParams = [clientId];
+
+    if (title) {
+      whereConditions.push('p.title LIKE ?');
+      queryParams.push(`%${title}%`);
+    }
+
+    const whereClause = 'WHERE ' + whereConditions.join(' AND ');
+
+    // 전체 게시글 수
+    const countQuery = `SELECT COUNT(*) AS totalPosts FROM Posts p ${whereClause}`;
+    const [[{ totalPosts }]] = await db.query(countQuery, queryParams);
+    const totalPages = Math.ceil(totalPosts / limit);
+
+    // 게시글 목록 조회
+    const selectQuery = `
+      SELECT 
+        p.id, 
+        p.title, 
+        p.author, 
+        p.views, 
+        p.created_at, 
+        COUNT(c.id) AS cart_count, 
+        COUNT(d.id) AS dislikes 
+      FROM Posts p
+      LEFT JOIN Cart c ON p.id = c.postId
+      LEFT JOIN Dislike d ON p.id = d.postId
+      ${whereClause}
+      GROUP BY p.id, p.title, p.author, p.views, p.created_at
+      ORDER BY ${orderByClause}
+      LIMIT ? OFFSET ?
+    `;
+    const selectParams = [...queryParams, limit, offset];
+    const [rows] = await db.query(selectQuery, selectParams);
+
+    res.status(200).json({
+      message: '내가 작성한 블랙리스트 목록을 성공적으로 조회했습니다.',
+      data: rows,
+      totalPosts,
+      totalPages,
+      currentPage: Number(page),
+      sort,
+      search: title,
+    });
+  } catch (error) {
+    res.status(500).json({ message: '블랙리스트를 조회하지 못했습니다.', error });
+  }
+});
+
 
 // 블랙리스트 작성
 router.post('/create', extractClientId, async (req, res) => {
@@ -269,6 +332,7 @@ router.delete('/:id', extractClientId, async (req, res) => {
     res.status(500).json({ message: '블랙리스트를 삭제하지 못했습니다.', error });
   }
 });
+
 
 
 module.exports = router;

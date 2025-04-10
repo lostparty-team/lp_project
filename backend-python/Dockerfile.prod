@@ -1,0 +1,31 @@
+FROM nvidia/cuda:11.8.0-runtime-ubuntu20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    libgl1-mesa-glx \
+    libgeos-c1v5 \
+    libglib2.0-0 \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --upgrade pip
+
+COPY requirements.txt requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+RUN mkdir -p /root/.paddleocr/whl/det/ml/Multilingual_PP-OCRv3_det_infer && \
+    curl -L -o /root/.paddleocr/whl/det/ml/Multilingual_PP-OCRv3_det_infer.tar https://paddleocr.bj.bcebos.com/PP-OCRv3/multilingual/Multilingual_PP-OCRv3_det_infer.tar && \
+    tar -xf /root/.paddleocr/whl/det/ml/Multilingual_PP-OCRv3_det_infer.tar -C /root/.paddleocr/whl/det/ml/
+
+COPY . .
+
+EXPOSE 5001
+
+# 배포용: reload 없이 성능 안정 모드
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5001", "--workers", "2"]
+
