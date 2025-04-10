@@ -339,6 +339,70 @@ paths:
           description: 게시글 없음
         '500':
           description: 서버 오류
+    patch:
+      summary: 블랙리스트 게시글 수정
+      description: >
+        로그인한 사용자가 본인이 작성한 블랙리스트 게시글을 수정합니다.
+        제목과 블랙리스트 내용을 수정할 수 있으며, 기존 블랙리스트는 전부 삭제 후 재등록됩니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: id
+          in: path
+          description: 수정할 게시글의 ID
+          required: true
+          schema:
+            type: integer
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - blacklist
+              properties:
+                title:
+                  type: string
+                  description: 수정할 게시글 제목
+                  example: "수정된 제목입니다"
+                blacklist:
+                  type: array
+                  description: 블랙리스트 닉네임 및 사유 목록
+                  items:
+                    type: object
+                    properties:
+                      nickname:
+                        type: string
+                        description: 닉네임
+                        example: "트롤123"
+                      reason:
+                        type: string
+                        description: 사유
+                        example: "자기멋대로 진입함"
+      responses:
+        '200':
+          description: 게시글 수정 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 게시글과 블랙리스트가 성공적으로 수정되었습니다.
+        '400':
+          description: 요청 데이터 오류
+        '403':
+          description: 수정 권한 없음 (작성자 아님)
+        '404':
+          description: 게시글을 찾을 수 없음
+        '500':
+          description: 서버 오류
+
 
 # 파티원 정보
 
