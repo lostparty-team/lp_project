@@ -27,5 +27,5 @@ COPY . .
 EXPOSE 5001
 
 # 배포용: reload 없이 성능 안정 모드
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5001", "--workers", "1"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5001", "--workers", "2"]
 
