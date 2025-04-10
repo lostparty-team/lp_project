@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:5000
     description: 로컬 개발 서버
+  - url: https://lostparty.com
+    description: 배포 서버
 tags:
   - name: blacklist
     description: 블랙리스트 관련 API
@@ -132,6 +134,94 @@ paths:
           description: 요청 데이터 오류
         '500':
           description: 서버 오류
+
+  /api/blacklist/myblacklist:
+    get:
+      summary: "내가 작성한 블랙리스트 목록 조회"
+      description: >
+        로그인한 사용자가 작성한 블랙리스트 게시글 목록을 조회합니다.
+        페이지네이션, 정렬, 제목 검색 기능을 지원합니다.
+      tags:
+        - blacklist
+      parameters:
+        - name: page
+          in: query
+          description: "페이지 번호"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: sort
+          in: query
+          description: "정렬 기준 (latest 또는 cart_count)"
+          required: false
+          schema:
+            type: string
+            default: latest
+        - name: title
+          in: query
+          description: "검색할 게시글 제목 (부분 검색 지원)"
+          required: false
+          schema:
+            type: string
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: "내가 작성한 블랙리스트 목록 조회 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "내가 작성한 블랙리스트 목록을 성공적으로 조회했습니다."
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "블랙리스트 제목"
+                        author:
+                          type: string
+                          example: "작성자"
+                        views:
+                          type: integer
+                          example: 123
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: "2025-02-18T00:00:00Z"
+                        cart_count:
+                          type: integer
+                          example: 5
+                        dislikes:
+                          type: integer
+                          example: 2
+                  totalPosts:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 2
+                  currentPage:
+                    type: integer
+                    example: 1
+                  sort:
+                    type: string
+                    example: "latest"
+                  search:
+                    type: string
+                    example: "검색어"
+        '500':
+          description: "서버 오류"
+
   /api/blacklist/dislike/{id}:
     post:
       summary: 게시글 비추천

@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.prod
+
+  backend-express:
+    build:
+      context: ./backend-express
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.prod
+
+  backend-python:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile.prod
+    restart: always
+    env_file:
+      - .env.prod
+    mem_limit: 2g
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    env_file:
+      - .env.prod
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - frontend
+      - backend-express
+      - backend-python
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: >
+      sh -c "certbot certonly --webroot -w /var/www/certbot
+      -d lostparty.com -d www.lostparty.com
+      --email inseok1999@gmail.com --agree-tos --non-interactive"
+
+  certbot-renew:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: >
+      sh -c "while :; do
+        certbot renew --webroot -w /var/www/certbot &&
+        nginx -s reload;
+        sleep 12h;
+      done"
+
+volumes:
+  mysql_data:

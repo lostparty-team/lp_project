@@ -3,4 +3,10 @@ dist/
 build/
 logs/
 .next/
-.env
+.env*
+
+certbot/conf/*
+!certbot/conf/.gitkeep
+
+certbot/www/*
+!certbot/www/.gitkeep

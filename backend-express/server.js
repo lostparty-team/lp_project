@@ -4,27 +4,31 @@ const cors = require('cors');
 require('dotenv').config();
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs"); // YAML 파일 로드 패키지
+const cookieParser = require('cookie-parser');
 
 const swaggerDocs = YAML.load('./swagger.yaml'); // swagger.yaml 파일 로드
 
 const visitorTracker = require('./middleware/visitorTracker');
 const swaggerAuth = require('./middleware/swaggerAuth');
 
+app.use(cookieParser());
+app.use(express.json({ limit: '50mb' })); // POST 요청의 JSON 데이터 파싱
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-app.use(express.json({ limit: '10mb' })); // POST 요청의 JSON 데이터 파싱
-app.use(express.urlencoded({ extended: true }));
-
+// CORS 설정
 app.use(cors({
-  origin: 'http://localhost:3000', // React 도메인
+  origin: process.env.ALLOWED_ORIGIN,
   methods: ['GET', 'POST', 'DELETE'],
 }));
 
 // Swagger UI 연결
 app.use(
   "/api-docs",
-  swaggerAuth,  // 관리자 인증 미들웨어 적용
+  swaggerAuth,
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocs)
+  swaggerUi.setup(swaggerDocs, {
+    explorer: true // ✅ 이 옵션이 있어야 서버 드롭다운이 보여요!
+  })
 );
 
 // 라우터 관리 부분
@@ -34,7 +38,7 @@ const blacklistRouter = require("./router/blacklist");
 const userdataRouter = require("./router/userdata");
 
 app.use("/product", testRouter);
-app.use("/party", partyRouter);
+app.use("/ex/party", partyRouter);
 app.use("/api/blacklist", blacklistRouter);
 app.use("/userdata", visitorTracker, userdataRouter);
 
