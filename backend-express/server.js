@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // CORS 설정
 app.use(cors({
   origin: process.env.ALLOWED_ORIGIN,
-  methods: ['GET', 'POST', 'DELETE'],
+  methods: ['GET', 'POST', 'DELETE', 'PATCH'],
 }));
 
 // Swagger UI 연결

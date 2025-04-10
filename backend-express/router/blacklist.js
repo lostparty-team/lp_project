@@ -333,6 +333,53 @@ router.delete('/:id', extractClientId, async (req, res) => {
   }
 });
 
+// 블랙리스트 게시글 수정
+router.patch('/:id', extractClientId, async (req, res) => {
+  const { id } = req.params;
+  const { title, blacklist } = req.body;
+  const clientId = req.clientId;
+
+  if (!title || !Array.isArray(blacklist)) {
+    return res.status(400).json({ message: '요청 데이터가 유효하지 않습니다.' });
+  }
+
+  let connection;
+  try {
+    // 본인 글인지 확인
+    const [[post]] = await db.query(`SELECT author FROM Posts WHERE id = ?`, [id]);
+    if (!post) {
+      return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+    }
+    if (post.author !== clientId) {
+      return res.status(403).json({ message: '수정 권한이 없습니다.' });
+    }
+
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    // 게시글 제목 수정
+    await connection.query(`UPDATE Posts SET title = ? WHERE id = ?`, [title, id]);
+
+    // 기존 블랙리스트 삭제 → 재등록
+    await connection.query(`DELETE FROM Blacklist WHERE postId = ?`, [id]);
+
+    if (blacklist.length > 0) {
+      const insertValues = blacklist.map(({ nickname, reason }) => [id, nickname, reason]);
+      const insertQuery = `INSERT INTO Blacklist (postId, nickname, reason) VALUES ?`;
+      await connection.query(insertQuery, [insertValues]);
+    }
+
+    await connection.commit();
+
+    res.status(200).json({ message: '게시글과 블랙리스트가 성공적으로 수정되었습니다.' });
+  } catch (error) {
+    if (connection) await connection.rollback();
+    console.error('수정 중 오류 발생:', error);
+    res.status(500).json({ message: '게시글을 수정하지 못했습니다.', error });
+  } finally {
+    if (connection) await connection.release();
+  }
+});
 
 
 module.exports = router;
