@@ -406,7 +406,7 @@ paths:
 
 # 파티원 정보
 
-  /party:
+  /ex/party:
     post:
       summary: 닉네임 기반 캐릭터 정보 조회
       description: "Lost Ark API를 호출하여 닉네임에 대한 캐릭터 정보를 반환합니다."
