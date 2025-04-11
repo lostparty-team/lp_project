@@ -430,95 +430,52 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  무기레벨:
-                    type: string
-                    description: "무기의 레벨 정보"
-                    example: "1400"
-                  직업각인:
-                    type: string
-                    description: "캐릭터의 직업 각인 정보"
-                    example: "바드"
-                  포인트:
-                    type: array
-                    description: "진화, 깨달음, 도약 포인트"
-                    items:
-                      type: integer
-                      example: 10
+                example:
+                  무기레벨: "1740"
+                  직업각인: "초심"
+                  포인트: [120, 101, 70]
                   초월:
-                    type: object
-                    description: "장비별 초월 정보"
-                    properties:
-                      투구:
-                        type: integer
-                        example: 5
-                      견장:
-                        type: integer
-                        example: 4
-                      상의:
-                        type: integer
-                        example: 3
-                      하의:
-                        type: integer
-                        example: 2
-                      장갑:
-                        type: integer
-                        example: 1
-                      무기:
-                        type: integer
-                        example: 6
-                  고대악세개수:
-                    type: integer
-                    description: "고대 등급 악세사리 개수"
-                    example: 2
-                  유물악세개수:
-                    type: integer
-                    description: "유물 등급 악세사리 개수"
-                    example: 3
+                    투구: 21
+                    견장: 20
+                    상의: 20
+                    하의: 20
+                    장갑: 20
+                    무기: 20
+                  고대악세개수: 5
+                  유물악세개수: 0
                   악세목록:
-                    type: array
-                    description: "악세사리 옵션 정보"
-                    items:
-                      type: string
-                      example: "치명 200, 특화 300"
+                    상특옵개수: 1
+                    상공용개수: 1
+                    중특옵개수: 7
+                    중공용개수: 1
+                    하특옵개수: 1
+                    하공용개수: 1
                   팔찌:
-                    type: array
-                    description: "팔찌 옵션 정보"
-                    items:
-                      type: string
-                      example: "공격력 증가"
+                    - "치명 +78"
+                    - "신속 +85"
+                    - "힘 +12288"
+                    - "스킬의 재사용 대기 시간이 2% 증가하지만, 적에게 주는 피해가 4.5% 증가한다."
+                    - "적에게 주는 피해가 3% 증가하며, 무력화 상태의 적에게 주는 피해가 5% 증가한다."
                   보석:
-                    type: array
-                    description: "보석 정보"
-                    items:
-                      type: string
-                      example: "보석 1: 효과 증가"
+                    8레벨 겁화: 4
+                    8레벨 작열: 5
+                    9레벨 겁화: 1
+                    10레벨 작열: 1
                   각인:
-                    type: array
-                    description: "각인 상세 정보"
-                    items:
-                      type: object
-                      properties:
-                        등급:
-                          type: string
-                          description: "각인 등급"
-                          example: "고급"
-                        등급레벨:
-                          type: integer
-                          description: "각인 등급 레벨"
-                          example: 3
-                        각인이름:
-                          type: string
-                          description: "각인 이름"
-                          example: "원한"
-                        어빌리티스톤레벨:
-                          type: integer
-                          description: "어빌리티 스톤 레벨"
-                          example: 5
-                  블랙리스트포함여부:
-                    type: boolean
-                    description: "닉네임이 블랙리스트에 포함되어 있는지 여부"
-                    example: false
+                    - 등급: "유물"
+                      등급레벨: 3
+                      각인이름: "원한"
+                      어빌리티스톤레벨: 5
+                    - 등급: "유물"
+                      등급레벨: 2
+                      각인이름: "질량 증가"
+                      어빌리티스톤레벨: 3
+                    - 등급: "유물"
+                      등급레벨: 1
+                      각인이름: "아드레날린"
+                      어빌리티스톤레벨: 1
+                  카드효과: "세상을 구하는 빛 6세트 (30각성합계)"
+                  블랙리스트포함여부: true
         '400':
           description: "요청 오류 (닉네임 누락)"
           content:
