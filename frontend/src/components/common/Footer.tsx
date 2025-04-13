@@ -7,8 +7,8 @@ export default function Footer() {
       <div className='container mx-auto px-4'>
         <div className='mb-12 flex flex-wrap justify-center gap-8'>
           {FOOTER_LINKS.map(({ name, href }) => (
-            <Link href={href} target='blank'>
-              <button key={name} className='relative text-white/70 transition-all duration-300 hover:text-lostark-400'>
+            <Link href={href} key={name} target='blank'>
+              <button className='relative text-white/70 transition-all duration-300 hover:text-lostark-400'>
                 {name}
               </button>
             </Link>

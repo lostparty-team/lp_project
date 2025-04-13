@@ -66,7 +66,13 @@ export const getSearchSuggestions = async (query: string) => {
   return data;
 };
 
-export const getMe = async () => {
-  const { data } = await authRequest('get', '/api/blacklist/myblacklist');
+export const getMe = async (sortType: SortType = 'latest', page: number = 1, title?: string) => {
+  const { data } = await authRequest('get', '/api/blacklist/myblacklist', {
+    params: {
+      page,
+      sort: sortType,
+      title,
+    },
+  });
   return data;
 };
