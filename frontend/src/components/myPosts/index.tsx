@@ -199,12 +199,9 @@ export default function MyPosts() {
                         <h3 className='text-lg font-semibold text-lostark-300'>{post.title}</h3>
                         <span className='text-sm text-gray-400'>{new Date(post.created_at).toLocaleDateString()}</span>
                       </div>
-                      <div className='flex items-center justify-between text-sm text-gray-300'>
-                        <span>조회수: {post.views}</span>
-                      </div>
                       <div className='flex items-center justify-between'>
-                        <span className='text-xs text-gray-400'>신고 수: {post.dislikes}</span>
-                        <span className='text-xs text-gray-400'>담은 수: {post.cart_count}</span>
+                        <span className='text-xs text-gray-400'>조회수: {post.views}</span>
+                        <span className='text-xs text-gray-400'>비추천: {post.dislikes}</span>
                       </div>
                     </div>
                   </li>
