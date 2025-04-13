@@ -7,6 +7,10 @@ export const COMMON_NAV_LINKS = [
     name: '블랙리스트',
     href: '/blacklist',
   },
+  {
+    name: '마이페이지',
+    href: '/mypage',
+  },
 ] as const;
 
 export const AUTH_NAV_LINKS = {
