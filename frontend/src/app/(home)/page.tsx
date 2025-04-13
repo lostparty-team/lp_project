@@ -14,7 +14,7 @@ import { CustomButton } from '@/components/common';
 
 const MainPage = () => {
   const router = useRouter();
-  const { blacklist } = useBlacklist('latest');
+  const { blacklist } = useBlacklist('newest');
   const { data: statsData, isLoading } = useStats();
 
   useEffect(() => {

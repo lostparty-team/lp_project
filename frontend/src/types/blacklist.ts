@@ -1,4 +1,4 @@
-export type SortType = 'popular' | 'newest' | '';
+export type SortType = 'newest' | 'cart_count';
 
 export interface BlacklistUser {
   id: number;
