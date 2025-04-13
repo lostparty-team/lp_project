@@ -45,8 +45,7 @@ export default function MyPosts() {
       setTotalPages(response.totalPages || 1);
       setCurrentPage(response.currentPage || 1);
     } catch (error) {
-      console.error('내 블랙리스트 게시글 조회 실패:', error);
-      toast.error('게시글 목록을 불러오는데 실패했습니다.');
+      return;
     } finally {
       setIsLoading(false);
       setGlobalLoading(false);
