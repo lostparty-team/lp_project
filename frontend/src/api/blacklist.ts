@@ -65,3 +65,8 @@ export const getSearchSuggestions = async (query: string) => {
   });
   return data;
 };
+
+export const getMe = async () => {
+  const { data } = await authRequest('get', '/api/blacklist/myblacklist');
+  return data;
+};
