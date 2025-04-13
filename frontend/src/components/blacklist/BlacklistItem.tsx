@@ -26,6 +26,7 @@ interface BlacklistItemProps {
   onAddClick: (item: BlacklistUser, e: React.MouseEvent<HTMLButtonElement>) => void;
   onDeleteClick: (item: BlacklistUser, e: React.MouseEvent<HTMLButtonElement>) => void;
   isDeleting: boolean;
+  isMyPost: boolean;
 }
 
 const BlacklistItem = ({
@@ -35,45 +36,54 @@ const BlacklistItem = ({
   onAddClick,
   onDeleteClick,
   isDeleting,
+  isMyPost,
 }: BlacklistItemProps) => {
-  const isAuthor = currentUser && blacklistItem.author === currentUser;
+  const handleItemClick = () => {
+    onItemClick(blacklistItem);
+  };
 
   return (
-    <>
-      <motion.li
-        variants={LIST_ITEM_VARIANTS}
-        animate='visible'
-        whileHover='hover'
-        className='flex items-center justify-between rounded-lg bg-black2 p-4'
-        layout
-      >
-        <button className='w-full text-left outline-none' onClick={() => onItemClick(blacklistItem)}>
-          <p className='mb-2 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</p>
-          <p className='text-sm text-gray-400'>
-            {blacklistItem.created_at?.split('T')[0]} | 조회수 {blacklistItem.views} | 비추천 {blacklistItem.dislikes}
-          </p>
-        </button>
-        <div className='flex gap-2'>
-          {isAuthor && (
-            <button
-              onClick={(e) => onDeleteClick(blacklistItem, e)}
-              className={`rounded-full ${
-                isDeleting ? 'cursor-not-allowed bg-gray-500' : 'bg-red-500 hover:bg-red-600'
-              } p-2`}
-              disabled={isDeleting}
-            >
-              <Trash2 className='text-white' size={20} />
-            </button>
-          )}
-          <button
-            onClick={(e) => onAddClick(blacklistItem, e)}
-            className='rounded-full bg-[#4CAF50] p-2 hover:bg-[#358438]'
-          >
-            <Plus className='text-white' size={20} />
-          </button>
+    <motion.li
+      layout
+      key={blacklistItem.id}
+      className='flex items-center justify-between rounded-lg bg-black2/80 p-4 shadow-md'
+      whileHover={{ scale: 1.01 }}
+      transition={{ duration: 0.2 }}
+    >
+      <button className='flex-1 text-left' onClick={handleItemClick}>
+        <div className='mb-1 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</div>
+        <div className='flex items-center gap-4'>
+          <span className='text-sm text-white/70'>작성일: {blacklistItem.created_at?.split('T')[0]}</span>
+          <span className='text-sm text-white/70'>조회수: {blacklistItem.views}</span>
+          <span className='text-sm text-white/70'>비추천: {blacklistItem.dislikes}</span>
+          <span className='text-sm text-white/70'>담은수: {blacklistItem.cart_count}</span>
         </div>
-      </motion.li>
-    </>
+      </button>
+      <div className='flex gap-2'>
+        {/* 담기 버튼 */}
+        <button
+          onClick={(e) => onAddClick(blacklistItem, e)}
+          className='rounded-full bg-[#4CAF50] p-2 text-white transition-all duration-200 hover:bg-[#358438]'
+          aria-label='블랙리스트 담기'
+        >
+          <Plus size={16} />
+        </button>
+
+        {/* 삭제 버튼 */}
+        {isMyPost && (
+          <button
+            onClick={(e) => onDeleteClick(blacklistItem, e)}
+            disabled={isDeleting}
+            className={`rounded-full bg-red-500 p-2 text-white transition-all duration-200 hover:bg-red-600 ${
+              isDeleting ? 'animate-pulse cursor-not-allowed opacity-70' : ''
+            }`}
+            aria-label='블랙리스트 삭제'
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
+      </div>
+    </motion.li>
   );
 };
 
