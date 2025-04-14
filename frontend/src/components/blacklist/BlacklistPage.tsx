@@ -204,6 +204,7 @@ const BlacklistPage = () => {
     async (page: number) => {
       setCurrentPage(page);
       await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
+      await queryClient.invalidateQueries({ queryKey: ['blacklist-myPosts'] });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     [setCurrentPage],
