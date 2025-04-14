@@ -52,11 +52,11 @@ const BlacklistItem = ({
     >
       <button className='flex-1 text-left' onClick={handleItemClick}>
         <div className='mb-1 text-lg font-semibold text-lostark-300'>{blacklistItem.title || '이름 없음'}</div>
-        <div className='flex items-center gap-4'>
-          <span className='text-sm text-white/70'>작성일: {blacklistItem.created_at?.split('T')[0]}</span>
-          <span className='text-sm text-white/70'>조회수: {blacklistItem.views}</span>
-          <span className='text-sm text-white/70'>비추천: {blacklistItem.dislikes}</span>
-          <span className='text-sm text-white/70'>담은수: {blacklistItem.cart_count}</span>
+        <div className='flex items-center gap-4 text-xs text-white/70'>
+          <span className=''>작성일: {blacklistItem.created_at?.split('T')[0]}</span>
+          <span className=''>조회수: {blacklistItem.views}</span>
+          <span className=''>비추천: {blacklistItem.dislikes}</span>
+          <span className=''>담은수: {blacklistItem.cart_count}</span>
         </div>
       </button>
       <div className='flex gap-2'>
