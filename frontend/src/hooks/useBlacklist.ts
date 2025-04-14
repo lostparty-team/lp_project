@@ -34,7 +34,7 @@ export const useBlacklist = (sortType?: SortType, page: number = 1, id?: string,
   // 내가 작성한 블랙리스트 조회
   const { data: myPostsData } = useQuery({
     queryKey: ['blacklist-myPosts'],
-    queryFn: getMe,
+    queryFn: () => getMe(sortType, page),
   });
 
   // 블랙리스트 상세 조회

@@ -40,7 +40,7 @@ export default function MyPosts() {
     try {
       setIsLoading(true);
       setGlobalLoading(true);
-      const response = await getMe();
+      const response = await getMe('latest', currentPage);
       setMyPosts(response.data || []);
       setTotalPages(response.totalPages || 1);
       setCurrentPage(response.currentPage || 1);
@@ -50,7 +50,7 @@ export default function MyPosts() {
       setIsLoading(false);
       setGlobalLoading(false);
     }
-  }, [setGlobalLoading]);
+  }, [setGlobalLoading, currentPage]);
 
   useEffect(() => {
     fetchMyPosts();
@@ -72,11 +72,16 @@ export default function MyPosts() {
     router.push(`/blacklist/${post.id}`, { scroll: false });
   };
 
-  const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  // 페이지네이션
+  const handlePageChange = useCallback(
+    async (page: number) => {
+      if (page < 1 || page > totalPages) return;
+      setCurrentPage(page);
+      await queryClient.invalidateQueries({ queryKey: ['blacklist-myPosts'] });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    [setCurrentPage, totalPages],
+  );
 
   // 체크박스 선택 처리
   const handleCheckboxChange = (id: number) => {
