@@ -8,11 +8,12 @@ import { useRouter } from 'next/navigation';
 import { useBlacklistStore } from '@/stores/blacklistStore';
 import { toast } from 'react-toastify';
 import { useLoadingStore } from '@/stores/loadingStore';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit2 } from 'lucide-react';
 import ConfirmModal from '../common/ConfirmModal';
 import queryClient from '@/api/queryClient';
 import CustomCheckbox from '../common/ui/CustomCheckbox';
 import BlacklistModal from '../blacklist/modal/blacklistModal';
+import BlacklistEditModal from '../blacklist/modal/blacklistEdit';
 
 interface MyBlacklistItem {
   id: number;
@@ -30,8 +31,7 @@ export default function MyPosts() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const { setIsLoading: setGlobalLoading } = useLoadingStore();
-  const router = useRouter();
-  const { setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
+  const { setIsModalOpen, setSelectedBlacklistData, setIsEditModalOpen } = useBlacklistStore();
 
   // 체크박스 관련 상태
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -59,7 +59,8 @@ export default function MyPosts() {
     // 블랙리스트 모달 초기화
     setIsModalOpen(false);
     setSelectedBlacklistData(null);
-  }, [fetchMyPosts, setIsModalOpen, setSelectedBlacklistData]);
+    setIsEditModalOpen(false);
+  }, [fetchMyPosts, setIsModalOpen, setSelectedBlacklistData, setIsEditModalOpen]);
 
   const handleItemClick = (post: MyBlacklistItem) => {
     const blacklistItem: BlacklistUser = {
@@ -74,6 +75,24 @@ export default function MyPosts() {
 
     setIsModalOpen(true);
     setSelectedBlacklistData(blacklistItem);
+  };
+
+  // 수정
+  const handleEditClick = (e: React.MouseEvent, post: MyBlacklistItem) => {
+    e.stopPropagation();
+
+    const blacklistItem: BlacklistUser = {
+      id: post.id,
+      title: post.title,
+      views: post.views,
+      dislikes: post.dislikes,
+      created_at: post.created_at,
+      cart_count: post.cart_count,
+      author: post.author,
+    };
+
+    setSelectedBlacklistData(blacklistItem);
+    setIsEditModalOpen(true);
   };
 
   // 페이지네이션
@@ -205,7 +224,18 @@ export default function MyPosts() {
                     <div className='flex flex-col gap-2 pl-8' onClick={() => handleItemClick(post)}>
                       <div className='flex items-center justify-between'>
                         <h3 className='text-lg font-semibold text-lostark-300'>{post.title}</h3>
-                        <span className='text-sm text-gray-400'>{new Date(post.created_at).toLocaleDateString()}</span>
+                        <div className='flex items-center gap-2'>
+                          <button
+                            onClick={(e) => handleEditClick(e, post)}
+                            className='flex items-center gap-1 rounded-lg bg-lostark-400/20 px-3 py-1 text-xs font-medium text-lostark-300 transition hover:bg-lostark-400/30'
+                          >
+                            <Edit2 size={14} />
+                            수정
+                          </button>
+                          <span className='text-sm text-gray-400'>
+                            {new Date(post.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
                       <div className='flex items-center justify-between'>
                         <span className='text-xs text-gray-400'>조회수: {post.views}</span>
@@ -269,6 +299,7 @@ export default function MyPosts() {
         />
 
         <BlacklistModal fromMyPage={true} />
+        <BlacklistEditModal />
       </div>
     </motion.div>
   );

@@ -77,3 +77,11 @@ export const getMe = async (sortType?: SortType, page: number = 1, title?: strin
   });
   return data;
 };
+
+export const updateBlacklist = async (id: number, title: string, blacklist: { nickname: string; reason: string }[]) => {
+  const { data } = await authRequest('patch', `/api/blacklist/${id}`, {
+    title,
+    blacklist,
+  });
+  return data;
+};

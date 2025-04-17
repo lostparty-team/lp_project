@@ -7,6 +7,7 @@ interface BlacklistStore {
   searchTerm: string;
   flyingItem: { id: string; x: number; y: number; type: 'add' | 'remove' } | null;
   isCreateModalOpen: boolean;
+  isEditModalOpen: boolean;
   selectedBlacklistData: Record<string, any> | null;
   sortType: SortType | undefined;
   cartRef: React.RefObject<HTMLDivElement> | null;
@@ -18,6 +19,7 @@ interface BlacklistStore {
   setSearchTerm: (term: string) => void;
   setFlyingItem: (item: { id: string; x: number; y: number; type: 'add' | 'remove' } | null) => void;
   setIsCreateModalOpen: (show: boolean) => void;
+  setIsEditModalOpen: (show: boolean) => void;
   setSelectedBlacklistData: (data: Record<string, any> | null) => void;
   setSortType: (type: SortType | undefined) => void;
   setCartRef: (ref: React.RefObject<HTMLDivElement>) => void;
@@ -30,6 +32,7 @@ export const useBlacklistStore = create<BlacklistStore>((set, get) => ({
   searchTerm: '',
   flyingItem: null,
   isCreateModalOpen: false,
+  isEditModalOpen: false,
   selectedBlacklistData: null,
   sortType: 'newest',
   cartRef: null,
@@ -50,6 +53,7 @@ export const useBlacklistStore = create<BlacklistStore>((set, get) => ({
   setSearchTerm: (term) => set({ searchTerm: term }),
   setFlyingItem: (item) => set({ flyingItem: item }),
   setIsCreateModalOpen: (show) => set({ isCreateModalOpen: show }),
+  setIsEditModalOpen: (show) => set({ isEditModalOpen: show }),
   setSelectedBlacklistData: (data) => set({ selectedBlacklistData: data }),
   setSortType: (type) => set({ sortType: type }),
   setCartRef: (ref) => set({ cartRef: ref }),
