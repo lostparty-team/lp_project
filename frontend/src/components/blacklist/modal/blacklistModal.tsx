@@ -9,32 +9,45 @@ import { useBlacklist } from '@/hooks/useBlacklist';
 import { useModalDrag } from '@/hooks/useModalDrag';
 import { BlacklistUserDetail } from '@/types/blacklist';
 
-const BlacklistModal = () => {
+interface BlacklistModalProps {
+  fromMyPage?: boolean;
+}
+
+const BlacklistModal = ({ fromMyPage = false }: BlacklistModalProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
   const id = params?.id as string;
-  const { setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
+  const { isModalOpen, selectedBlacklistData, setIsModalOpen, setSelectedBlacklistData } = useBlacklistStore();
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const { postDislikeMutation, blacklistDetail } = useBlacklist(undefined, 1, id);
+
+  const blacklistId = fromMyPage && selectedBlacklistData ? selectedBlacklistData.id.toString() : id;
+  const { postDislikeMutation, blacklistDetail } = useBlacklist(undefined, 1, blacklistId);
 
   const handleClose = () => {
     setIsVisible(false);
-    router.push('/blacklist', { scroll: false });
+    if (fromMyPage) {
+      setIsModalOpen(false);
+      setSelectedBlacklistData(null);
+    } else {
+      router.push('/blacklist', { scroll: false });
+    }
   };
 
   const { handleMouseDown, handleMouseUp } = useModalDrag({ onClose: handleClose });
 
   useEffect(() => {
-    if (pathname === '/blacklist') {
+    if (fromMyPage) {
+      setIsVisible(isModalOpen);
+    } else if (pathname === '/blacklist') {
       setIsVisible(false);
       setIsModalOpen(false);
       setSelectedBlacklistData(null);
     } else {
       setIsVisible(true);
     }
-  }, [pathname, setIsModalOpen, setSelectedBlacklistData]);
+  }, [pathname, isModalOpen, fromMyPage, setIsModalOpen, setSelectedBlacklistData]);
 
   const handleDislike = (blacklistId: string) => {
     postDislikeMutation(blacklistId);
@@ -111,7 +124,7 @@ const BlacklistModal = () => {
 
                   {/* dislike */}
                   <button
-                    onClick={() => handleDislike(id)}
+                    onClick={() => handleDislike(blacklistId)}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 ${
                       blacklistDetail?.post.userDisliked
                         ? 'bg-lostark-400 text-white'

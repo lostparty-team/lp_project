@@ -12,6 +12,7 @@ import { Trash2 } from 'lucide-react';
 import ConfirmModal from '../common/ConfirmModal';
 import queryClient from '@/api/queryClient';
 import CustomCheckbox from '../common/ui/CustomCheckbox';
+import BlacklistModal from '../blacklist/modal/blacklistModal';
 
 interface MyBlacklistItem {
   id: number;
@@ -54,7 +55,11 @@ export default function MyPosts() {
 
   useEffect(() => {
     fetchMyPosts();
-  }, [fetchMyPosts]);
+
+    // 블랙리스트 모달 초기화
+    setIsModalOpen(false);
+    setSelectedBlacklistData(null);
+  }, [fetchMyPosts, setIsModalOpen, setSelectedBlacklistData]);
 
   const handleItemClick = (post: MyBlacklistItem) => {
     const blacklistItem: BlacklistUser = {
@@ -69,7 +74,6 @@ export default function MyPosts() {
 
     setIsModalOpen(true);
     setSelectedBlacklistData(blacklistItem);
-    router.push(`/blacklist/${post.id}`, { scroll: false });
   };
 
   // 페이지네이션
@@ -263,6 +267,8 @@ export default function MyPosts() {
           cancelText='취소'
           danger
         />
+
+        <BlacklistModal fromMyPage={true} />
       </div>
     </motion.div>
   );
