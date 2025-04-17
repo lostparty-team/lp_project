@@ -65,3 +65,23 @@ export const getSearchSuggestions = async (query: string) => {
   });
   return data;
 };
+
+export const getMe = async (sortType?: SortType, page: number = 1, title?: string) => {
+  const { data } = await axiosInstance.get('/api/blacklist/myblacklist', {
+    params: {
+      page,
+      sort: sortType,
+      title,
+    },
+    headers: getAuthHeader(),
+  });
+  return data;
+};
+
+export const updateBlacklist = async (id: number, title: string, blacklist: { nickname: string; reason: string }[]) => {
+  const { data } = await authRequest('patch', `/api/blacklist/${id}`, {
+    title,
+    blacklist,
+  });
+  return data;
+};

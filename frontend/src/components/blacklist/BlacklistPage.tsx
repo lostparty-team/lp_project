@@ -15,6 +15,7 @@ import MyBlacklistItem from './MyBlacklistItem';
 import { pageVariants } from '@/constants/animations';
 import { deleteBlacklist } from '@/api/blacklist';
 import queryClient from '@/api/queryClient';
+import ConfirmModal from '../common/ConfirmModal';
 
 const BlacklistPage = () => {
   const router = useRouter();
@@ -23,6 +24,8 @@ const BlacklistPage = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
   const [currentUser] = useState<string>();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [blacklistToDelete, setBlacklistToDelete] = useState<BlacklistUser | null>(null);
 
   const {
     searchTerm,
@@ -56,12 +59,8 @@ const BlacklistPage = () => {
     }
   }, [searchParams, setSearchTerm]);
 
-  const { blacklist, myBlacklist, isLoading, addToCartMutation, removeFromCartMutation, totalPages } = useBlacklist(
-    sortType,
-    currentPage,
-    undefined,
-    searchTerm,
-  );
+  const { blacklist, myBlacklist, isLoading, addToCartMutation, removeFromCartMutation, totalPages, isMyPost } =
+    useBlacklist(sortType, currentPage, undefined, searchTerm);
 
   const { setIsLoading } = useLoadingStore();
 
@@ -130,7 +129,11 @@ const BlacklistPage = () => {
     (blacklistItem: BlacklistUser, e: React.MouseEvent) => {
       e.stopPropagation();
       try {
-        removeFromCartMutation(blacklistItem.postId);
+        if (blacklistItem.postId !== undefined) {
+          removeFromCartMutation(blacklistItem.postId);
+        } else {
+          toast.error('유효하지 않은 블랙리스트입니다.');
+        }
       } catch (error) {
         console.error('블랙리스트 제거 실패:', error);
         toast.error('블랙리스트 제거에 실패했습니다.');
@@ -145,61 +148,33 @@ const BlacklistPage = () => {
       if (isDeletingId !== null) return;
 
       setIsDeletingId(blacklistItem.id);
-
-      const confirmDelete = () => {
-        return new Promise<boolean>((resolve) => {
-          const postId = toast.warn(
-            <div className=''>
-              <p className='mb-4'>블랙리스트를 삭제하시겠습니까?</p>
-              <div className='flex justify-end gap-2'>
-                <button
-                  className='rounded bg-gray-500 px-3 py-1 text-white hover:bg-gray-600'
-                  onClick={() => {
-                    toast.dismiss(postId);
-                    resolve(false);
-                  }}
-                >
-                  취소
-                </button>
-                <button
-                  className='rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600'
-                  onClick={() => {
-                    toast.dismiss(postId);
-                    resolve(true);
-                  }}
-                >
-                  삭제
-                </button>
-              </div>
-            </div>,
-            {
-              autoClose: false,
-              closeOnClick: false,
-              closeButton: false,
-              position: 'top-center',
-              hideProgressBar: true,
-              draggable: false,
-              className: 'no-transition',
-            },
-          );
-        });
-      };
-
-      try {
-        const confirmed = await confirmDelete();
-        if (confirmed) {
-          await deleteBlacklist(blacklistItem.id);
-          await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
-          toast.success('블랙리스트가 삭제되었습니다.');
-        }
-      } catch (error) {
-        toast.error('블랙리스트 삭제에 실패했습니다.');
-      } finally {
-        setIsDeletingId(null);
-      }
+      setBlacklistToDelete(blacklistItem);
+      setIsDeleteModalOpen(true);
     },
     [isDeletingId],
   );
+
+  const handleConfirmDelete = async () => {
+    if (!blacklistToDelete) return;
+
+    try {
+      await deleteBlacklist(blacklistToDelete.id);
+      await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
+      toast.success('블랙리스트가 삭제되었습니다.');
+    } catch (error) {
+      toast.error('블랙리스트 삭제에 실패했습니다.');
+    } finally {
+      setIsDeletingId(null);
+      setIsDeleteModalOpen(false);
+      setBlacklistToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeletingId(null);
+    setIsDeleteModalOpen(false);
+    setBlacklistToDelete(null);
+  };
 
   // 모달
   const handleCreateModalOpen = useCallback(() => {
@@ -229,6 +204,7 @@ const BlacklistPage = () => {
     async (page: number) => {
       setCurrentPage(page);
       await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
+      await queryClient.invalidateQueries({ queryKey: ['blacklist-myPosts'] });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     [setCurrentPage],
@@ -339,6 +315,7 @@ const BlacklistPage = () => {
                       onAddClick={handleAddToBlacklist}
                       onDeleteClick={handleDeleteBlacklist}
                       isDeleting={isDeletingId === blacklistItem.id}
+                      isMyPost={isMyPost(blacklistItem.id)}
                     />
                   ))}
                 </ul>
@@ -422,6 +399,17 @@ const BlacklistPage = () => {
         </AnimatePresence>
 
         <AnimatePresence>{isCreateModalOpen && <BlacklistCreateModal />}</AnimatePresence>
+
+        <ConfirmModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+          title='블랙리스트 삭제'
+          message='블랙리스트를 삭제하시겠습니까?'
+          confirmText='삭제'
+          cancelText='취소'
+          danger
+        />
       </div>
     </motion.div>
   );

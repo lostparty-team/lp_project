@@ -6,10 +6,10 @@ const ToastProvider = () => {
   return (
     <ToastContainer
       theme='dark'
-      autoClose={100}
+      autoClose={1}
       pauseOnFocusLoss={false}
       pauseOnHover={false}
-      limit={1}
+      limit={3}
       transition={Flip}
       hideProgressBar
     />

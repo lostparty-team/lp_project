@@ -1,31 +1,32 @@
+export type SortType = 'newest' | 'latest' | 'cart_count';
+
 export interface BlacklistUser {
-  postId: number;
   id: number;
+  postId?: number;
   title: string;
   author: string;
   views: number;
-  created_at?: string;
-  cart_count?: number;
-  dislikes?: number;
+  created_at: string;
+  cart_count: number;
+  dislikes: number;
 }
 
-export type SortType = 'latest' | 'popular';
-
 export interface BlacklistUserDetail {
+  id: number;
   nickname: string;
   reason: string;
 }
 
-export interface BlacklistDetail {
-  message: string;
+export interface BlacklistDetailResponse {
   post: {
     id: number;
     title: string;
     author: string;
-    created_at?: string;
-    dislikes?: number;
-    userDisliked?: boolean;
-    views?: number;
+    views: number;
+    created_at: string;
+    cart_count: number;
+    dislikes: number;
+    userDisliked: boolean;
   };
   data: BlacklistUserDetail[];
 }

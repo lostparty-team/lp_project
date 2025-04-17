@@ -1,137 +1,132 @@
+import { useCallback, useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useBlacklistStore } from '@/stores/blacklistStore';
-import { SortType } from '@/types/blacklist';
+import { toast } from 'react-toastify';
 import queryClient from '@/api/queryClient';
 import {
   getBlacklist,
-  deleteBlacklist,
+  getBlacklistDetail,
   postDislike,
   getCart,
   addToCart,
   removeFromCart,
-  getBlacklistDetail,
+  getMe,
 } from '@/api/blacklist';
-import { toast } from 'react-toastify';
+import { BlacklistUser, SortType } from '@/types/blacklist';
 
-export const useBlacklist = (sortType?: SortType, page: number = 1, blacklistId?: string, searchTitle?: string) => {
-  const { addToMyBlacklist, removeFromMyBlacklist } = useBlacklistStore();
+export const useBlacklist = (sortType?: SortType, page: number = 1, id?: string, searchTerm?: string) => {
+  const [blacklist, setBlacklist] = useState<BlacklistUser[]>([]);
+  const [myBlacklist, setMyBlacklist] = useState<BlacklistUser[]>([]);
+  const [myPosts, setMyPosts] = useState<BlacklistUser[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['blacklist', sortType, page, searchTitle],
-    queryFn: () => getBlacklist(sortType, page, searchTitle),
-    staleTime: 1000 * 60 * 5, // 5분
-    gcTime: 1000 * 60 * 30, // 30분
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    retry: false,
+  // 블랙리스트 목록 조회
+  const { data: blacklistData, isLoading } = useQuery({
+    queryKey: ['blacklist', sortType, page, searchTerm],
+    queryFn: () => getBlacklist(sortType, page, searchTerm),
   });
 
-  const { data: myBlacklist = [], isLoading: isMyBlacklistLoading } = useQuery({
-    queryKey: ['myBlacklist'],
-    queryFn: () => getCart(),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    retry: false,
+  // 내가 담은 블랙리스트 조회
+  const { data: cartData } = useQuery({
+    queryKey: ['blacklist-cart'],
+    queryFn: getCart,
   });
 
-  const { data: blacklistDetail } = useQuery({
-    queryKey: ['blacklistModal', blacklistId],
-    queryFn: () => (blacklistId ? getBlacklistDetail(blacklistId) : null),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    retry: false,
-    enabled: !!blacklistId,
+  // 내가 작성한 블랙리스트 조회
+  const { data: myPostsData } = useQuery({
+    queryKey: ['blacklist-myPosts'],
+    queryFn: () => getMe(sortType, page),
   });
 
-  const { mutate: deleteBlacklistMutation } = useMutation({
-    mutationFn: deleteBlacklist,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blacklist'] });
-    },
+  // 블랙리스트 상세 조회
+  const { data: blacklistDetailData } = useQuery({
+    queryKey: ['blacklist-detail', id],
+    queryFn: () => (id ? getBlacklistDetail(id) : null),
+    enabled: !!id,
   });
 
-  const { mutate: postDislikeMutation } = useMutation({
+  // 블랙리스트 싫어요
+  const { mutateAsync: dislikeMutation } = useMutation({
     mutationFn: postDislike,
     onSuccess: () => {
-      toast.success('비추천이 완료되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['blacklist'] });
-      queryClient.invalidateQueries({ queryKey: ['blacklistModal'] });
-    },
-    onError: (error: any) => {
-      const statusCode = error?.response?.status;
-      switch (statusCode) {
-        case 400:
-          toast.error('잘못된 요청입니다.');
-          break;
-        case 409:
-          toast.error('이미 비추천한 게시글입니다.');
-          break;
-        default:
-          toast.error('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      }
+      queryClient.invalidateQueries({ queryKey: ['blacklist-detail'] });
     },
   });
 
-  const { mutate: addToCartMutation } = useMutation({
+  // 블랙리스트 담기
+  const { mutateAsync: addToCartMutation } = useMutation({
     mutationFn: addToCart,
     onSuccess: () => {
-      toast.success('장바구니 추가가 완료되었습니다.');
-      queryClient.invalidateQueries({ queryKey: ['myBlacklist'] });
+      queryClient.invalidateQueries({ queryKey: ['blacklist-cart'] });
+      toast.success('블랙리스트에 추가되었습니다.');
     },
-    onError: (error: any) => {
-      const statusCode = error?.response?.status;
-      switch (statusCode) {
-        case 400:
-          toast.error('잘못된 요청입니다.');
-          break;
-        case 409:
-          toast.error('이미 장바구니에 존재하는 아이템입니다.');
-          break;
-        default:
-          toast.error('장바구니 추가에 실패했습니다.');
-      }
+    onError: () => {
+      toast.error('이미 추가된 블랙리스트입니다.');
     },
   });
 
-  const { mutate: removeFromCartMutation } = useMutation({
+  // 블랙리스트 담기 해제
+  const { mutateAsync: removeFromCartMutation } = useMutation({
     mutationFn: removeFromCart,
     onSuccess: () => {
-      toast.success('장바구니에서 삭제되었습니다.');
-      queryClient.invalidateQueries({ queryKey: ['myBlacklist'] });
-    },
-    onError: (error: any) => {
-      const statusCode = error?.response?.status;
-      switch (statusCode) {
-        case 400:
-          toast.error('잘못된 요청입니다.');
-          break;
-        case 404:
-          toast.error('존재하지 않는 블랙리스트입니다.');
-          break;
-        default:
-          toast.error('장바구니에서 삭제하는데 실패했습니다.');
-      }
+      queryClient.invalidateQueries({ queryKey: ['blacklist-cart'] });
+      toast.success('블랙리스트가 제거되었습니다.');
     },
   });
 
+  // 블랙리스트 데이터 설정
+  useEffect(() => {
+    if (blacklistData) {
+      setBlacklist(blacklistData.data);
+      setTotalPages(blacklistData.totalPages);
+    }
+  }, [blacklistData]);
+
+  // 내가 담은 블랙리스트 설정
+  useEffect(() => {
+    if (cartData) {
+      setMyBlacklist(cartData.data);
+    }
+  }, [cartData]);
+
+  // 내가 작성한 블랙리스트 설정
+  useEffect(() => {
+    if (myPostsData) {
+      setMyPosts(myPostsData.data);
+    }
+  }, [myPostsData]);
+
+  // 블랙리스트 싫어요
+  const postDislikeMutation = useCallback(
+    async (id: string) => {
+      try {
+        await dislikeMutation(id);
+        toast.success('싫어요를 표시했습니다.');
+      } catch (error) {
+        toast.error('이미 싫어요를 표시했습니다.');
+      }
+    },
+    [dislikeMutation],
+  );
+
+  // 본인 게시물 확인
+  const isMyPost = useCallback(
+    (postId: number) => {
+      return myPosts.some((post) => post.id === postId);
+    },
+    [myPosts],
+  );
+
   return {
-    blacklist: data?.data || [],
-    totalPages: data?.totalPages || 1,
-    currentPage: data?.currentPage || 1,
-    totalPosts: data?.totalPosts || 0,
-    myBlacklist: Array.isArray(myBlacklist.data) ? myBlacklist.data : [],
+    blacklist,
+    myBlacklist,
+    myPosts,
     isLoading,
-    isMyBlacklistLoading,
-    handleAddToMyBlacklist: addToMyBlacklist,
-    handleRemoveFromMyBlacklist: removeFromMyBlacklist,
-    deleteBlacklist: deleteBlacklistMutation,
-    postDislikeMutation,
+    blacklistDetail: blacklistDetailData,
     addToCartMutation,
     removeFromCartMutation,
-    blacklistDetail,
+    postDislikeMutation,
+    totalPages,
+    isMyPost,
   };
 };

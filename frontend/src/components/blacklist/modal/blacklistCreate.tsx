@@ -120,6 +120,7 @@ const BlacklistCreateModal = () => {
       });
       toast.success('블랙리스트가 생성되었습니다.');
       await queryClient.invalidateQueries({ queryKey: ['blacklist'] });
+      await queryClient.invalidateQueries({ queryKey: ['blacklist-myPosts'] });
       return data;
     } catch (err) {
       toast.error('블랙리스트 생성에 실패했습니다.');

@@ -47,15 +47,6 @@ const NavLinks = () => {
             API 입력
           </button>
         </li>
-        {/* <li key={authLink.href}>
-          <Link
-            href={authLink.href}
-            className='relative text-lg transition-colors hover:text-lostark-400'
-            onClick={handleLogout}
-          >
-            {authLink.name}
-          </Link>
-        </li> */}
       </ul>
       <ApiInputModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </nav>
@@ -66,7 +57,6 @@ const MainHeader = () => (
   <div className='container mx-auto flex h-16 items-center justify-between px-4'>
     <Link href='/' className='group relative'>
       <span className='bg-gradient-to-r from-lostark-400 via-lostark-500 to-lostark-600 bg-clip-text text-3xl font-bold text-transparent'>
-        {/* LostArkParty */}
         로스트파티
       </span>
     </Link>

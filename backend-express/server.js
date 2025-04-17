@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // CORS 설정
 app.use(cors({
   origin: process.env.ALLOWED_ORIGIN,
-  methods: ['GET', 'POST', 'DELETE'],
+  methods: ['GET', 'POST', 'DELETE', 'PATCH'],
 }));
 
 // Swagger UI 연결
@@ -43,7 +43,7 @@ app.use("/api/blacklist", blacklistRouter);
 app.use("/userdata", visitorTracker, userdataRouter);
 
 // 서버 실행
-app.listen(5000, () => {
+app.listen(5000, '0.0.0.0', () => {
   console.log('Express 서버가 http://localhost:5000 에서 실행 중입니다.');
   console.log('API documentation available at http://localhost:5000/api-docs');
 });
