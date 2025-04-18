@@ -21,7 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='ko' className='bg-black1'>
       <head>
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6105668975420119" crossorigin="anonymous"></script>
+        <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6105668975420119"
+            crossOrigin="anonymous"
+        />
       </head>
         <body className={pretendard.className}>
           <QueryProvider>
