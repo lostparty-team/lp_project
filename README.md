@@ -48,7 +48,7 @@
 | **블랙리스트 작성 및 적용** | <img src="https://github.com/user-attachments/assets/53392234-1562-4c90-8e76-a950a6ad4366" style="width: 100%; max-width: 300px;"> | 새로운 블랙리스트를 작성하고 기능을 제공합니다. |
 | **인게임 파티 구인창** | <img src="https://github.com/user-attachments/assets/53bf64f0-5133-4e96-a9a9-3d714fcc75ca" style="width: 100%; max-width: 300px;"> | 게임화면을 인식하여 파티 신청자의 닉네임을 추출합니다. |
 | **파티원 정보** | <img src="https://github.com/user-attachments/assets/e6016932-11cb-4fe5-b5c0-20bd7e984f71" style="width: 100%; max-width: 300px;"> | 파티 신청자의 스펙 및 정보를 직관적으로 파악할 수 있습니다. |
-| **API 문서** | <img src="https://github.com/user-attachments/assets/d0ed6713-7126-40ce-952e-d51f99ebf22e)" style="width: 100%; max-width: 300px;"> | 로스트아크 파티 매칭 웹서비스의 API 문서입니다. 닉네임 기반 캐릭터 정보 조회, 블랙리스트 관리 기능 등을 제공합니다. |
+| **API 문서** | <img src="https://github.com/user-attachments/assets/d0ed6713-7126-40ce-952e-d51f99ebf22e" style="width: 100%; max-width: 300px;"> | 로스트아크 파티 매칭 웹서비스의 API 문서입니다. 닉네임 기반 캐릭터 정보 조회, 블랙리스트 관리 기능 등을 제공합니다. |
 
 
 ## 🏗️ 기술 스택
