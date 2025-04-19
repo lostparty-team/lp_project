@@ -48,6 +48,7 @@
 | **블랙리스트 작성 및 적용** | <img src="https://github.com/user-attachments/assets/53392234-1562-4c90-8e76-a950a6ad4366" style="width: 100%; max-width: 300px;"> | 새로운 블랙리스트를 작성하고 기능을 제공합니다. |
 | **인게임 파티 구인창** | <img src="https://github.com/user-attachments/assets/53bf64f0-5133-4e96-a9a9-3d714fcc75ca" style="width: 100%; max-width: 300px;"> | 게임화면을 인식하여 파티 신청자의 닉네임을 추출합니다. |
 | **파티원 정보** | <img src="https://github.com/user-attachments/assets/e6016932-11cb-4fe5-b5c0-20bd7e984f71" style="width: 100%; max-width: 300px;"> | 파티 신청자의 스펙 및 정보를 직관적으로 파악할 수 있습니다. |
+| **API 문서** | <img src="https://github.com/user-attachments/assets/d0ed6713-7126-40ce-952e-d51f99ebf22e)" style="width: 100%; max-width: 300px;"> | 로스트아크 파티 매칭 웹서비스의 API 문서입니다. 닉네임 기반 캐릭터 정보 조회, 블랙리스트 관리 기능 등을 제공합니다. |
 
 
 ## 🏗️ 기술 스택
@@ -63,18 +64,20 @@
 
 ---
 
-## 📦 설치 및 실행 방법
+## 📦 설치 및 실행 방법 (개발 환경)
 
 ```bash
 # 1. 프로젝트 클론
 git clone https://github.com/HaeSung99/lp_project.git
 cd lp_project
 
-# 2. 패키지 설치
-npm install
+# 2. Docker 및 Docker Compose 설치 (설치되어 있지 않은 경우)
 
-# 3. 개발 서버 실행
-npm run dev
+# 3. 환경 변수 파일 작성 (.env)
+# 예시: .env.dev 또는 .env.prod 파일을 프로젝트 루트에 생성
+
+# 4. Docker Compose로 컨테이너 실행
+docker-compose -f docker-compose.dev.yml up --build
 ```
 
 ## 🚀 배포 링크
@@ -83,9 +86,9 @@ npm run dev
 | :-: | :------------------------------: |
 | BE (dev) | https://localhost:5000/api-docs/ |
 
-| FE (prod) |     https://localhost:3000/      |
+| FE (prod) |     https://lostparty.com      |
 | :-: | :------------------------------: |
-| BE (prod) | https://localhost:5000/api-docs/ |
+| BE (prod) | 비공개 |
 
 ## 👋🏻 팀원 소개
 
@@ -93,8 +96,8 @@ npm run dev
 
 |  팀원  |   담당   |                                              프로필                                              |                                            주요 기여 및 핵심 역할                                           |
 | :----: | :------: | :----------------------------------------------------------------------------------------------: |  :----------------------------------------------------------------------------------------: |
-| 김도환 | FrontEnd | [<img src="https://github.com/ehghks021203.png" width="100px">](https://github.com/ehghks021203) |
-| 최종현 | FrontEnd |    [<img src="https://github.com/elbyss.png" width="100px">](https://github.com/elbyss)    |
+| 김도환 | Python | [<img src="https://github.com/ehghks021203.png" width="100px">](https://github.com/ehghks021203) | • PaddleOCR를 활용한 텍스트 추출 로직 구현 <br> • 화면 공유 기반 OCR 프로세스 개발 <br> • 프론트엔드 OCR 연동 구현
+| 최종현 | FrontEnd |    [<img src="https://github.com/elbyss.png" width="100px">](https://github.com/elbyss)    | • 프론트엔드 전반 개발 <br> • 프론트엔드 UI/UX 구현 및 스타일링
 | 김재찬 | BackEnd  |      [<img src="https://github.com/kjc6735.png" width="100px">](https://github.com/kjc6735)      | • 사용자 인증 및 보안 강화를 위한 로그인·로그아웃 기능 구현 (실효성 검토 후 미적용)
 | 성인석 | BackEnd  | [<img src="https://github.com/HaeSung99.png" width="100px">](https://github.com/HaeSung99) | • Dockerfile 작성 및 개발환경 구축 <br> • DB 구조 설계 및 API 연동 <br> • API 및 기능 명세서 작성 <br> • 페이지 구성 설계 및 OpenAPI를 활용한 데이터 재가공 <br> • 팀원 모집 및 프로젝트 관리 (노션 정리 포함)
 
