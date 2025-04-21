@@ -16,6 +16,14 @@
 
 ![home](https://github.com/user-attachments/assets/307a77ae-ad19-4447-979f-af92fa8383df)
 
+## 🗂️ ERD 다이어그램
+
+본 프로젝트에서 사용된 데이터베이스 구조는 아래의 ERD(Entity Relationship Diagram)를 통해 확인할 수 있습니다.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/58f1924e-e0ff-46fc-9385-639320c40b45" style="width: 100%; max-width: 300px;">
+</p>
+
 ## ✨ 주요 기능
 
 ### 🔎 1. 닉네임 감지 (OCR)
