@@ -94,7 +94,7 @@ docker-compose -f docker-compose.dev.yml up --build
 | :-: | :------------------------------: |
 | BE (dev) | https://localhost:5000/api-docs/ |
 
-| FE (prod) |     https://lostparty.com      |
+| FE (prod) |     https://lostparty.com (비용문제로 일시중지)     |
 | :-: | :------------------------------: |
 | BE (prod) | 비공개 |
 
